@@ -43,28 +43,48 @@
   #app{ max-width:520px; margin:0 auto; background:var(--cream); box-shadow:var(--shadow); position:relative; overflow:hidden; }
   .wrap{ max-width:400px; margin:0 auto; padding:0 var(--sp-6); }
 
+  /* Nút đổi ngôn ngữ: huy hiệu tròn khắc cờ, chỉ hiện lúc còn ở bìa thiệp
+     (ẩn hẳn ngay khi khách chạm "Chạm để mở thiệp", xem #openBtn trong script) */
   #langSwitch{
-    position:fixed; top:var(--sp-4); right:var(--sp-4); z-index:500;
-    display:flex; background:rgba(20,4,7,.55); backdrop-filter:blur(8px);
-    border:1px solid rgba(207,159,63,.5); border-radius:30px; padding:3px; gap:2px;
+    position:fixed; top:var(--sp-4); right:var(--sp-4); z-index:1500;
+    width:46px; height:46px; padding:0; border:none; border-radius:50%;
+    background:none; cursor:pointer;
     opacity:0; pointer-events:none; transition:opacity .5s ease .15s;
   }
   #langSwitch.show{opacity:1; pointer-events:auto;}
-  #langSwitch button{ border:none; background:transparent; color:var(--cream-dim); font-weight:500; font-size:12px; letter-spacing:.03em; padding:7px 14px; border-radius:22px; transition:.2s; }
-  #langSwitch button.active{ background:var(--gold); color:var(--red-deep); }
+  #langSwitch.show{ animation:langRing 3.2s ease-out infinite; }
+  @keyframes langRing{
+    0%{ box-shadow:0 0 0 0 rgba(207,159,63,.26); }
+    70%{ box-shadow:0 0 0 12px rgba(207,159,63,0); }
+    100%{ box-shadow:0 0 0 0 rgba(207,159,63,0); }
+  }
+  #langSwitch svg{ width:46px; height:46px; overflow:visible; }
+  #langSwitch .flag-vi, #langSwitch .flag-en{ transition:opacity .35s ease, transform .35s ease; transform-origin:50% 50%; }
+  #langSwitch .flag-vi{ opacity:1; transform:rotateY(0deg); }
+  #langSwitch .flag-en{ opacity:0; transform:rotateY(90deg); }
+  #langSwitch.is-en .flag-vi{ opacity:0; transform:rotateY(-90deg); }
+  #langSwitch.is-en .flag-en{ opacity:1; transform:rotateY(0deg); }
 
+  /* Nút nhạc nền: đĩa than tròn (ngoại lệ duy nhất phá quy ước "không bo tròn",
+     vì bản chất đĩa than vốn phải tròn), khắc nốt nhạc ở tâm. */
   #musicToggle{
     position:fixed; top:var(--sp-4); left:var(--sp-4); z-index:500;
-    width:38px; height:38px; display:flex; align-items:center; justify-content:center;
-    background:rgba(20,4,7,.55); backdrop-filter:blur(8px);
-    border:1px solid rgba(207,159,63,.5); border-radius:3px; color:var(--gold);
+    width:46px; height:46px; padding:0; border:none; border-radius:50%;
+    background:none; cursor:pointer;
     opacity:0; pointer-events:none; transition:opacity .5s ease .15s;
   }
   #musicToggle.show{opacity:1; pointer-events:auto;}
-  #musicToggle svg{ width:19px; height:19px; }
-  #musicToggle .ic-off{ display:none; }
-  #musicToggle.is-on .ic-on{ display:none; }
-  #musicToggle.is-on .ic-off{ display:block; }
+  #musicToggle svg{ width:46px; height:46px; overflow:visible; transform-origin:50% 50%; }
+  #musicToggle.is-on svg{ animation:discSpin 3.6s linear infinite; }
+  #musicToggle.is-on{ animation:discRing 2.2s ease-out infinite; }
+  #musicToggle .slash{ opacity:0; transition:opacity .2s ease; }
+  #musicToggle:not(.is-on) .slash{ opacity:1; }
+  @keyframes discSpin{ to{ transform:rotate(360deg); } }
+  @keyframes discRing{
+    0%{ box-shadow:0 0 0 0 rgba(207,159,63,.28); }
+    70%{ box-shadow:0 0 0 13px rgba(207,159,63,0); }
+    100%{ box-shadow:0 0 0 0 rgba(207,159,63,0); }
+  }
 
   /* ================= COVER — velvet curtain reveal ================= */
   #cover{ position:fixed; top:0; bottom:0; left:0; right:0; max-width:520px; margin:0 auto; z-index:1000; overflow:hidden; transition:visibility .9s; }
@@ -230,7 +250,14 @@
   .hero-names{ font-family:var(--serif); font-weight:400; font-size:clamp(28px,8vw,38px); color:var(--cream); line-height:1.28; margin-top:var(--sp-4); letter-spacing:.01em; }
   .hero-rule{ width:44px; height:1px; background:rgba(207,159,63,.7); margin:var(--sp-5) 0; }
   .hero-date{ font-weight:400; font-size:13px; letter-spacing:.1em; color:var(--cream-dim); }
-  .hero-scroll{ margin-top:var(--sp-6); font-size:10.5px; letter-spacing:.14em; color:rgba(253,248,239,.5); }
+  .hero-scroll{
+    margin-top:auto; padding-top:var(--sp-7);
+    display:flex; flex-direction:column; align-items:flex-start; gap:6px;
+    font-size:10.5px; letter-spacing:.14em; color:rgba(253,248,239,.5);
+  }
+  .hero-scroll svg{ width:13px; height:13px; animation:heroScrollBob 1.7s ease-in-out infinite; }
+  @keyframes heroScrollBob{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(4px); } }
+  @media (prefers-reduced-motion: reduce){ .hero-scroll svg{ animation:none; } }
 
   /* ================= SECTION frame ================= */
   section{ padding:var(--sp-9) 0; position:relative; }
@@ -451,17 +478,48 @@
 </div>
 
 <!-- ============ LANGUAGE SWITCH ============ -->
-<div id="langSwitch">
-  <button id="btnVi" class="active">VI</button>
-  <button id="btnEn">EN</button>
-</div>
+<!-- Chỉ cho đổi ngôn ngữ lúc còn ở bìa thiệp; ẩn/khoá ngay khi khách bấm "Chạm để mở thiệp" -->
+<button type="button" id="langSwitch" class="show" aria-label="đổi ngôn ngữ / change language">
+  <svg viewBox="0 0 46 46" aria-hidden="true">
+    <defs><clipPath id="flagClip"><circle cx="23" cy="23" r="21.5"/></clipPath></defs>
+    <circle cx="23" cy="23" r="22.3" fill="none" stroke="var(--gold-line)" stroke-width="1.4"/>
+    <g class="flag-vi" clip-path="url(#flagClip)">
+      <rect x="1.5" y="1.5" width="43" height="43" fill="#DA251D"/>
+      <polygon fill="#FFCD00" points="23,14 25.12,20.09 31.56,20.22 26.42,24.11 28.29,30.28 23,26.6 17.71,30.28 19.58,24.11 14.44,20.22 20.88,20.09"/>
+    </g>
+    <g class="flag-en" clip-path="url(#flagClip)">
+      <rect x="1.5" y="1.5" width="43" height="43" fill="#00247D"/>
+      <line x1="1.5" y1="1.5" x2="44.5" y2="44.5" stroke="#fff" stroke-width="9"/>
+      <line x1="44.5" y1="1.5" x2="1.5" y2="44.5" stroke="#fff" stroke-width="9"/>
+      <line x1="1.5" y1="1.5" x2="44.5" y2="44.5" stroke="#CF142B" stroke-width="3.4"/>
+      <line x1="44.5" y1="1.5" x2="1.5" y2="44.5" stroke="#CF142B" stroke-width="3.4"/>
+      <line x1="23" y1="1.5" x2="23" y2="44.5" stroke="#fff" stroke-width="14"/>
+      <line x1="1.5" y1="23" x2="44.5" y2="23" stroke="#fff" stroke-width="14"/>
+      <line x1="23" y1="1.5" x2="23" y2="44.5" stroke="#CF142B" stroke-width="7"/>
+      <line x1="1.5" y1="23" x2="44.5" y2="23" stroke="#CF142B" stroke-width="7"/>
+    </g>
+  </svg>
+</button>
 
 <!-- ============ NHẠC NỀN ============ -->
 <!-- TODO (xem README, mục "Nhạc nền"): thả file nhạc thật vào audio/bg-music.mp3, không cần sửa gì ở đây -->
 <audio id="bgMusic" src="audio/bg-music.mp3" loop preload="none"></audio>
 <button type="button" id="musicToggle" aria-label="bật/tắt nhạc nền" aria-pressed="false">
-  <svg class="ic-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10v4h3.5l4.5 4V6l-4.5 4H4z"/><path d="M16.5 9a4.5 4.5 0 0 1 0 6"/><path d="M18.8 6.7a8 8 0 0 1 0 10.6"/></svg>
-  <svg class="ic-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10v4h3.5l4.5 4V6l-4.5 4H4z"/><path d="M16.5 9l4 6M20.5 9l-4 6"/></svg>
+  <svg viewBox="0 0 46 46" aria-hidden="true">
+    <circle cx="23" cy="23" r="21.5" fill="var(--red-deep)" stroke="var(--gold-line)" stroke-width="1.2"/>
+    <circle cx="23" cy="23" r="16.8" fill="none" stroke="rgba(207,159,63,.4)" stroke-width="1"/>
+    <circle cx="23" cy="23" r="12.2" fill="none" stroke="rgba(207,159,63,.4)" stroke-width="1"/>
+    <circle cx="23" cy="23" r="8.4" fill="var(--gold)"/>
+    <g fill="none" stroke="var(--red-deep)" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round">
+      <circle cx="21.2" cy="24.92" r="1.29"/>
+      <path d="M22.49 24.92V20l3.6-1.02v4.98"/>
+      <circle cx="26.09" cy="23.96" r="1.29"/>
+    </g>
+    <g class="slash">
+      <line x1="8.6" y1="37.4" x2="37.4" y2="8.6" stroke="var(--red-deep)" stroke-width="3.6" stroke-linecap="round" opacity=".55"/>
+      <line x1="8.6" y1="37.4" x2="37.4" y2="8.6" stroke="var(--gold)" stroke-width="1.8" stroke-linecap="round"/>
+    </g>
+  </svg>
 </button>
 
 <div id="app">
@@ -477,7 +535,10 @@
       <div class="hero-names">Hoàng Sơn &amp; Phương Thảo</div>
       <div class="hero-rule"></div>
       <div class="hero-date" id="heroDate"><span data-vi>Thứ Bảy · 21 Tháng 11, 2026 · Vũng Tàu</span><span data-en>Saturday · November 21, 2026 · Vung Tau</span></div>
-      <div class="hero-scroll"><span data-vi>VUỐT XUỐNG ĐỂ XEM THIỆP</span><span data-en>SCROLL TO EXPLORE</span></div>
+      <div class="hero-scroll">
+        <span><span data-vi>VUỐT XUỐNG ĐỂ XEM THIỆP</span><span data-en>SCROLL TO EXPLORE</span></span>
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
+      </div>
     </div>
   </div>
 
@@ -686,11 +747,11 @@
             <div class="field" style="margin-top:var(--sp-6)">
               <label><span data-vi>Điểm đón</span><span data-en>Pickup point</span></label>
               <select id="rsvpPickup">
-                <option value="">— chọn điểm đón —</option>
-                <option value="Điểm A">Điểm A</option>
-                <option value="Điểm B">Điểm B</option>
-                <option value="Điểm C">Điểm C</option>
-                <option value="Khác">Điểm khác</option>
+                <option value="" data-vi="— Chọn điểm đón —" data-en="— Select pickup point —">— Chọn điểm đón —</option>
+                <option value="Điểm A" data-vi="Điểm A" data-en="Point A">Điểm A</option>
+                <option value="Điểm B" data-vi="Điểm B" data-en="Point B">Điểm B</option>
+                <option value="Điểm C" data-vi="Điểm C" data-en="Point C">Điểm C</option>
+                <option value="Khác" data-vi="Điểm khác" data-en="Other">Điểm khác</option>
               </select>
             </div>
             <div class="field" style="margin-top:var(--sp-6)">
@@ -972,10 +1033,11 @@
     if(cover.classList.contains('open')) return;
     cover.classList.add('open');
     document.body.classList.remove('locked');
+    // khoá đổi ngôn ngữ ngay từ lúc chạm mở thiệp — chỉ đổi được lúc còn ở bìa
+    langSwitch.classList.remove('show');
     // nội dung bắt đầu dâng lên khi rèm còn đang kéo, để hai lớp nối liền nhau
     setTimeout(function(){
       card.classList.add('show');
-      langSwitch.classList.add('show');
       if(musicToggle) musicToggle.classList.add('show');
     }, 520);
     // rèm dừng đúng vị trí hai dải bên trong rồi hạ lớp bìa xuống, giữ nguyên rèm
@@ -1010,17 +1072,24 @@
     });
   }
 
-  var btnVi = document.getElementById('btnVi');
-  var btnEn = document.getElementById('btnEn');
-  btnVi.addEventListener('click', function(){
-    document.body.classList.remove('lang-en');
-    btnVi.classList.add('active'); btnEn.classList.remove('active');
-    document.documentElement.lang='vi';
-  });
-  btnEn.addEventListener('click', function(){
-    document.body.classList.add('lang-en');
-    btnEn.classList.add('active'); btnVi.classList.remove('active');
-    document.documentElement.lang='en';
+  // <option> không nhận span data-vi/data-en như chữ thường, nên đổi chữ theo ngôn ngữ
+  // qua thuộc tính data-vi/data-en gắn sẵn trên từng option
+  function syncSelectLang(lang){
+    var pickupEl = document.getElementById('rsvpPickup');
+    if(!pickupEl) return;
+    Array.prototype.forEach.call(pickupEl.options, function(opt){
+      var text = opt.getAttribute(lang === 'en' ? 'data-en' : 'data-vi');
+      if(text) opt.textContent = text;
+    });
+  }
+
+  langSwitch.addEventListener('click', function(){
+    var toEn = !langSwitch.classList.contains('is-en');
+    langSwitch.classList.toggle('is-en', toEn);
+    langSwitch.setAttribute('aria-pressed', toEn ? 'true' : 'false');
+    document.body.classList.toggle('lang-en', toEn);
+    document.documentElement.lang = toEn ? 'en' : 'vi';
+    syncSelectLang(toEn ? 'en' : 'vi');
   });
 
   var target = new Date(EV.target).getTime();

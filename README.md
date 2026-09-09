@@ -59,6 +59,13 @@ Toàn bộ nằm trong `index.html`. Vài mốc để tìm nhanh:
 - [ ] Điểm đón còn là Điểm A, B, C — có đánh dấu `TODO` trong `index.html`, cần thay bằng địa điểm thật.
 - [ ] Chưa có file nhạc nền thật. Khung phát nhạc (nút bật/tắt, thẻ `<audio>`) đã có sẵn, trỏ tới `audio/bg-music.mp3` — chỉ cần thả file nhạc (đã xin phép bản quyền) vào đúng đường dẫn đó, không cần sửa `index.html`.
 
+## Câu hỏi mở — cần bàn thêm
+
+- **Ăn cỗ chiều 27 (hôm trước lễ 28)**: theo phong tục, nhiều đám cưới ngày lễ chính 28 lại có bữa ăn cỗ vào chiều hôm trước (27). Trang hiện chưa có thông tin gì về bữa này. Cần xác định trước khi làm:
+  - Bữa chiều 27 là bữa chính, đa số khách tới ăn hôm đó (lễ 9h sáng 28 chỉ là lễ gia tiên/rước dâu riêng cho gia đình gần)? → nếu vậy cần đổi trọng tâm hiển thị cho khách mời ngày 28: giờ/địa điểm chính nên là chiều 27, lễ sáng 28 chỉ ghi chú thêm.
+  - Hay bữa chiều 27 chỉ là bữa nhỏ thân mật (họ hàng/hàng xóm), khách mời chính vẫn tới dự lễ 9h sáng 28 như hiện tại? → nếu vậy chỉ cần thêm 1 dòng ghi chú nhỏ trong trang ngày 28, không đổi cấu trúc.
+  - Chưa quyết định phương án nào — để đây bàn tiếp trước khi sửa `index.html`.
+
 ## Nối hồi âm vào Google Form
 
 1. Tạo một Google Form với các câu hỏi tương ứng: họ tên, tham dự hay không, số người, cách di chuyển, điểm đón, số điện thoại.
