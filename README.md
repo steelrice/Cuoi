@@ -49,20 +49,35 @@ Toàn bộ nằm trong `index.html`. Vài mốc để tìm nhanh:
 
 - **Nội dung hai ngày**: tìm `var EVENTS` — chứa toàn bộ chữ nghĩa, giờ giấc, đường dẫn bản đồ của cả hai lễ
 - **Khung giờ**: tìm `TIMELINE` — hiện đang cố định, chưa đổi theo ngày
-- **Điểm đón**: tìm `rsvpPickup` — hiện là Điểm A, B, C, cần thay bằng địa điểm thật
+- **Điểm đón**: tìm `rsvpPickup` — hiện là Điểm A, B, C (đánh dấu `TODO` ngay phía trên trong HTML), **bắt buộc thay bằng tên/địa chỉ điểm đón thật trước khi gửi thiệp cho khách**
 - **Màu sắc và phông chữ**: tìm `:root` ở đầu phần `<style>`
 
 ## Việc còn tồn
 
-- [ ] **Phần hồi âm chưa gửi dữ liệu đi đâu cả.** Hiện chỉ lưu tạm trên máy khách, chủ thiệp không nhận được gì. Cần đấu nối Google Form, Formspree hoặc dịch vụ tương tự trước khi gửi thiệp cho khách.
-- [ ] Khung giờ chưa đổi theo ngày, và giờ lễ (11:00) đang vênh với giờ ghi ở đầu thiệp (10 giờ 30)
-- [ ] Điểm đón còn là Điểm A, B, C
-- [ ] Chưa có nhạc nền
+- [x] ~~Khung giờ chưa đổi theo ngày, và giờ lễ (11:00) đang vênh với giờ ghi ở đầu thiệp (10 giờ 30)~~ — nay tự tính từ `EVENTS[...].target` theo từng ngày.
+- [ ] **Phần hồi âm chưa thật sự gửi đi đâu.** Code đã đấu nối sẵn tới Google Form (xem mục "Nối hồi âm vào Google Form" bên dưới), nhưng `RSVP_CONFIG` còn để trống — **bắt buộc điền link Form + entry ID thật trước khi gửi thiệp cho khách**, nếu không hồi âm sẽ không tới tay ai cả.
+- [ ] Điểm đón còn là Điểm A, B, C — có đánh dấu `TODO` trong `index.html`, cần thay bằng địa điểm thật.
+- [ ] Chưa có file nhạc nền thật. Khung phát nhạc (nút bật/tắt, thẻ `<audio>`) đã có sẵn, trỏ tới `audio/bg-music.mp3` — chỉ cần thả file nhạc (đã xin phép bản quyền) vào đúng đường dẫn đó, không cần sửa `index.html`.
+
+## Nối hồi âm vào Google Form
+
+1. Tạo một Google Form với các câu hỏi tương ứng: họ tên, tham dự hay không, số người, cách di chuyển, điểm đón, số điện thoại.
+2. Mở form ở chế độ xem trước, bấm **⋮ → Nhận liên kết được điền sẵn (Get pre-filled link)**, điền tạm mỗi ô một giá trị rồi bấm **Nhận liên kết**.
+3. Liên kết trả về có dạng `...?entry.111111111=...&entry.222222222=...` — mỗi `entry.xxxxxxxxx` ứng với một câu hỏi theo đúng thứ tự bạn đã điền, ghi lại từng cặp.
+4. Lấy URL nộp form: mở form thật (không phải link rút gọn), copy đường dẫn, đổi đuôi `/viewform` thành `/formResponse`.
+5. Trong `index.html`, tìm `RSVP_CONFIG` (gần đầu phần xử lý hồi âm), điền:
+   - `googleFormAction`: URL `/formResponse` ở bước 4
+   - từng `fields.*`: entry ID tương ứng ở bước 3
+6. Gửi thử một hồi âm trên trang, kiểm tra có xuất hiện dòng mới trong Google Sheet liên kết với Form không.
+
+Muốn dùng Formspree hoặc dịch vụ khác thay vì Google Form thì thay nội dung hàm `sendRsvpToGoogleForm` trong `index.html` bằng lệnh gọi tới dịch vụ đó.
 
 ## Cấu trúc
 
 ```
 index.html          toàn bộ giao diện và mã xử lý
+audio/
+  bg-music.mp3      nhạc nền — placeholder, tự thêm file thật (xem mục "Việc còn tồn")
 images/
   album/            ảnh album — xem mục dưới
     01.jpg

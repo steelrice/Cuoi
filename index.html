@@ -3,6 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="theme-color" content="#4c0c17">
 <title>Hoàng Sơn &amp; Phương Thảo — Thiệp cưới</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -22,7 +23,7 @@
     --sp-6:32px; --sp-7:48px; --sp-8:64px; --sp-9:88px;
   }
   *{box-sizing:border-box; margin:0; padding:0;}
-  html{scroll-behavior:smooth;}
+  html{scroll-behavior:smooth; background:#210407;}
   body{
     font-family:var(--sans); color:var(--ink); -webkit-font-smoothing:antialiased; text-rendering:optimizeLegibility;
     background:
@@ -51,6 +52,19 @@
   #langSwitch.show{opacity:1; pointer-events:auto;}
   #langSwitch button{ border:none; background:transparent; color:var(--cream-dim); font-weight:500; font-size:12px; letter-spacing:.03em; padding:7px 14px; border-radius:22px; transition:.2s; }
   #langSwitch button.active{ background:var(--gold); color:var(--red-deep); }
+
+  #musicToggle{
+    position:fixed; top:var(--sp-4); left:var(--sp-4); z-index:500;
+    width:38px; height:38px; display:flex; align-items:center; justify-content:center;
+    background:rgba(20,4,7,.55); backdrop-filter:blur(8px);
+    border:1px solid rgba(207,159,63,.5); border-radius:3px; color:var(--gold);
+    opacity:0; pointer-events:none; transition:opacity .5s ease .15s;
+  }
+  #musicToggle.show{opacity:1; pointer-events:auto;}
+  #musicToggle svg{ width:19px; height:19px; }
+  #musicToggle .ic-off{ display:none; }
+  #musicToggle.is-on .ic-on{ display:none; }
+  #musicToggle.is-on .ic-off{ display:block; }
 
   /* ================= COVER — velvet curtain reveal ================= */
   #cover{ position:fixed; top:0; bottom:0; left:0; right:0; max-width:520px; margin:0 auto; z-index:1000; overflow:hidden; transition:visibility .9s; }
@@ -120,7 +134,7 @@
   .s-guest{ font-family:var(--serif); font-weight:400; font-size:clamp(26px,7.5vw,32px); color:var(--cream); margin-top:var(--sp-5); line-height:1.2; letter-spacing:.01em; }
   .s-join{ font-family:var(--script); font-style:italic; font-weight:500; font-size:20px; color:var(--cream-dim); margin-top:var(--sp-4); }
   .s-rule{ width:64px; height:1px; background:rgba(207,159,63,.35); margin-top:var(--sp-2); }
-  .s-event{ font-family:var(--serif); font-weight:400; font-size:23px; color:var(--gold); margin-top:var(--sp-5); letter-spacing:.02em; }
+  .s-event{ font-family:var(--serif); font-weight:400; font-size:23px; color:var(--gold); margin-top:var(--sp-5); letter-spacing:.02em; line-height:1.3; text-wrap:balance; }
   .s-time{ font-size:14px; color:var(--cream-dim); margin-top:var(--sp-3); line-height:1.5; }
   .s-time b{ color:var(--cream); font-weight:600; }
 
@@ -442,6 +456,14 @@
   <button id="btnEn">EN</button>
 </div>
 
+<!-- ============ NHẠC NỀN ============ -->
+<!-- TODO (xem README, mục "Nhạc nền"): thả file nhạc thật vào audio/bg-music.mp3, không cần sửa gì ở đây -->
+<audio id="bgMusic" src="audio/bg-music.mp3" loop preload="none"></audio>
+<button type="button" id="musicToggle" aria-label="bật/tắt nhạc nền" aria-pressed="false">
+  <svg class="ic-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10v4h3.5l4.5 4V6l-4.5 4H4z"/><path d="M16.5 9a4.5 4.5 0 0 1 0 6"/><path d="M18.8 6.7a8 8 0 0 1 0 10.6"/></svg>
+  <svg class="ic-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 10v4h3.5l4.5 4V6l-4.5 4H4z"/><path d="M16.5 9l4 6M20.5 9l-4 6"/></svg>
+</button>
+
 <div id="app">
 
 <div id="card">
@@ -551,21 +573,21 @@
       <div class="tl">
         <div class="tl-item">
           <div class="tl-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h10l-1.2 6.5a3.8 3.8 0 0 1-3.8 3.1 3.8 3.8 0 0 1-3.8-3.1L7 3z"/><path d="M12 12.6V19M8.5 19h7"/></svg></div>
-          <div class="tl-time">10:00</div>
+          <div class="tl-time" id="tlTime1">10:00</div>
           <div class="tl-title"><span data-vi>Đón khách</span><span data-en>Guests arrive</span></div>
           <div class="tl-desc"><span data-vi>Chụp vài tấm ở photobooth và để lại đôi dòng cảm nghĩ cho chúng mình nhé</span><span data-en>Take a few photos at the booth and leave us a note</span></div>
         </div>
         <div class="tl-sep"></div>
         <div class="tl-item">
           <div class="tl-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="9" cy="13" r="4.2"/><circle cx="15" cy="13" r="4.2"/></svg></div>
-          <div class="tl-time">11:00</div>
-          <div class="tl-title"><span data-vi>Lễ thành hôn</span><span data-en>Wedding ceremony</span></div>
-          <div class="tl-desc"><span data-vi>Nghi lễ chính của ngày hôm ấy, cũng là lúc hai đứa nên duyên vợ chồng</span><span data-en>The heart of the day — the moment we become husband and wife</span></div>
+          <div class="tl-time" id="tlTime2">11:00</div>
+          <div class="tl-title" id="tlTitle2"><span data-vi>Lễ thành hôn</span><span data-en>Wedding ceremony</span></div>
+          <div class="tl-desc" id="tlDesc2"><span data-vi>Nghi lễ chính của ngày hôm ấy, cũng là lúc hai đứa nên duyên vợ chồng</span><span data-en>The heart of the day — the moment we become husband and wife</span></div>
         </div>
         <div class="tl-sep"></div>
         <div class="tl-item">
           <div class="tl-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l10-2v13"/><circle cx="6.5" cy="18" r="2.5"/><circle cx="16.5" cy="16" r="2.5"/></svg></div>
-          <div class="tl-time">11:30</div>
+          <div class="tl-time" id="tlTime3">11:30</div>
           <div class="tl-title"><span data-vi>Khai tiệc</span><span data-en>Reception begins</span></div>
           <div class="tl-desc"><span data-vi>Cùng nâng ly và ở lại dùng bữa trưa thân mật với hai bên gia đình</span><span data-en>Raise a glass and stay for lunch with both families</span></div>
         </div>
@@ -659,6 +681,8 @@
             <div class="field-hint" id="moveHint"></div>
           </div>
           <div class="collapse" id="pickupBlock">
+            <!-- TODO (xem README, mục "Điểm đón"): các option bên dưới còn là dữ liệu giả (Điểm A/B/C).
+                 Bắt buộc phải thay bằng tên/địa chỉ điểm đón thật trước khi gửi thiệp cho khách. -->
             <div class="field" style="margin-top:var(--sp-6)">
               <label><span data-vi>Điểm đón</span><span data-en>Pickup point</span></label>
               <select id="rsvpPickup">
@@ -825,7 +849,7 @@
     '21': {
       day:'21', maps:'https://maps.app.goo.gl/tdT1LGaSET7pAMx68', shuttle:true,
       target:'2026-11-21T10:30:00+07:00',
-      vi:{ title:'BUỔI TIỆC CHUNG VUI', time:'Được tổ chức vào lúc ', hi:'10 giờ 30 sáng, Thứ Bảy',
+      vi:{ title:'TIỆC CHUNG VUI', time:'Được tổ chức vào lúc ', hi:'10 giờ 30 sáng, Thứ Bảy',
            lunar:'Tức ngày 13 tháng 10', yearLunar:'Năm Bính Ngọ',
            venue:'TẠI SẢNH 2 MERASTIS TOWER', addr:'356 - 358 Trương Công Định, Tam Thắng, TP. Vũng Tàu',
            coverDate:'21 · 11 · 2026 · Vũng Tàu', heroDate:'Thứ Bảy · 21 Tháng 11, 2026 · Vũng Tàu',
@@ -900,6 +924,22 @@
     bi('thanks',    v.thanks, e.thanks);
     bi('credit',    v.credit, e.credit);
 
+    // Khung giờ timeline: suy ra từ giờ chính (EV.target) ± 30 phút, giờ hiển thị theo múi giờ Việt Nam
+    function fmtTime(offsetMin){
+      var d = new Date(new Date(EV.target).getTime() + offsetMin * 60000);
+      return d.toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit', hour12:false, timeZone:'Asia/Ho_Chi_Minh' });
+    }
+    var t1 = document.getElementById('tlTime1'); if(t1) t1.textContent = fmtTime(-30);
+    var t2 = document.getElementById('tlTime2'); if(t2) t2.textContent = fmtTime(0);
+    var t3 = document.getElementById('tlTime3'); if(t3) t3.textContent = fmtTime(30);
+    if(EV.day === '21'){
+      bi('tlTitle2', 'Tiệc chung vui bắt đầu', 'Celebration begins');
+      bi('tlDesc2',  'Khoảnh khắc mở đầu buổi tiệc, cùng nâng ly chúc mừng hai đứa', 'The opening moment of the party — join us in raising a toast');
+    } else {
+      bi('tlTitle2', 'Lễ thành hôn', 'Wedding ceremony');
+      bi('tlDesc2',  'Nghi lễ chính của ngày hôm ấy, cũng là lúc hai đứa nên duyên vợ chồng', 'The heart of the day — the moment we become husband and wife');
+    }
+
     var sDay = document.getElementById('sDay');
     if(sDay) sDay.textContent = EV.day;
     var sCta = document.getElementById('sCta');
@@ -936,13 +976,39 @@
     setTimeout(function(){
       card.classList.add('show');
       langSwitch.classList.add('show');
+      if(musicToggle) musicToggle.classList.add('show');
     }, 520);
     // rèm dừng đúng vị trí hai dải bên trong rồi hạ lớp bìa xuống, giữ nguyên rèm
     setTimeout(function(){
       cover.classList.add('opened');
     }, 1300);
+    // thử phát nhạc nền ngay lúc khách vừa chạm để mở thiệp — đúng cử chỉ người dùng
+    // nên vượt được giới hạn chặn autoplay của trình duyệt di động
+    if(bgMusic && bgMusic.paused){
+      bgMusic.play().then(function(){ setMusicUI(true); }).catch(function(){ setMusicUI(false); });
+    }
   }
   openBtn.addEventListener('click', openInvite);
+
+  /* nút bật/tắt nhạc nền */
+  var bgMusic = document.getElementById('bgMusic');
+  var musicToggle = document.getElementById('musicToggle');
+  function setMusicUI(on){
+    if(musicToggle){
+      musicToggle.classList.toggle('is-on', on);
+      musicToggle.setAttribute('aria-pressed', on ? 'true' : 'false');
+    }
+  }
+  if(musicToggle && bgMusic){
+    musicToggle.addEventListener('click', function(){
+      if(bgMusic.paused){
+        bgMusic.play().then(function(){ setMusicUI(true); }).catch(function(){ setMusicUI(false); });
+      } else {
+        bgMusic.pause();
+        setMusicUI(false);
+      }
+    });
+  }
 
   var btnVi = document.getElementById('btnVi');
   var btnEn = document.getElementById('btnEn');
@@ -1133,6 +1199,37 @@
     }, 60);
   });
 
+  // ===== Đấu nối hồi âm với Google Form =====
+  // Xem README, mục "Nối hồi âm vào Google Form" để biết cách lấy các giá trị dưới đây.
+  // Khi googleFormAction còn để trống, hồi âm chỉ hiển thị "đã gửi" trên máy khách, KHÔNG tới tay ai cả.
+  var RSVP_CONFIG = {
+    googleFormAction: '', // vd: 'https://docs.google.com/forms/d/e/XXXXXXXXXXXXXXXXXXXXXXX/formResponse'
+    fields: {
+      name:   '', // vd: 'entry.111111111'
+      attend: '', // vd: 'entry.222222222'
+      guests: '', // vd: 'entry.333333333'
+      move:   '', // vd: 'entry.444444444'
+      pickup: '', // vd: 'entry.555555555'
+      phone:  ''  // vd: 'entry.666666666'
+    }
+  };
+  function rsvpConfigured(){ return !!(RSVP_CONFIG.googleFormAction && RSVP_CONFIG.fields.name); }
+  function sendRsvpToGoogleForm(entry){
+    var fd = new FormData();
+    var f = RSVP_CONFIG.fields;
+    if(f.name)   fd.append(f.name, entry.name);
+    if(f.attend) fd.append(f.attend, entry.attend === 'yes'
+      ? (isEn() ? "I'll be there" : 'Mình sẽ có mặt')
+      : (isEn() ? "I can't make it" : 'Mình không đến được'));
+    if(f.guests && entry.attend === 'yes') fd.append(f.guests, String(entry.guests));
+    if(f.move && entry.move) fd.append(f.move, entry.move);
+    if(f.pickup && entry.pickup) fd.append(f.pickup, entry.pickup);
+    if(f.phone && entry.phone) fd.append(f.phone, entry.phone);
+    // Google Form không cho đọc phản hồi qua CORS nên dùng no-cors: gửi "mù",
+    // không biết được có thành công hay không, chỉ biết là không có lỗi mạng.
+    return fetch(RSVP_CONFIG.googleFormAction, { method:'POST', mode:'no-cors', body: fd });
+  }
+
   var attendBtns = document.querySelectorAll('.attend-btn');
   var attendVal = 'yes';
   var guestField = document.getElementById('guestField');
@@ -1221,18 +1318,17 @@
     }
     note.textContent = isEn() ? 'Sending…' : 'Đang gửi…';
     try{
-      var key = 'rsvp:'+Date.now()+'-'+Math.random().toString(36).slice(2,8);
-      var res = await window.storage.set(key, JSON.stringify(entry), true);
-      if(res){
-        note.textContent = isEn() ? 'Thank you! Your RSVP has been sent.' : 'Cảm ơn bạn! Đã gửi xác nhận thành công.';
-        document.getElementById('rsvpForm').reset();
-        guestCount=1; guestCountEl.textContent='1';
-        moveVal='self';
-        moveBtns.forEach(function(b){ b.classList.toggle('active', b.getAttribute('data-val')==='self'); });
-        syncMove();
-      }else{
-        note.textContent = isEn() ? 'Something went wrong, please try again.' : 'Có lỗi xảy ra, bạn thử lại nhé.';
+      if(!rsvpConfigured()){
+        console.warn('RSVP_CONFIG chưa được điền — hồi âm này không gửi tới đâu cả. Xem README, mục "Nối hồi âm vào Google Form".');
+      } else {
+        await sendRsvpToGoogleForm(entry);
       }
+      note.textContent = isEn() ? 'Thank you! Your RSVP has been sent.' : 'Cảm ơn bạn! Đã gửi xác nhận thành công.';
+      document.getElementById('rsvpForm').reset();
+      guestCount=1; guestCountEl.textContent='1';
+      moveVal='self';
+      moveBtns.forEach(function(b){ b.classList.toggle('active', b.getAttribute('data-val')==='self'); });
+      syncMove();
     }catch(err){
       note.textContent = isEn() ? 'Could not send right now.' : 'Chưa gửi được lúc này.';
     }
