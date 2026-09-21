@@ -1088,7 +1088,7 @@
   function revealMusic(){
     if(!bgMusic || (!bgMusic.muted && !bgMusic.paused)) return;
     bgMusic.muted = false;
-    var afterPlay = function(){ fadeAudio(bgMusic, MUSIC_VOLUME, 2500); setMusicUI(true); };
+    var afterPlay = function(){ fadeAudio(bgMusic, MUSIC_VOLUME, 1100); setMusicUI(true); };
     if(bgMusic.paused){
       bgMusic.play().then(afterPlay).catch(function(){ setMusicUI(false); });
     } else {
