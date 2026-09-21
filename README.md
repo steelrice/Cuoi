@@ -19,7 +19,7 @@ Gắn vào sau đường dẫn để cá nhân hoá từng khách.
 |---|---|---|---|
 | `date` | `21` hoặc `28` | `21` | `21` = tiệc Vũng Tàu, `28` = lễ Hưng Yên |
 | `guestName` | tên khách | *(trống)* | Không truyền thì hiện "Quý khách" |
-| `pronounGuest` | `Bạn`, `Anh`, `Chị`, `Cô`, `Chú`… | `Bạn` | Cách xưng hô, chỉ áp dụng bản tiếng Việt |
+| `pronounGuest` | `Bạn`, `Anh`, `Chị`, `Cô`, `Chú`… | *(trống)* | Cách xưng hô, chỉ áp dụng bản tiếng Việt. Không truyền thì chỉ hiện tên (không tự thêm "Bạn") — dùng khi `guestName` đã có sẵn xưng hô trong đó, vd `guestName=Chế lớn` |
 | `genderEn` | `m` hoặc `f` | *(trống)* | `m` → Mr., `f` → Ms., bỏ trống thì không có danh xưng |
 | `companionName` | tên người đi cùng | *(trống)* | Hiện thành "… và …" |
 | `pronounHost` | `chúng mình`, `tụi mình`, `em`, `cháu`… | `chúng mình` | Cách cô dâu chú rể tự xưng ở phần xe đưa đón |
