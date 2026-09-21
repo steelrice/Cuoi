@@ -57,7 +57,7 @@ Toàn bộ nằm trong `index.html`. Vài mốc để tìm nhanh:
 - [x] ~~Khung giờ chưa đổi theo ngày, và giờ lễ (11:00) đang vênh với giờ ghi ở đầu thiệp (10 giờ 30)~~ — nay tự tính từ `EVENTS[...].target` theo từng ngày.
 - [ ] **Phần hồi âm chưa thật sự gửi đi đâu.** Code đã đấu nối sẵn để ghi thẳng vào sheet "Danh sách khách mời" qua Google Apps Script (xem mục "Nối hồi âm vào Google Sheet" bên dưới), nhưng `APPS_SCRIPT_URL` còn để trống — **bắt buộc triển khai Apps Script rồi điền link Web App thật trước khi gửi thiệp cho khách**, nếu không hồi âm sẽ không tới tay ai cả.
 - [ ] Điểm đón còn là Điểm A, B, C — có đánh dấu `TODO` trong `index.html`, cần thay bằng địa điểm thật.
-- [ ] Chưa có file nhạc nền thật. Khung phát nhạc (nút bật/tắt, thẻ `<audio>`) đã có sẵn, trỏ tới `audio/bg-music.mp3` — chỉ cần thả file nhạc (đã xin phép bản quyền) vào đúng đường dẫn đó, không cần sửa `index.html`.
+- [x] ~~Chưa có file nhạc nền thật~~ — đã có `audio/bg-music.mp3` (nén còn ~2.7MB, 128kbps để tải nhanh). `preload="auto"` để trình duyệt tải sẵn ngay khi vào trang, tránh khựng lúc bấm mở thiệp.
 
 ## Câu hỏi mở — cần bàn thêm
 
