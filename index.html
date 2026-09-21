@@ -1062,6 +1062,54 @@
   var langSwitch = document.getElementById('langSwitch');
   var openBtn = document.getElementById('openBtn');
 
+  /* nhạc nền: vào trang là phát luôn (tắt tiếng để trình duyệt cho autoplay),
+     mở tiếng + tăng âm lượng dần ngay khi khách có cử chỉ chạm đầu tiên */
+  var bgMusic = document.getElementById('bgMusic');
+  var musicToggle = document.getElementById('musicToggle');
+  var MUSIC_VOLUME = 1;
+  function setMusicUI(on){
+    if(musicToggle){
+      musicToggle.classList.toggle('is-on', on);
+      musicToggle.setAttribute('aria-pressed', on ? 'true' : 'false');
+    }
+  }
+  function fadeAudio(el, toVol, duration, onDone){
+    if(!el) return;
+    var fromVol = el.volume, start = null;
+    function step(ts){
+      if(start === null) start = ts;
+      var p = Math.min(1, (ts - start) / duration);
+      el.volume = fromVol + (toVol - fromVol) * p;
+      if(p < 1) requestAnimationFrame(step);
+      else if(onDone) onDone();
+    }
+    requestAnimationFrame(step);
+  }
+  function revealMusic(){
+    if(!bgMusic || (!bgMusic.muted && !bgMusic.paused)) return;
+    bgMusic.muted = false;
+    var afterPlay = function(){ fadeAudio(bgMusic, MUSIC_VOLUME, 2500); setMusicUI(true); };
+    if(bgMusic.paused){
+      bgMusic.play().then(afterPlay).catch(function(){ setMusicUI(false); });
+    } else {
+      afterPlay();
+    }
+  }
+  if(bgMusic){
+    bgMusic.volume = 0;
+    bgMusic.muted = true;
+    bgMusic.play().catch(function(){}); // autoplay tắt tiếng luôn được phép, lỗi thì bỏ qua trong im lặng
+  }
+  if(musicToggle && bgMusic){
+    musicToggle.addEventListener('click', function(){
+      if(bgMusic.paused || bgMusic.muted){
+        revealMusic();
+      } else {
+        fadeAudio(bgMusic, 0, 600, function(){ bgMusic.pause(); setMusicUI(false); });
+      }
+    });
+  }
+
   // rèm tự kéo hé sau 1.5s
   setTimeout(function(){ cover.classList.add('parted'); }, 1500);
 
@@ -1080,33 +1128,10 @@
     setTimeout(function(){
       cover.classList.add('opened');
     }, 1300);
-    // thử phát nhạc nền ngay lúc khách vừa chạm để mở thiệp — đúng cử chỉ người dùng
-    // nên vượt được giới hạn chặn autoplay của trình duyệt di động
-    if(bgMusic && bgMusic.paused){
-      bgMusic.play().then(function(){ setMusicUI(true); }).catch(function(){ setMusicUI(false); });
-    }
+    // khách vừa có cử chỉ thật (chạm mở thiệp) — mở tiếng nhạc đã phát sẵn, fade âm lượng lên
+    revealMusic();
   }
   openBtn.addEventListener('click', openInvite);
-
-  /* nút bật/tắt nhạc nền */
-  var bgMusic = document.getElementById('bgMusic');
-  var musicToggle = document.getElementById('musicToggle');
-  function setMusicUI(on){
-    if(musicToggle){
-      musicToggle.classList.toggle('is-on', on);
-      musicToggle.setAttribute('aria-pressed', on ? 'true' : 'false');
-    }
-  }
-  if(musicToggle && bgMusic){
-    musicToggle.addEventListener('click', function(){
-      if(bgMusic.paused){
-        bgMusic.play().then(function(){ setMusicUI(true); }).catch(function(){ setMusicUI(false); });
-      } else {
-        bgMusic.pause();
-        setMusicUI(false);
-      }
-    });
-  }
 
   // <option> không nhận span data-vi/data-en như chữ thường, nên đổi chữ theo ngôn ngữ
   // qua thuộc tính data-vi/data-en gắn sẵn trên từng option
