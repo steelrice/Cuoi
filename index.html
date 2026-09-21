@@ -912,9 +912,11 @@
     }catch(e){ return ''; }
   }
 
-  // Cô dâu chú rể tự xưng (mặc định "Chúng mình") và tên khách (mặc định "bạn" khi không truyền)
+  // Cô dâu chú rể tự xưng (mặc định "chúng mình") và tên khách (mặc định "bạn" khi không truyền)
   // — dùng để thay các chỗ "chúng mình"/"bạn" đang viết cứng trong nội dung
-  var hostPronoun = getUrlParam('pronounHost') || 'Chúng mình';
+  // Luôn viết thường, trừ khi đứng đầu câu thì viết hoa chữ cái đầu (hostPronounCap)
+  var hostPronounLower = (getUrlParam('pronounHost') || 'chúng mình').toLowerCase();
+  var hostPronounCap = hostPronounLower.charAt(0).toUpperCase() + hostPronounLower.slice(1);
   var guestNameRaw = getUrlParam('guestName') || 'bạn';
   // Ghép xưng hô + tên khi có, giống hệt cách trang mở đầu ghép (guestLine) — mềm mại hơn khi nhắc tới khách
   var guestFull = (getUrlParam('pronounGuest') + ' ' + guestNameRaw).trim();
@@ -930,7 +932,7 @@
            venue:'TẠI SẢNH 2 MERASTIS TOWER', addr:'356 - 358 Trương Công Định, Tam Thắng, TP. Vũng Tàu',
            coverDate:'21 · 11 · 2026 · Vũng Tàu', heroDate:'Thứ Bảy · 21 Tháng 11, 2026 · Vũng Tàu',
            locName:'Nhà hàng Merastis', locAddr:'Sảnh 2 · 356A-358 Trương Công Định<br>TP. Vũng Tàu',
-           thanks:'Cảm ơn ' + guestFull + ' đã dành thời gian đọc hết thiệp mời của ' + hostPronoun + '. Hẹn gặp ' + guestPronounOnly + ' ngày 21.11.2026 tại Vũng Tàu!',
+           thanks:'Cảm ơn ' + guestFull + ' đã dành thời gian đọc hết thiệp mời của ' + hostPronounLower + '. Hẹn gặp ' + guestPronounOnly + ' ngày 21.11.2026 tại Vũng Tàu!',
            credit:'21 · 11 · 2026 — VŨNG TÀU' },
       en:{ title:'OUR CELEBRATION PARTY', time:'To be held at ', hi:'10:30 AM, Saturday',
            lunar:'(Lunar Calendar: October 13th)', yearLunar:'Year of the Fire Horse',
@@ -948,7 +950,7 @@
            venue:'TẠI TƯ GIA NHÀ TRAI', addr:'QL39A, xã Tân Hưng, TP. Hưng Yên',
            coverDate:'28 · 11 · 2026 · Hưng Yên', heroDate:'Thứ Bảy · 28 Tháng 11, 2026 · Hưng Yên',
            locName:'Tư gia nhà trai', locAddr:'QL39A · xã Tân Hưng<br>TP. Hưng Yên',
-           thanks:'Cảm ơn ' + guestFull + ' đã dành thời gian đọc hết thiệp mời của ' + hostPronoun + '. Hẹn gặp ' + guestPronounOnly + ' ngày 28.11.2026 tại Hưng Yên!',
+           thanks:'Cảm ơn ' + guestFull + ' đã dành thời gian đọc hết thiệp mời của ' + hostPronounLower + '. Hẹn gặp ' + guestPronounOnly + ' ngày 28.11.2026 tại Hưng Yên!',
            credit:'28 · 11 · 2026 — HƯNG YÊN' },
       en:{ title:'OUR WEDDING CEREMONY', time:'To be held at ', hi:'9:00 AM, Saturday',
            lunar:'(Lunar Calendar: October 20th)', yearLunar:'Year of the Fire Horse',
@@ -968,7 +970,7 @@
   }
   function guestLine(lang){
     var name = getUrlParam('guestName') || '';
-    var companion = getUrlParam('companionName') || '';
+    var companion = (getUrlParam('companionName') || '').toLowerCase();
     if(!name) return (lang === 'en') ? 'Dear guest' : 'Quý khách';
     var part;
     if(lang === 'en'){
@@ -1038,22 +1040,22 @@
   applyEvent();
 
   // Thay "chúng mình"/"mình" bằng pronounHost, "bạn" bằng guestName ở các chỗ đang viết cứng
-  bi('countdownLead', 'đến giây phút ' + hostPronoun + ' chính thức về chung một nhà', 'until we officially become family');
-  bi('calendarTitle', 'Ngày ' + hostPronoun + ' mong đợi', 'The day we look forward to');
-  bi('venueHeading', 'Chung vui cùng ' + hostPronoun, 'Join the celebration');
-  bi('noteBoxText', 'Khách ở TP.HCM đừng lo đường xa nhé — cô dâu chú rể sẽ sắp xe đưa đón về Vũng Tàu. Chỉ cần báo ' + hostPronoun + ' trong lời nhắn RSVP bên dưới!',
+  bi('countdownLead', 'đến giây phút ' + hostPronounLower + ' chính thức về chung một nhà', 'until we officially become family');
+  bi('calendarTitle', 'Ngày ' + hostPronounLower + ' mong đợi', 'The day we look forward to');
+  bi('venueHeading', 'Chung vui cùng ' + hostPronounLower, 'Join the celebration');
+  bi('noteBoxText', 'Khách ở TP.HCM đừng lo đường xa nhé — cô dâu chú rể sẽ sắp xe đưa đón về Vũng Tàu. Chỉ cần báo ' + hostPronounLower + ' trong lời nhắn RSVP bên dưới!',
      "Coming from HCMC? No need to worry about the drive — we'll arrange a shuttle to Vung Tau for you. Just let us know in the RSVP below!");
-  bi('tlDesc1', 'Chụp vài tấm ở photobooth và để lại đôi dòng cảm nghĩ cho ' + hostPronoun + ' nhé', 'Take a few photos at the booth and leave us a note');
-  bi('galleryHeading', 'Vài khoảnh khắc của ' + hostPronoun, 'A few of our favourite shots');
-  bi('dressLead', hostPronoun + ' sẽ rất vui nếu ' + guestFull + ' diện trang phục hoà cùng tông màu của bữa tiệc', "We'd love it if your outfit echoed the palette of the evening");
-  bi('rsvpLead', guestFull + ' hồi âm đôi dòng để ' + hostPronoun + ' chuẩn bị được chu đáo hơn nhé.', 'A short reply helps us prepare for you.');
+  bi('tlDesc1', 'Chụp vài tấm ở photobooth và để lại đôi dòng cảm nghĩ cho ' + hostPronounLower + ' nhé', 'Take a few photos at the booth and leave us a note');
+  bi('galleryHeading', 'Vài khoảnh khắc của ' + hostPronounLower, 'A few of our favourite shots');
+  bi('dressLead', hostPronounCap + ' sẽ rất vui nếu ' + guestFull + ' diện trang phục hoà cùng tông màu của bữa tiệc', "We'd love it if your outfit echoed the palette of the evening");
+  bi('rsvpLead', guestFull + ' hồi âm đôi dòng để ' + hostPronounLower + ' chuẩn bị được chu đáo hơn nhé.', 'A short reply helps us prepare for you.');
   bi('rsvpAttendLabel', guestPronounOnly + ' sẽ đến tham dự chứ', 'Will you be joining us');
   bi('rsvpHeading', 'Mong được đón ' + guestPronounOnly, 'We hope to see you there');
   bi('attendYesBtn', guestPronounOnly + ' sẽ có mặt', "I'll be there");
   bi('attendNoBtn', guestPronounOnly + ' không đến được', "I can't make it");
   bi('moveSelfBtn', guestPronounOnly + ' tự di chuyển', "I'll make my own way");
   bi('moveShuttleBtn', guestPronounOnly + ' đi xe chung', "I'll ride along");
-  bi('storyQuote', 'Từ những buổi hẹn đầu còn ngại ngùng đến hôm nay, hai đứa đã đi cùng nhau một quãng đường đủ dài để tin rằng đây chính là người mình muốn nắm tay đi hết phần đời còn lại. Và ' + hostPronoun + ' mong ngày vui ấy có ' + guestFull + ' ở bên.',
+  bi('storyQuote', 'Từ những buổi hẹn đầu còn ngại ngùng đến hôm nay, hai đứa đã đi cùng nhau một quãng đường đủ dài để tin rằng đây chính là người mình muốn nắm tay đi hết phần đời còn lại. Và ' + hostPronounLower + ' mong ngày vui ấy có ' + guestFull + ' ở bên.',
      "From a shy first date to today, we've come far enough together to know this is the hand we want to hold for the rest of the way. And we hope to have you beside us on the day.");
   bi('giftLead', 'Sự hiện diện của ' + guestFull + ' là món quà ý nghĩa nhất', 'Your presence is the greatest gift of all');
 
@@ -1303,35 +1305,29 @@
     }, 60);
   });
 
-  // ===== Đấu nối hồi âm với Google Form =====
-  // Xem README, mục "Nối hồi âm vào Google Form" để biết cách lấy các giá trị dưới đây.
-  // Khi googleFormAction còn để trống, hồi âm chỉ hiển thị "đã gửi" trên máy khách, KHÔNG tới tay ai cả.
-  var RSVP_CONFIG = {
-    googleFormAction: '', // vd: 'https://docs.google.com/forms/d/e/XXXXXXXXXXXXXXXXXXXXXXX/formResponse'
-    fields: {
-      name:   '', // vd: 'entry.111111111'
-      attend: '', // vd: 'entry.222222222'
-      guests: '', // vd: 'entry.333333333'
-      move:   '', // vd: 'entry.444444444'
-      pickup: '', // vd: 'entry.555555555'
-      phone:  ''  // vd: 'entry.666666666'
-    }
-  };
-  function rsvpConfigured(){ return !!(RSVP_CONFIG.googleFormAction && RSVP_CONFIG.fields.name); }
-  function sendRsvpToGoogleForm(entry){
+  // ===== Đấu nối hồi âm thẳng vào sheet "Danh sách khách mời" qua Google Apps Script =====
+  // Xem README, mục "Nối hồi âm vào Google Sheet" để biết cách lấy link Web App dán vào đây.
+  // Khi APPS_SCRIPT_URL còn để trống, hồi âm chỉ hiển thị "đã gửi" trên máy khách, KHÔNG tới tay ai cả.
+  var APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwk5h1DahrTnnxwONrelBqsQgRBd-D-svmRCpiW0G5BaQEAn8_62GeA4F9PaBpQOb2O/exec';
+  function rsvpConfigured(){ return !!APPS_SCRIPT_URL; }
+  function sendRsvpToSheet(entry){
     var fd = new FormData();
-    var f = RSVP_CONFIG.fields;
-    if(f.name)   fd.append(f.name, entry.name);
-    if(f.attend) fd.append(f.attend, entry.attend === 'yes'
-      ? (isEn() ? "I'll be there" : 'Mình sẽ có mặt')
-      : (isEn() ? "I can't make it" : 'Mình không đến được'));
-    if(f.guests && entry.attend === 'yes') fd.append(f.guests, String(entry.guests));
-    if(f.move && entry.move) fd.append(f.move, entry.move);
-    if(f.pickup && entry.pickup) fd.append(f.pickup, entry.pickup);
-    if(f.phone && entry.phone) fd.append(f.phone, entry.phone);
-    // Google Form không cho đọc phản hồi qua CORS nên dùng no-cors: gửi "mù",
+    // định danh khách theo đúng tham số trên URL — Apps Script dò đúng hàng của khách này
+    // trong sheet để cập nhật đè (gửi lại nhiều lần vẫn ghi vào cùng 1 hàng, không tạo trùng)
+    fd.append('pronounGuest', getUrlParam('pronounGuest'));
+    fd.append('guestName', getUrlParam('guestName'));
+    fd.append('date', getUrlParam('date'));
+    fd.append('companionName', getUrlParam('companionName'));
+    fd.append('pronounHost', getUrlParam('pronounHost'));
+    fd.append('formName', entry.name); // tên khách tự gõ trong form, có thể khác guestName trên URL
+    fd.append('attend', entry.attend);
+    if(entry.attend === 'yes') fd.append('guests', String(entry.guests));
+    if(entry.move) fd.append('move', entry.move);
+    if(entry.pickup) fd.append('pickup', entry.pickup);
+    if(entry.phone) fd.append('phone', entry.phone);
+    // Apps Script Web App không trả CORS header nên dùng no-cors: gửi "mù",
     // không biết được có thành công hay không, chỉ biết là không có lỗi mạng.
-    return fetch(RSVP_CONFIG.googleFormAction, { method:'POST', mode:'no-cors', body: fd });
+    return fetch(APPS_SCRIPT_URL, { method:'POST', mode:'no-cors', body: fd });
   }
 
   var attendBtns = document.querySelectorAll('.attend-btn');
@@ -1416,9 +1412,9 @@
     note.textContent = isEn() ? 'Sending…' : 'Đang gửi…';
     try{
       if(!rsvpConfigured()){
-        console.warn('RSVP_CONFIG chưa được điền — hồi âm này không gửi tới đâu cả. Xem README, mục "Nối hồi âm vào Google Form".');
+        console.warn('APPS_SCRIPT_URL chưa được điền — hồi âm này không gửi tới đâu cả. Xem README, mục "Nối hồi âm vào Google Sheet".');
       } else {
-        await sendRsvpToGoogleForm(entry);
+        await sendRsvpToSheet(entry);
       }
       note.textContent = isEn() ? 'Thank you! Your RSVP has been sent.' : 'Cảm ơn bạn! Đã gửi xác nhận thành công.';
       document.getElementById('rsvpForm').reset();

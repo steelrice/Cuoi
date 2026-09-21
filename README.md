@@ -55,7 +55,7 @@ Toàn bộ nằm trong `index.html`. Vài mốc để tìm nhanh:
 ## Việc còn tồn
 
 - [x] ~~Khung giờ chưa đổi theo ngày, và giờ lễ (11:00) đang vênh với giờ ghi ở đầu thiệp (10 giờ 30)~~ — nay tự tính từ `EVENTS[...].target` theo từng ngày.
-- [ ] **Phần hồi âm chưa thật sự gửi đi đâu.** Code đã đấu nối sẵn tới Google Form (xem mục "Nối hồi âm vào Google Form" bên dưới), nhưng `RSVP_CONFIG` còn để trống — **bắt buộc điền link Form + entry ID thật trước khi gửi thiệp cho khách**, nếu không hồi âm sẽ không tới tay ai cả.
+- [ ] **Phần hồi âm chưa thật sự gửi đi đâu.** Code đã đấu nối sẵn để ghi thẳng vào sheet "Danh sách khách mời" qua Google Apps Script (xem mục "Nối hồi âm vào Google Sheet" bên dưới), nhưng `APPS_SCRIPT_URL` còn để trống — **bắt buộc triển khai Apps Script rồi điền link Web App thật trước khi gửi thiệp cho khách**, nếu không hồi âm sẽ không tới tay ai cả.
 - [ ] Điểm đón còn là Điểm A, B, C — có đánh dấu `TODO` trong `index.html`, cần thay bằng địa điểm thật.
 - [ ] Chưa có file nhạc nền thật. Khung phát nhạc (nút bật/tắt, thẻ `<audio>`) đã có sẵn, trỏ tới `audio/bg-music.mp3` — chỉ cần thả file nhạc (đã xin phép bản quyền) vào đúng đường dẫn đó, không cần sửa `index.html`.
 
@@ -66,23 +66,31 @@ Toàn bộ nằm trong `index.html`. Vài mốc để tìm nhanh:
   - Hay bữa chiều 27 chỉ là bữa nhỏ thân mật (họ hàng/hàng xóm), khách mời chính vẫn tới dự lễ 9h sáng 28 như hiện tại? → nếu vậy chỉ cần thêm 1 dòng ghi chú nhỏ trong trang ngày 28, không đổi cấu trúc.
   - Chưa quyết định phương án nào — để đây bàn tiếp trước khi sửa `index.html`.
 
-## Nối hồi âm vào Google Form
+## Nối hồi âm vào Google Sheet
 
-1. Tạo một Google Form với các câu hỏi tương ứng: họ tên, tham dự hay không, số người, cách di chuyển, điểm đón, số điện thoại.
-2. Mở form ở chế độ xem trước, bấm **⋮ → Nhận liên kết được điền sẵn (Get pre-filled link)**, điền tạm mỗi ô một giá trị rồi bấm **Nhận liên kết**.
-3. Liên kết trả về có dạng `...?entry.111111111=...&entry.222222222=...` — mỗi `entry.xxxxxxxxx` ứng với một câu hỏi theo đúng thứ tự bạn đã điền, ghi lại từng cặp.
-4. Lấy URL nộp form: mở form thật (không phải link rút gọn), copy đường dẫn, đổi đuôi `/viewform` thành `/formResponse`.
-5. Trong `index.html`, tìm `RSVP_CONFIG` (gần đầu phần xử lý hồi âm), điền:
-   - `googleFormAction`: URL `/formResponse` ở bước 4
-   - từng `fields.*`: entry ID tương ứng ở bước 3
-6. Gửi thử một hồi âm trên trang, kiểm tra có xuất hiện dòng mới trong Google Sheet liên kết với Form không.
+Hồi âm không tạo dòng mới lung tung — trang gửi kèm `pronounGuest`+`guestName` lấy từ URL, Apps Script dò đúng hàng của khách đó trong sheet "Danh sách khách mời" để **cập nhật đè** (RSVP status, số điện thoại, ghi chú). Khách gửi lại nhiều lần vẫn ghi vào đúng 1 hàng. Khách không khớp được hàng nào (link không tham số, hoặc lạ) thì tự thêm hàng mới ở cuối.
 
-Muốn dùng Formspree hoặc dịch vụ khác thay vì Google Form thì thay nội dung hàm `sendRsvpToGoogleForm` trong `index.html` bằng lệnh gọi tới dịch vụ đó.
+Cài đặt:
+
+1. Mở Google Sheet chứa danh sách khách mời → menu **Extensions → Apps Script**.
+2. Xoá nội dung mặc định, dán toàn bộ nội dung file [`apps-script/rsvp-sync.gs`](apps-script/rsvp-sync.gs) trong repo này vào.
+3. Kiểm tra khối `COL` ở đầu file khớp đúng thứ tự cột thật trong sheet của bạn (A=Xưng hô, B=Tên khách... theo đúng sheet hiện tại thì không cần sửa gì).
+4. Sửa `STATUS_YES`/`STATUS_NO` cho khớp **chính xác** chữ trong dropdown "RSVP status" của bạn (vd "Đã xác nhận"/"Từ chối") — sai chữ thì dropdown sẽ không nhận diện được giá trị ghi vào.
+5. Bấm **Deploy → New deployment** → chọn loại **Web app** → Execute as: **Me**, Who has access: **Anyone** → Deploy. Lần đầu Google sẽ hỏi cấp quyền cho script, đồng ý hết.
+6. Copy URL kết thúc bằng `/exec`.
+7. Trong `index.html`, tìm `APPS_SCRIPT_URL` (gần đầu phần xử lý hồi âm), dán URL vào.
+8. Gửi thử một hồi âm trên trang, kiểm tra đúng hàng của khách đó trong sheet có cập nhật RSVP status/số điện thoại không.
+
+Mỗi lần sửa lại code Apps Script phải **Deploy → Manage deployments → sửa (bút chì) → Version: New version → Deploy** thì thay đổi mới có hiệu lực — sửa code không tự áp dụng vào URL `/exec` đang chạy.
+
+Muốn dùng Google Form/Formspree thay vì ghi thẳng vào Sheet thì thay nội dung hàm `sendRsvpToSheet` trong `index.html` bằng lệnh gọi tới dịch vụ đó.
 
 ## Cấu trúc
 
 ```
 index.html          toàn bộ giao diện và mã xử lý
+apps-script/
+  rsvp-sync.gs      code Google Apps Script — ghi hồi âm thẳng vào sheet khách mời
 audio/
   bg-music.mp3      nhạc nền — placeholder, tự thêm file thật (xem mục "Việc còn tồn")
 images/
