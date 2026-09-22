@@ -545,13 +545,13 @@
   <section class="band-red">
     <div class="wrap center">
       <h2 class="title"><span data-vi>Chỉ còn</span><span data-en>Counting down</span></h2>
-      <p class="lead" id="countdownLead"><span data-vi>đến giây phút chúng mình chính thức về chung một nhà</span><span data-en>until we officially become family</span></p>
       <div class="countdown">
         <div class="cd-box"><div class="cd-num" id="cd-d">00</div><div class="cd-label"><span data-vi>ngày</span><span data-en>days</span></div></div>
         <div class="cd-box"><div class="cd-num" id="cd-h">00</div><div class="cd-label"><span data-vi>giờ</span><span data-en>hrs</span></div></div>
         <div class="cd-box"><div class="cd-num" id="cd-m">00</div><div class="cd-label"><span data-vi>phút</span><span data-en>min</span></div></div>
         <div class="cd-box"><div class="cd-num" id="cd-s">00</div><div class="cd-label"><span data-vi>giây</span><span data-en>sec</span></div></div>
       </div>
+      <p class="lead" id="countdownLead"><span data-vi>đến giây phút chúng mình chính thức về chung một nhà</span><span data-en>until we officially become family</span></p>
     </div>
   </section>
 
@@ -712,10 +712,6 @@
           <p class="lead" id="rsvpLead"><span data-vi>Bạn hồi âm đôi dòng để chúng mình chuẩn bị được chu đáo hơn nhé.</span><span data-en>A short reply helps us prepare for you.</span></p>
         </div>
         <form class="rsvp-form" id="rsvpForm">
-        <div class="field">
-          <label><span data-vi>Họ và tên</span><span data-en>Your name</span></label>
-          <input type="text" id="rsvpName" placeholder="Nguyễn Văn A" required>
-        </div>
         <div class="field">
           <label id="rsvpAttendLabel"><span data-vi>Bạn sẽ đến tham dự chứ</span><span data-en>Will you be joining us</span></label>
           <div class="attend-toggle">
@@ -922,6 +918,17 @@
   // Chỉ riêng xưng hô (không kèm tên) — dùng ở những chỗ khách "tự xưng" qua nút bấm, hoặc câu chào ngắn
   var guestPronounOnly = getUrlParam('pronounGuest') || 'bạn';
 
+  // Khách xưng hô "Em" (pronounGuest=Em): riêng phần RSVP/gợi ý trang phục/lời cảm ơn
+  // chỉ gọi đúng tên khách (không kèm "Em" phía trước); pronounHost giữ nguyên xi chữ hoa/thường
+  // như trong Sheet, không ép về chữ thường như các khách khác — các chỗ khác (countdown,
+  // lịch, địa điểm...) vẫn giữ giọng thân mật như cũ.
+  var isEmGuest = (getUrlParam('pronounGuest') || '').trim().toLowerCase() === 'em';
+  var pronounHostRaw = getUrlParam('pronounHost') || 'chúng mình';
+  var rsvpHost = isEmGuest ? pronounHostRaw : hostPronounLower;
+  var rsvpHostCap = isEmGuest ? pronounHostRaw : hostPronounCap;
+  var rsvpGuestFull = isEmGuest ? guestNameRaw : guestFull;
+  var rsvpGuestPronounOnly = isEmGuest ? guestNameRaw : guestPronounOnly;
+
   var EVENTS = {
     '21': {
       day:'21', maps:'https://maps.app.goo.gl/tdT1LGaSET7pAMx68', shuttle:true,
@@ -931,7 +938,7 @@
            venue:'TẠI SẢNH 2 MERASTIS TOWER', addr:'356 - 358 Trương Công Định, Tam Thắng, TP. Vũng Tàu',
            coverDate:'21 · 11 · 2026 · Vũng Tàu', heroDate:'Thứ Bảy · 21 Tháng 11, 2026 · Vũng Tàu',
            locName:'Nhà hàng Merastis', locAddr:'Sảnh 2 · 356A-358 Trương Công Định<br>TP. Vũng Tàu',
-           thanks:'Cảm ơn ' + guestFull + ' đã dành thời gian đọc hết thiệp mời của ' + hostPronounLower + '. Hẹn gặp ' + guestPronounOnly + ' ngày 21.11.2026 tại Vũng Tàu!',
+           thanks:'Cảm ơn ' + rsvpGuestFull + ' đã dành thời gian đọc hết thiệp mời của ' + rsvpHost + '. Hẹn gặp ' + rsvpGuestPronounOnly + ' ngày 21.11.2026 tại Vũng Tàu!',
            credit:'21 · 11 · 2026 — VŨNG TÀU' },
       en:{ title:'OUR CELEBRATION PARTY', time:'To be held at ', hi:'10:30 AM, Saturday',
            lunar:'(Lunar Calendar: October 13th)', yearLunar:'Year of the Fire Horse',
@@ -949,7 +956,7 @@
            venue:'TẠI TƯ GIA NHÀ TRAI', addr:'QL39A, xã Tân Hưng, TP. Hưng Yên',
            coverDate:'28 · 11 · 2026 · Hưng Yên', heroDate:'Thứ Bảy · 28 Tháng 11, 2026 · Hưng Yên',
            locName:'Tư gia nhà trai', locAddr:'QL39A · xã Tân Hưng<br>TP. Hưng Yên',
-           thanks:'Cảm ơn ' + guestFull + ' đã dành thời gian đọc hết thiệp mời của ' + hostPronounLower + '. Hẹn gặp ' + guestPronounOnly + ' ngày 28.11.2026 tại Hưng Yên!',
+           thanks:'Cảm ơn ' + rsvpGuestFull + ' đã dành thời gian đọc hết thiệp mời của ' + rsvpHost + '. Hẹn gặp ' + rsvpGuestPronounOnly + ' ngày 28.11.2026 tại Hưng Yên!',
            credit:'28 · 11 · 2026 — HƯNG YÊN' },
       en:{ title:'OUR WEDDING CEREMONY', time:'To be held at ', hi:'9:00 AM, Saturday',
            lunar:'(Lunar Calendar: October 20th)', yearLunar:'Year of the Fire Horse',
@@ -1046,17 +1053,17 @@
      "Coming from HCMC? No need to worry about the drive — we'll arrange a shuttle to Vung Tau for you. Just let us know in the RSVP below!");
   bi('tlDesc1', 'Chụp vài tấm ở photobooth và để lại đôi dòng cảm nghĩ cho ' + hostPronounLower + ' nhé', 'Take a few photos at the booth and leave us a note');
   bi('galleryHeading', 'Vài khoảnh khắc của ' + hostPronounLower, 'A few of our favourite shots');
-  bi('dressLead', hostPronounCap + ' sẽ rất vui nếu ' + guestFull + ' diện trang phục hoà cùng tông màu của bữa tiệc', "We'd love it if your outfit echoed the palette of the evening");
-  bi('rsvpLead', guestFull + ' hồi âm đôi dòng để ' + hostPronounLower + ' chuẩn bị được chu đáo hơn nhé.', 'A short reply helps us prepare for you.');
-  bi('rsvpAttendLabel', guestPronounOnly + ' sẽ đến tham dự chứ', 'Will you be joining us');
-  bi('rsvpHeading', 'Mong được đón ' + guestPronounOnly, 'We hope to see you there');
-  bi('attendYesBtn', guestPronounOnly + ' sẽ có mặt', "I'll be there");
-  bi('attendNoBtn', guestPronounOnly + ' không đến được', "I can't make it");
-  bi('moveSelfBtn', guestPronounOnly + ' tự di chuyển', "I'll make my own way");
-  bi('moveShuttleBtn', guestPronounOnly + ' đi xe chung', "I'll ride along");
+  bi('dressLead', rsvpHostCap + ' sẽ rất vui nếu ' + rsvpGuestFull + ' diện trang phục hoà cùng tông màu của bữa tiệc', "We'd love it if your outfit echoed the palette of the evening");
+  bi('rsvpLead', rsvpGuestFull + ' hồi âm đôi dòng để ' + rsvpHost + ' chuẩn bị được chu đáo hơn nhé.', 'A short reply helps us prepare for you.');
+  bi('rsvpAttendLabel', rsvpGuestPronounOnly + ' sẽ đến tham dự chứ', 'Will you be joining us');
+  bi('rsvpHeading', 'Mong được đón ' + rsvpGuestPronounOnly, 'We hope to see you there');
+  bi('attendYesBtn', rsvpGuestPronounOnly + ' sẽ có mặt', "I'll be there");
+  bi('attendNoBtn', rsvpGuestPronounOnly + ' không đến được', "I can't make it");
+  bi('moveSelfBtn', rsvpGuestPronounOnly + ' tự di chuyển', "I'll make my own way");
+  bi('moveShuttleBtn', rsvpGuestPronounOnly + ' đi xe chung', "I'll ride along");
   bi('storyQuote', 'Từ những buổi hẹn đầu còn ngại ngùng đến hôm nay, hai đứa đã đi cùng nhau một quãng đường đủ dài để tin rằng đây chính là người mình muốn nắm tay đi hết phần đời còn lại. Và ' + hostPronounLower + ' mong ngày vui ấy có ' + guestFull + ' ở bên.',
      "From a shy first date to today, we've come far enough together to know this is the hand we want to hold for the rest of the way. And we hope to have you beside us on the day.");
-  bi('giftLead', 'Sự hiện diện của ' + guestFull + ' là món quà ý nghĩa nhất', 'Your presence is the greatest gift of all');
+  bi('giftLead', 'Sự hiện diện của ' + rsvpGuestFull + ' là món quà ý nghĩa nhất', 'Your presence is the greatest gift of all');
 
   var card = document.getElementById('card');
   var langSwitch = document.getElementById('langSwitch');
@@ -1407,12 +1414,10 @@
   document.getElementById('rsvpForm').addEventListener('submit', async function(e){
     e.preventDefault();
     var note = document.getElementById('rsvpNote');
-    var name = document.getElementById('rsvpName').value.trim();
     var phoneEl = document.getElementById('rsvpPhone');
     var phone = phoneEl ? phoneEl.value.trim() : '';
     var phoneErr = document.getElementById('phoneErr');
     var needPhone = isVungTau && attendVal === 'yes' && moveVal === 'shuttle';
-    if(!name){ return; }
 
     var digits = phone.replace(/[^0-9]/g,'');
     if(needPhone && !digits){
@@ -1428,7 +1433,7 @@
     phoneErr.textContent = '';
 
     var pickupEl = document.getElementById('rsvpPickup');
-    var entry = { name:name, phone:phone, attend:attendVal, guests:guestCount, ts:Date.now() };
+    var entry = { name:guestNameRaw, phone:phone, attend:attendVal, guests:guestCount, ts:Date.now() };
     if(isVungTau && attendVal === 'yes'){
       entry.move = moveVal;
       if(moveVal === 'shuttle' && pickupEl) entry.pickup = pickupEl.value || '';
