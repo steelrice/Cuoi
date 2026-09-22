@@ -918,10 +918,9 @@
   // Chỉ riêng xưng hô (không kèm tên) — dùng ở những chỗ khách "tự xưng" qua nút bấm, hoặc câu chào ngắn
   var guestPronounOnly = getUrlParam('pronounGuest') || 'bạn';
 
-  // Khách xưng hô "Em" (pronounGuest=Em): riêng phần RSVP/gợi ý trang phục/lời cảm ơn
-  // chỉ gọi đúng tên khách (không kèm "Em" phía trước); pronounHost giữ nguyên xi chữ hoa/thường
-  // như trong Sheet, không ép về chữ thường như các khách khác — các chỗ khác (countdown,
-  // lịch, địa điểm...) vẫn giữ giọng thân mật như cũ.
+  // Khách xưng hô "Em" (pronounGuest=Em): gọi đúng tên khách (không kèm "Em" phía trước)
+  // ở các chỗ RSVP/gợi ý trang phục/lời cảm ơn; pronounHost giữ nguyên xi chữ hoa/thường
+  // như trong Sheet ở MỌI chỗ nhắc tới cô dâu chú rể (không ép về chữ thường như khách khác).
   var isEmGuest = (getUrlParam('pronounGuest') || '').trim().toLowerCase() === 'em';
   var pronounHostRaw = getUrlParam('pronounHost') || 'chúng mình';
   var rsvpHost = isEmGuest ? pronounHostRaw : hostPronounLower;
@@ -1046,13 +1045,13 @@
   applyEvent();
 
   // Thay "chúng mình"/"mình" bằng pronounHost, "bạn" bằng guestName ở các chỗ đang viết cứng
-  bi('countdownLead', 'đến giây phút ' + hostPronounLower + ' chính thức về chung một nhà', 'until we officially become family');
-  bi('calendarTitle', 'Ngày ' + hostPronounLower + ' mong đợi', 'The day we look forward to');
-  bi('venueHeading', 'Chung vui cùng ' + hostPronounLower, 'Join the celebration');
-  bi('noteBoxText', 'Khách ở TP.HCM đừng lo đường xa nhé — cô dâu chú rể sẽ sắp xe đưa đón về Vũng Tàu. Chỉ cần báo ' + hostPronounLower + ' trong lời nhắn RSVP bên dưới!',
+  bi('countdownLead', 'đến giây phút ' + rsvpHost + ' chính thức về chung một nhà', 'until we officially become family');
+  bi('calendarTitle', 'Ngày ' + rsvpHost + ' mong đợi', 'The day we look forward to');
+  bi('venueHeading', 'Chung vui cùng ' + rsvpHost, 'Join the celebration');
+  bi('noteBoxText', 'Khách ở TP.HCM đừng lo đường xa nhé — cô dâu chú rể sẽ sắp xe đưa đón về Vũng Tàu. Chỉ cần báo ' + rsvpHost + ' trong lời nhắn RSVP bên dưới!',
      "Coming from HCMC? No need to worry about the drive — we'll arrange a shuttle to Vung Tau for you. Just let us know in the RSVP below!");
-  bi('tlDesc1', 'Chụp vài tấm ở photobooth và để lại đôi dòng cảm nghĩ cho ' + hostPronounLower + ' nhé', 'Take a few photos at the booth and leave us a note');
-  bi('galleryHeading', 'Vài khoảnh khắc của ' + hostPronounLower, 'A few of our favourite shots');
+  bi('tlDesc1', 'Chụp vài tấm ở photobooth và để lại đôi dòng cảm nghĩ cho ' + rsvpHost + ' nhé', 'Take a few photos at the booth and leave us a note');
+  bi('galleryHeading', 'Vài khoảnh khắc của ' + rsvpHost, 'A few of our favourite shots');
   bi('dressLead', rsvpHostCap + ' sẽ rất vui nếu ' + rsvpGuestFull + ' diện trang phục hoà cùng tông màu của bữa tiệc', "We'd love it if your outfit echoed the palette of the evening");
   bi('rsvpLead', rsvpGuestFull + ' hồi âm đôi dòng để ' + rsvpHost + ' chuẩn bị được chu đáo hơn nhé.', 'A short reply helps us prepare for you.');
   bi('rsvpAttendLabel', rsvpGuestPronounOnly + ' sẽ đến tham dự chứ', 'Will you be joining us');
@@ -1445,7 +1444,8 @@
       } else {
         await sendRsvpToSheet(entry);
       }
-      note.textContent = isEn() ? 'Thank you! Your RSVP has been sent.' : 'Cảm ơn bạn! Đã gửi xác nhận thành công.';
+      note.textContent = isEn() ? "Thank you! If anything changes, feel free to resend this form."
+        : 'Cảm ơn ' + rsvpGuestFull + ' đã gửi thông tin. Nếu có cập nhật gì hãy gửi lại form cho ' + rsvpHost + ' nhé.';
       document.getElementById('rsvpForm').reset();
       guestCount=1; guestCountEl.textContent='1';
       moveVal='self';
