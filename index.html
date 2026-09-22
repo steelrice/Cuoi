@@ -376,11 +376,11 @@
   }
 
   /* ---------- RSVP — kiểu gạch chân ---------- */
-  .rsvp-card{ background:var(--card); border:1px solid rgba(76,12,23,.14); border-radius:6px; padding:var(--sp-7) var(--sp-5) var(--sp-6); box-shadow:var(--shadow); }
+  .rsvp-card{ background:var(--card); border:1px solid rgba(76,12,23,.14); border-radius:6px; padding:var(--sp-5) var(--sp-5) var(--sp-6); box-shadow:var(--shadow); }
   .band-red .rsvp-card h2.title{ color:var(--ink); }
   .band-red .rsvp-card .lead{ color:var(--ink-soft); }
   .band-red .rsvp-card .kicker{ color:var(--red-mid); }
-  .rsvp-form{ margin-top:var(--sp-7); display:flex; flex-direction:column; gap:var(--sp-7); }
+  .rsvp-form{ margin-top:var(--sp-6); display:flex; flex-direction:column; gap:var(--sp-6); }
   .field label{ display:block; font-weight:500; font-size:12.5px; letter-spacing:.01em; color:var(--ink-soft); opacity:.8; margin-bottom:var(--sp-3); }
   .field input[type=text], .field input[type=tel], .field textarea, .field select{
     width:100%; background:transparent; border:none;
@@ -681,15 +681,14 @@
     </div>
   </section>
 
-  <!-- ============ RSVP (chuyển lên đây, dùng chung nền kem với GIFT) ============ -->
+  <!-- ============ RSVP (chuyển lên đây, dùng chung nền kem với GIFT, không khung) ============ -->
   <section>
     <div class="wrap">
-      <div class="rsvp-card">
-        <div class="center">
-          <h2 class="title" id="rsvpHeading"><span data-vi>Mong được đón bạn</span><span data-en>We hope to see you there</span></h2>
-          <p class="lead" id="rsvpLead"><span data-vi>Bạn hồi âm đôi dòng để chúng mình chuẩn bị được chu đáo hơn nhé.</span><span data-en>A short reply helps us prepare for you.</span></p>
-        </div>
-        <form class="rsvp-form" id="rsvpForm">
+      <div class="center">
+        <h2 class="title" id="rsvpHeading"><span data-vi>Rất mong được đón tiếp bạn</span><span data-en>We hope to see you there</span></h2>
+        <p class="lead" id="rsvpLead"><span data-vi>Bạn hồi âm đôi dòng để chúng mình chuẩn bị được chu đáo hơn nhé.</span><span data-en>A short reply helps us prepare for you.</span></p>
+      </div>
+      <form class="rsvp-form" id="rsvpForm">
         <div class="field">
           <label id="rsvpAttendLabel"><span data-vi>Bạn sẽ đến tham dự chứ</span><span data-en>Will you be joining us</span></label>
           <div class="attend-toggle">
@@ -716,7 +715,7 @@
           <div class="collapse" id="pickupBlock">
             <!-- TODO (xem README, mục "Điểm đón"): các option bên dưới còn là dữ liệu giả (Điểm A/B/C).
                  Bắt buộc phải thay bằng tên/địa chỉ điểm đón thật trước khi gửi thiệp cho khách. -->
-            <div class="field" style="margin-top:var(--sp-6)">
+            <div class="field" style="margin-top:var(--sp-5)">
               <label><span data-vi>Điểm đón</span><span data-en>Pickup point</span></label>
               <select id="rsvpPickup">
                 <option value="" data-vi="— Chọn điểm đón —" data-en="— Select pickup point —">— Chọn điểm đón —</option>
@@ -726,7 +725,7 @@
                 <option value="Khác" data-vi="Điểm khác" data-en="Other">Điểm khác</option>
               </select>
             </div>
-            <div class="field" style="margin-top:var(--sp-6)">
+            <div class="field" style="margin-top:var(--sp-5)">
               <label><span data-vi>Số điện thoại</span><span data-en>Phone number</span></label>
               <input type="tel" id="rsvpPhone" inputmode="tel" placeholder="09xx xxx xxx">
               <div class="rsvp-err" id="phoneErr"></div>
@@ -736,7 +735,6 @@
         <button type="submit" class="rsvp-submit"><span data-vi>Gửi hồi âm</span><span data-en>Send your reply</span></button>
         <div class="rsvp-note" id="rsvpNote"></div>
       </form>
-      </div>
     </div>
   </section>
 
@@ -1058,7 +1056,7 @@
   bi('dressLead', rsvpHostCap + ' sẽ rất vui nếu ' + rsvpGuestFull + ' diện trang phục hoà cùng tông màu của bữa tiệc', "We'd love it if your outfit echoed the palette of the evening");
   bi('rsvpLead', rsvpGuestFull + ' hồi âm đôi dòng để ' + rsvpHost + ' chuẩn bị được chu đáo hơn nhé.', 'A short reply helps us prepare for you.');
   bi('rsvpAttendLabel', rsvpGuestPronounOnly + ' sẽ đến tham dự chứ', 'Will you be joining us');
-  bi('rsvpHeading', 'Mong được đón ' + rsvpGuestPronounOnly, 'We hope to see you there');
+  bi('rsvpHeading', 'Rất mong được đón tiếp ' + rsvpGuestPronounOnly, 'We hope to see you there');
   bi('attendYesBtn', rsvpGuestPronounOnly + ' sẽ có mặt', "I'll be there");
   bi('attendNoBtn', rsvpGuestPronounOnly + ' không đến được', "I can't make it");
   bi('moveSelfBtn', rsvpGuestPronounOnly + ' tự di chuyển', "I'll make my own way");
