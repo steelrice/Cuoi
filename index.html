@@ -275,11 +275,12 @@
   .band-red h2.title{ color:var(--cream); }
   .band-red .lead{ color:var(--cream-dim); }
 
-  /* ---------- countdown ---------- */
-  .countdown{ display:grid; grid-template-columns:repeat(4,1fr); gap:var(--sp-3); margin-top:var(--sp-6); }
-  .cd-box{ text-align:center; background:rgba(253,248,239,.07); border:1px solid rgba(207,159,63,.4); border-radius:6px; padding:var(--sp-4) var(--sp-1); }
-  .cd-num{ font-family:var(--serif); font-weight:400; font-size:30px; color:var(--cream); font-variant-numeric:tabular-nums; line-height:1; }
-  .cd-label{ font-size:10.5px; letter-spacing:.08em; margin-top:var(--sp-2); color:var(--cream-dim); }
+  /* ---------- countdown (nằm chung trong .cal-card, nền trắng) ---------- */
+  .countdown{ display:grid; grid-template-columns:repeat(4,1fr); gap:var(--sp-3); }
+  .cd-box{ text-align:center; background:rgba(122,21,36,.05); border:1px solid rgba(207,159,63,.5); border-radius:6px; padding:var(--sp-4) var(--sp-1); }
+  .cd-num{ font-family:var(--serif); font-weight:400; font-size:30px; color:var(--red-deep); font-variant-numeric:tabular-nums; line-height:1; }
+  .cd-label{ font-size:10.5px; letter-spacing:.08em; margin-top:var(--sp-2); color:var(--ink-soft); }
+  .cal-split{ width:44px; height:1px; background:rgba(122,21,36,.25); margin:var(--sp-6) auto; }
 
   /* ---------- calendar ---------- */
   .cal-card{ margin-top:var(--sp-6); background:var(--card); border:1px solid rgba(207,159,63,.35); border-radius:8px; padding:var(--sp-5); box-shadow:var(--shadow); }
@@ -542,24 +543,19 @@
   </div>
 
   <!-- ============ COUNTDOWN ============ -->
-  <section class="band-red">
-    <div class="wrap center">
-      <h2 class="title"><span data-vi>Chỉ còn</span><span data-en>Counting down</span></h2>
-      <div class="countdown">
-        <div class="cd-box"><div class="cd-num" id="cd-d">00</div><div class="cd-label"><span data-vi>ngày</span><span data-en>days</span></div></div>
-        <div class="cd-box"><div class="cd-num" id="cd-h">00</div><div class="cd-label"><span data-vi>giờ</span><span data-en>hrs</span></div></div>
-        <div class="cd-box"><div class="cd-num" id="cd-m">00</div><div class="cd-label"><span data-vi>phút</span><span data-en>min</span></div></div>
-        <div class="cd-box"><div class="cd-num" id="cd-s">00</div><div class="cd-label"><span data-vi>giây</span><span data-en>sec</span></div></div>
-      </div>
-      <p class="lead" id="countdownLead"><span data-vi>đến giây phút chúng mình chính thức về chung một nhà</span><span data-en>until we officially become family</span></p>
-    </div>
-  </section>
-
-  <!-- ============ CALENDAR ============ -->
+  <!-- ============ COUNTDOWN + CALENDAR (gộp chung 1 card) ============ -->
   <section>
     <div class="wrap center">
-      <h2 class="title" id="calendarTitle"><span data-vi>Ngày chúng mình mong đợi</span><span data-en>The day we look forward to</span></h2>
+      <h2 class="title"><span data-vi>Chỉ còn</span><span data-en>Counting down</span></h2>
       <div class="cal-card">
+        <div class="countdown">
+          <div class="cd-box"><div class="cd-num" id="cd-d">00</div><div class="cd-label"><span data-vi>ngày</span><span data-en>days</span></div></div>
+          <div class="cd-box"><div class="cd-num" id="cd-h">00</div><div class="cd-label"><span data-vi>giờ</span><span data-en>hrs</span></div></div>
+          <div class="cd-box"><div class="cd-num" id="cd-m">00</div><div class="cd-label"><span data-vi>phút</span><span data-en>min</span></div></div>
+          <div class="cd-box"><div class="cd-num" id="cd-s">00</div><div class="cd-label"><span data-vi>giây</span><span data-en>sec</span></div></div>
+        </div>
+        <p class="lead" id="countdownLead"><span data-vi>đến giây phút chúng mình chính thức về chung một nhà</span><span data-en>until we officially become family</span></p>
+        <div class="cal-split"></div>
         <div class="cal-month"><span data-vi>Tháng 11 · 2026</span><span data-en>November · 2026</span></div>
         <div class="cal-grid">
           <div class="dow"><span data-vi>T2</span><span data-en>Mo</span></div>
@@ -1046,7 +1042,6 @@
 
   // Thay "chúng mình"/"mình" bằng pronounHost, "bạn" bằng guestName ở các chỗ đang viết cứng
   bi('countdownLead', 'đến giây phút ' + rsvpHost + ' chính thức về chung một nhà', 'until we officially become family');
-  bi('calendarTitle', 'Ngày ' + rsvpHost + ' mong đợi', 'The day we look forward to');
   bi('venueHeading', 'Chung vui cùng ' + rsvpHost, 'Join the celebration');
   bi('noteBoxText', 'Khách ở TP.HCM đừng lo đường xa nhé — cô dâu chú rể sẽ sắp xe đưa đón về Vũng Tàu. Chỉ cần báo ' + rsvpHost + ' trong lời nhắn RSVP bên dưới!',
      "Coming from HCMC? No need to worry about the drive — we'll arrange a shuttle to Vung Tau for you. Just let us know in the RSVP below!");
