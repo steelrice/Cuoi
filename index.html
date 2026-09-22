@@ -275,15 +275,16 @@
   .band-red h2.title{ color:var(--cream); }
   .band-red .lead{ color:var(--cream-dim); }
 
-  /* ---------- countdown (nằm chung trong .cal-card, nền trắng) ---------- */
-  .countdown{ display:grid; grid-template-columns:repeat(4,1fr); gap:var(--sp-3); }
-  .cd-box{ text-align:center; background:rgba(122,21,36,.05); border:1px solid rgba(207,159,63,.5); border-radius:6px; padding:var(--sp-4) var(--sp-1); }
-  .cd-num{ font-family:var(--serif); font-weight:400; font-size:30px; color:var(--red-deep); font-variant-numeric:tabular-nums; line-height:1; }
-  .cd-label{ font-size:10.5px; letter-spacing:.08em; margin-top:var(--sp-2); color:var(--ink-soft); }
-  .cal-split{ width:44px; height:1px; background:rgba(122,21,36,.25); margin:var(--sp-6) auto; }
+  /* ---------- countdown (không khung, nằm thẳng trên nền kem) ---------- */
+  .countdown{ display:flex; justify-content:center; align-items:center; margin-top:var(--sp-6); }
+  .cd-box{ text-align:center; padding:0 var(--sp-4); }
+  .cd-num{ font-family:var(--serif); font-weight:400; font-size:34px; color:var(--red-deep); font-variant-numeric:tabular-nums; line-height:1; }
+  .cd-label{ font-size:10px; letter-spacing:.1em; margin-top:var(--sp-2); color:var(--ink-soft); text-transform:uppercase; }
+  .cd-dot{ width:3px; height:3px; border-radius:50%; background:var(--gold); align-self:flex-end; margin-bottom:18px; }
+  .cal-split{ width:100%; height:1px; background-image:linear-gradient(to right, transparent, rgba(207,159,63,.55) 50%, transparent); margin:var(--sp-7) 0; }
 
   /* ---------- calendar ---------- */
-  .cal-card{ margin-top:var(--sp-6); background:var(--card); border:1px solid rgba(207,159,63,.35); border-radius:8px; padding:var(--sp-5); box-shadow:var(--shadow); }
+  .cal-card{ margin-top:var(--sp-6); }
   .cal-month{ font-family:var(--script); font-style:italic; font-weight:600; font-size:22px; color:var(--red-mid); text-align:center; margin-bottom:var(--sp-4); }
   .cal-grid{ display:grid; grid-template-columns:repeat(7,1fr); gap:6px; text-align:center; }
   .cal-grid .dow{ font-size:10.5px; letter-spacing:.04em; color:var(--ink-soft); font-weight:500; padding-bottom:4px; }
@@ -550,8 +551,11 @@
       <div class="cal-card">
         <div class="countdown">
           <div class="cd-box"><div class="cd-num" id="cd-d">00</div><div class="cd-label"><span data-vi>ngày</span><span data-en>days</span></div></div>
+          <div class="cd-dot"></div>
           <div class="cd-box"><div class="cd-num" id="cd-h">00</div><div class="cd-label"><span data-vi>giờ</span><span data-en>hrs</span></div></div>
+          <div class="cd-dot"></div>
           <div class="cd-box"><div class="cd-num" id="cd-m">00</div><div class="cd-label"><span data-vi>phút</span><span data-en>min</span></div></div>
+          <div class="cd-dot"></div>
           <div class="cd-box"><div class="cd-num" id="cd-s">00</div><div class="cd-label"><span data-vi>giây</span><span data-en>sec</span></div></div>
         </div>
         <p class="lead" id="countdownLead"><span data-vi>đến giây phút chúng mình chính thức về chung một nhà</span><span data-en>until we officially become family</span></p>
@@ -669,7 +673,7 @@
       </div>
       <div class="story">
         <blockquote id="storyQuote">
-          <span data-vi>Từ những buổi hẹn đầu còn ngại ngùng đến hôm nay, hai đứa đã đi cùng nhau một quãng đường đủ dài để tin rằng đây chính là người mình muốn nắm tay đi hết phần đời còn lại. Và chúng mình mong ngày vui ấy có bạn ở bên.</span>
+          <span data-vi>Từ những buổi hẹn đầu còn ngại ngùng đến hôm nay, hai đứa đã đi cùng nhau một quãng đường đủ dài để tin rằng đây chính là người mình muốn nắm tay đi hết phần đời còn lại. Chúng mình mong ngày vui ấy có bạn đến chung vui.</span>
           <span data-en>From a shy first date to today, we've come far enough together to know this is the hand we want to hold for the rest of the way. And we hope to have you beside us on the day.</span>
         </blockquote>
         <cite>HOÀNG SƠN &amp; PHƯƠNG THẢO</cite>
@@ -1055,7 +1059,7 @@
   bi('attendNoBtn', rsvpGuestPronounOnly + ' không đến được', "I can't make it");
   bi('moveSelfBtn', rsvpGuestPronounOnly + ' tự di chuyển', "I'll make my own way");
   bi('moveShuttleBtn', rsvpGuestPronounOnly + ' đi xe chung', "I'll ride along");
-  bi('storyQuote', 'Từ những buổi hẹn đầu còn ngại ngùng đến hôm nay, hai đứa đã đi cùng nhau một quãng đường đủ dài để tin rằng đây chính là người mình muốn nắm tay đi hết phần đời còn lại. Và ' + hostPronounLower + ' mong ngày vui ấy có ' + guestFull + ' ở bên.',
+  bi('storyQuote', 'Từ những buổi hẹn đầu còn ngại ngùng đến hôm nay, hai đứa đã đi cùng nhau một quãng đường đủ dài để tin rằng đây chính là người mình muốn nắm tay đi hết phần đời còn lại. ' + rsvpHostCap + ' mong ngày vui ấy có ' + guestFull + ' đến chung vui.',
      "From a shy first date to today, we've come far enough together to know this is the hand we want to hold for the rest of the way. And we hope to have you beside us on the day.");
   bi('giftLead', 'Sự hiện diện của ' + rsvpGuestFull + ' là món quà ý nghĩa nhất', 'Your presence is the greatest gift of all');
 
