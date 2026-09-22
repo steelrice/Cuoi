@@ -68,7 +68,7 @@
   /* Nút nhạc nền: đĩa than tròn (ngoại lệ duy nhất phá quy ước "không bo tròn",
      vì bản chất đĩa than vốn phải tròn), khắc nốt nhạc ở tâm. */
   #musicToggle{
-    position:fixed; top:var(--sp-4); left:var(--sp-4); z-index:500;
+    position:fixed; top:var(--sp-4); left:var(--sp-4); z-index:1500;
     width:46px; height:46px; padding:0; border:none; border-radius:50%;
     background:none; cursor:pointer;
     opacity:0; pointer-events:none; transition:opacity .5s ease .15s;
@@ -503,7 +503,7 @@
 
 <!-- ============ NHẠC NỀN ============ -->
 <audio id="bgMusic" src="audio/bg-music.mp3" loop preload="auto"></audio>
-<button type="button" id="musicToggle" aria-label="bật/tắt nhạc nền" aria-pressed="false">
+<button type="button" id="musicToggle" class="show" aria-label="bật/tắt nhạc nền" aria-pressed="false">
   <svg viewBox="0 0 46 46" aria-hidden="true">
     <circle cx="23" cy="23" r="21.5" fill="var(--red-deep)" stroke="var(--gold-line)" stroke-width="1.2"/>
     <circle cx="23" cy="23" r="16.8" fill="none" stroke="rgba(207,159,63,.4)" stroke-width="1"/>
@@ -1072,7 +1072,7 @@
      mở tiếng + tăng âm lượng dần ngay khi khách có cử chỉ chạm đầu tiên */
   var bgMusic = document.getElementById('bgMusic');
   var musicToggle = document.getElementById('musicToggle');
-  var MUSIC_VOLUME = 1;
+  var MUSIC_VOLUME = 0.6; // âm lượng vừa phải, khách muốn to hơn thì tự chỉnh volume điện thoại
   function setMusicUI(on){
     if(musicToggle){
       musicToggle.classList.toggle('is-on', on);
@@ -1094,7 +1094,7 @@
   function revealMusic(){
     if(!bgMusic || (!bgMusic.muted && !bgMusic.paused)) return;
     bgMusic.muted = false;
-    var afterPlay = function(){ fadeAudio(bgMusic, MUSIC_VOLUME, 1100); setMusicUI(true); };
+    var afterPlay = function(){ fadeAudio(bgMusic, MUSIC_VOLUME, 3000); setMusicUI(true); };
     if(bgMusic.paused){
       bgMusic.play().then(afterPlay).catch(function(){ setMusicUI(false); });
     } else {
@@ -1128,7 +1128,6 @@
     // nội dung bắt đầu dâng lên khi rèm còn đang kéo, để hai lớp nối liền nhau
     setTimeout(function(){
       card.classList.add('show');
-      if(musicToggle) musicToggle.classList.add('show');
     }, 520);
     // rèm dừng đúng vị trí hai dải bên trong rồi hạ lớp bìa xuống, giữ nguyên rèm
     setTimeout(function(){

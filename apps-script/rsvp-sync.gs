@@ -7,7 +7,10 @@
  * Cài đặt: xem README.md, mục "Nối hồi âm vào Google Sheet".
  */
 
-var SHEET_NAME = 'Danh sách khách mời';
+// Đây là TÊN TAB thật ở dưới cùng màn hình Sheets — khác với tên hiển thị ở
+// thanh tím phía trên nếu bạn có dùng tính năng "Table" (Table đặt tên riêng,
+// không phải tên tab). Kiểm tra đúng tên tab trước khi deploy.
+var SHEET_NAME = 'Sơn';
 var HEADER_ROW = 1; // dòng tiêu đề cột
 
 // Thứ tự cột trong sheet — sửa lại số nếu bạn đổi vị trí cột
@@ -22,12 +25,17 @@ var COL = {
   link:         8,  // H - Link mời (công thức, không đụng vào)
   guestsCount:  9,  // I - Số người đi cùng
   phone:        10, // J - Số điện thoại
-  notes:        11  // K - Notes
+  move:         11, // K - Cách di chuyển (dropdown Tự di chuyển / Đi xe chung)
+  notes:        12  // L - Notes
 };
 
 // Chỉnh 2 dòng này cho khớp CHÍNH XÁC chữ trong dropdown "RSVP status" của bạn
 var STATUS_YES = 'Tham dự';
 var STATUS_NO  = 'Từ chối';
+
+// Chỉnh 2 dòng này cho khớp CHÍNH XÁC chữ trong dropdown "Cách di chuyển" của bạn
+var MOVE_SELF    = 'Tự di chuyển';
+var MOVE_SHUTTLE = 'Đi xe chung';
 
 function doPost(e) {
   var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME);
@@ -48,13 +56,15 @@ function doPost(e) {
   var rowIndex = findGuestRow(sheet, pronounGuest, guestName, date);
 
   var statusText = attend === 'yes' ? STATUS_YES : (attend === 'no' ? STATUS_NO : '');
-  var notesText = buildNotes(move, pickup, formName, guestName);
+  var moveText = move === 'shuttle' ? MOVE_SHUTTLE : (move === 'self' ? MOVE_SELF : '');
+  var notesText = buildNotes(pickup, formName, guestName);
   var guestsCount = attend === 'yes' ? guests : '';
 
   if (rowIndex > -1) {
     if (statusText) sheet.getRange(rowIndex, COL.rsvp).setValue(statusText);
     if (guestsCount) sheet.getRange(rowIndex, COL.guestsCount).setValue(guestsCount);
     if (phone) sheet.getRange(rowIndex, COL.phone).setValue(phone);
+    if (moveText) sheet.getRange(rowIndex, COL.move).setValue(moveText);
     if (notesText) sheet.getRange(rowIndex, COL.notes).setValue(notesText);
   } else {
     var row = [];
@@ -68,6 +78,7 @@ function doPost(e) {
     row[COL.link - 1] = '';
     row[COL.guestsCount - 1] = guestsCount;
     row[COL.phone - 1] = phone;
+    row[COL.move - 1] = moveText;
     row[COL.notes - 1] = notesText;
     sheet.appendRow(row);
   }
@@ -94,9 +105,8 @@ function findGuestRow(sheet, pronounGuest, guestName, date) {
   return -1;
 }
 
-function buildNotes(move, pickup, formName, guestName) {
+function buildNotes(pickup, formName, guestName) {
   var parts = [];
-  if (move === 'shuttle') parts.push('Đi xe chung');
   if (pickup) parts.push('Điểm đón: ' + pickup);
   if (formName && formName !== guestName) parts.push('Tên tự gõ trong form: ' + formName);
   return parts.join(' · ');
