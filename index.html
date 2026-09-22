@@ -920,13 +920,13 @@
   // Chỉ riêng xưng hô (không kèm tên) — dùng ở những chỗ khách "tự xưng" qua nút bấm, hoặc câu chào ngắn
   var guestPronounOnly = getUrlParam('pronounGuest') || 'bạn';
 
-  // Khách xưng hô "Em" (pronounGuest=Em): gọi đúng tên khách (không kèm "Em" phía trước)
-  // ở các chỗ RSVP/gợi ý trang phục/lời cảm ơn; pronounHost giữ nguyên xi chữ hoa/thường
-  // như trong Sheet ở MỌI chỗ nhắc tới cô dâu chú rể (không ép về chữ thường như khách khác).
-  var isEmGuest = (getUrlParam('pronounGuest') || '').trim().toLowerCase() === 'em';
-  var pronounHostRaw = getUrlParam('pronounHost') || 'chúng mình';
-  var rsvpHost = isEmGuest ? pronounHostRaw : hostPronounLower;
-  var rsvpHostCap = isEmGuest ? pronounHostRaw : hostPronounCap;
+  // Khách xưng hô "Em" hoặc "Bạn" (pronounGuest=Em|Bạn): gọi đúng tên khách (không kèm
+  // xưng hô phía trước) ở các chỗ RSVP/gợi ý trang phục/lời cảm ơn. pronounHost luôn viết
+  // thường (hostPronounLower/hostPronounCap) ở mọi trường hợp.
+  var pronounGuestLower = (getUrlParam('pronounGuest') || '').trim().toLowerCase();
+  var isEmGuest = pronounGuestLower === 'em' || pronounGuestLower === 'bạn';
+  var rsvpHost = hostPronounLower;
+  var rsvpHostCap = hostPronounCap;
   var rsvpGuestFull = isEmGuest ? guestNameRaw : guestFull;
   var rsvpGuestPronounOnly = isEmGuest ? guestNameRaw : guestPronounOnly;
 
