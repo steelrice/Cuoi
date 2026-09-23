@@ -123,6 +123,13 @@
     text-align:center; padding:0 var(--sp-6); transition:opacity .5s ease;
   }
   #cover.parted .cover-center{ opacity:0; pointer-events:none; }
+  /* Nhãn phiên bản trên bìa — hiện xuyên suốt (rèm đóng lẫn đã kéo), tiện kiểm tra
+     nhanh không cần cuộn tới chân trang. Xoá khi deploy chính thức, cùng lúc với
+     .footer .version-tag. */
+  .cover-version{
+    position:absolute; left:50%; bottom:calc(env(safe-area-inset-bottom, 0px) + 10px);
+    transform:translateX(-50%); z-index:8; pointer-events:none;
+  }
   .cover-kicker{ font-family:var(--script); font-style:italic; font-weight:500; font-size:16px; letter-spacing:.1em; color:var(--gold); }
   .cover-names{ font-family:var(--serif); font-weight:400; font-size:clamp(30px,9vw,42px); color:var(--cream); margin-top:var(--sp-3); line-height:1.25; letter-spacing:.01em; }
   .cover-date{ margin-top:var(--sp-2); font-size:13px; letter-spacing:.05em; color:var(--cream-dim); }
@@ -189,31 +196,26 @@
               seal-pulse 2.4s ease-in-out calc(1.15s + var(--d,0s) + .8s) infinite;
   }
 
-  /* Màn hình thấp: khối thông tin trên bìa (đặc biệt bản tiếng Anh — chữ dài hơn,
-     "OUR WEDDING CEREMONY"/"AT THE GROOM'S FAMILY RESIDENCE" dễ xuống 2 dòng) có thể
-     cao hơn màn hình — khối này canh giữa dọc nên phần tràn bị cắt đều ở cả 2 đầu,
-     mất chữ "With Great Pleasure!" phía trên lẫn nút "Tap to open" phía dưới. Siết
-     bớt khoảng cách giữa các dòng khi màn hình thấp thay vì để tràn ra ngoài. */
-  @media (max-height: 700px){
-    .s-guest{ margin-top:var(--sp-4); }
-    .s-guest .companion{ margin-top:6px; }
-    .s-join{ margin-top:var(--sp-3); }
-    .s-rule{ margin-top:6px; }
-    .s-event{ margin-top:var(--sp-4); }
-    .s-time{ margin-top:var(--sp-2); }
-    .s-date{ margin-top:var(--sp-4); }
-    .s-venue{ margin-top:var(--sp-4); }
-    .s-addr{ margin-top:6px; }
-    .s-cta{ margin-top:var(--sp-4); }
-    .stage .seal-btn{ margin-top:var(--sp-4); }
-  }
-  /* Màn hình quá thấp (≤620px) + tên/người đi cùng dài — mức trên vẫn chưa đủ,
-     siết thêm chút ở 3 khoảng lớn nhất thay vì siết lại toàn bộ. */
-  @media (max-height: 620px){
-    .s-date{ margin-top:var(--sp-3); }
-    .s-venue{ margin-top:var(--sp-3); }
-    .s-cta{ margin-top:var(--sp-3); }
-  }
+  /* Khối thông tin trên bìa canh giữa dọc trong khung cố định — nếu nội dung cao hơn
+     khung nhìn (thường chỉ xảy ra ở bản tiếng Anh, chữ dài dễ xuống 2 dòng, hoặc tên/
+     người đi cùng dài), phần tràn bị cắt đều ở cả 2 đầu, mất chữ "With Great Pleasure!"
+     phía trên lẫn nút mở thiệp phía dưới. Thay vì đoán theo chiều cao màn hình (từng làm
+     bản tiếng Việt bị siết oan dù không cần), JS đo đúng chiều cao nội dung thực tế
+     (fitCoverStage) rồi mới gắn class .compact/.compact-more khi thực sự tràn. */
+  .stage.compact .s-guest{ margin-top:var(--sp-4); }
+  .stage.compact .s-guest .companion{ margin-top:6px; }
+  .stage.compact .s-join{ margin-top:var(--sp-3); }
+  .stage.compact .s-rule{ margin-top:6px; }
+  .stage.compact .s-event{ margin-top:var(--sp-4); }
+  .stage.compact .s-time{ margin-top:var(--sp-2); }
+  .stage.compact .s-date{ margin-top:var(--sp-4); }
+  .stage.compact .s-venue{ margin-top:var(--sp-4); }
+  .stage.compact .s-addr{ margin-top:6px; }
+  .stage.compact .s-cta{ margin-top:var(--sp-4); }
+  .stage.compact .seal-btn{ margin-top:var(--sp-4); }
+  .stage.compact-more .s-date{ margin-top:var(--sp-3); }
+  .stage.compact-more .s-venue{ margin-top:var(--sp-3); }
+  .stage.compact-more .s-cta{ margin-top:var(--sp-3); }
 
   /* tàn lửa vàng bay lên */
   .petal{
@@ -529,7 +531,8 @@
   .footer .thanks{ font-weight:400; font-size:14.5px; margin-top:var(--sp-5); line-height:1.7; max-width:300px; margin-left:auto; margin-right:auto; color:var(--cream-dim); }
   .footer .credit{ margin-top:var(--sp-6); font-size:10.5px; letter-spacing:.12em; color:rgba(239,226,201,.5); }
   /* Đánh dấu bản deploy đang thử nghiệm — xoá khi deploy chính thức */
-  .footer .version-tag{ margin-top:var(--sp-2); font-size:9px; letter-spacing:.08em; color:rgba(239,226,201,.28); }
+  .version-tag{ font-size:9px; letter-spacing:.08em; color:rgba(239,226,201,.28); }
+  .footer .version-tag{ margin-top:var(--sp-2); }
 </style>
 </head>
 <body class="locked">
@@ -578,6 +581,8 @@
     <div class="cover-names">Hoàng Sơn &amp; Phương Thảo</div>
     <div class="cover-date" id="coverDate"><span data-vi>21 · 11 · 2026 · Vũng Tàu</span><span data-en>11 · 21 · 2026 · Vung Tau</span></div>
   </div>
+
+  <div class="version-tag cover-version">v23.9.02</div>
 </div>
 
 <!-- ============ LANGUAGE SWITCH ============ -->
@@ -1305,6 +1310,21 @@
     });
   }
 
+  /* Đo đúng chiều cao thật của khối thông tin trên bìa so với khung nhìn hiện có —
+     chỉ siết khoảng cách khi THỰC SỰ tràn (thường chỉ bản tiếng Anh hoặc tên/người đi
+     cùng dài), để bản tiếng Việt bình thường luôn được giãn cách thoáng đầy đủ thay vì
+     bị đoán nhầm theo chiều cao màn hình chung chung. */
+  function fitCoverStage(){
+    var stageEl = document.querySelector('.stage');
+    var stageIn = document.querySelector('.stage-in');
+    if(!stageEl || !stageIn) return;
+    stageEl.classList.remove('compact', 'compact-more');
+    var padY = parseFloat(getComputedStyle(stageEl).paddingTop) || 0;
+    var avail = window.innerHeight - padY * 2;
+    if(stageIn.scrollHeight > avail) stageEl.classList.add('compact');
+    if(stageIn.scrollHeight > avail) stageEl.classList.add('compact-more');
+  }
+
   function applyEvent(){
     var v = EV.vi, e = EV.en;
     bi('coverDate', v.coverDate, e.coverDate);
@@ -1359,8 +1379,10 @@
 
     var mark = document.getElementById('d' + EV.day);
     if(mark){ mark.className = 'day marked'; mark.innerHTML = '<span></span><em>' + EV.day + '</em>'; }
+    fitCoverStage();
   }
   applyEvent();
+  window.addEventListener('resize', fitCoverStage);
 
   // Thay "chúng mình"/"mình" bằng pronounHost, "bạn" bằng guestName ở các chỗ đang viết cứng
   bi('countdownLead', 'đến giây phút ' + rsvpHost + ' chính thức về chung một nhà', 'until we officially become family');
@@ -1473,6 +1495,7 @@
     document.documentElement.lang = toEn ? 'en' : 'vi';
     syncSelectLang(toEn ? 'en' : 'vi');
     fitGuestName();
+    fitCoverStage();
   });
 
   var target = new Date(EV.target).getTime();
