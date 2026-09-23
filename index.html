@@ -256,11 +256,11 @@
   .solo-card.groom{ top:19%; left:40%; width:50%; aspect-ratio:4/5; }
   .solo-card.bride{ top:52%; left:2%; width:50%; aspect-ratio:4/5; }
 
-  .solo-label{ position:absolute; width:max-content; max-width:36%; will-change:transform, opacity; }
-  .solo-label .lk{ font-family:var(--script); font-style:italic; font-weight:600; font-size:17px; color:var(--gold); }
-  .solo-label .ln{ font-family:var(--serif); font-weight:400; font-size:21px; color:var(--cream); margin-top:5px; line-height:1.25; letter-spacing:.01em; }
-  .solo-label.groom{ top:33%; left:0; text-align:left; }
-  .solo-label.bride{ top:67%; right:0; text-align:right; }
+  .solo-label{ position:absolute; width:max-content; will-change:transform, opacity; }
+  .solo-label .lk{ font-family:var(--script); font-style:italic; font-weight:600; font-size:19px; color:var(--gold); }
+  .solo-label .ln{ font-family:var(--serif); font-weight:400; font-size:24px; color:var(--cream); margin-top:5px; line-height:1.25; letter-spacing:.01em; }
+  .solo-label.groom{ top:33%; left:0; text-align:left; max-width:38%; }
+  .solo-label.bride{ top:67%; right:0; text-align:right; max-width:46%; }
 
   /* "Xin giới thiệu" — tiêu đề mở màn, cỡ lớn ngang .s-kicker của bìa, gõ chữ dần */
   .intro-kicker{ position:absolute; top:0; left:50%; transform:translateX(-50%); width:100%; text-align:center; opacity:0; transition:opacity .5s ease, transform .5s ease; will-change:opacity, transform; }
@@ -343,8 +343,8 @@
   /* ---------- story: editorial offset photo ---------- */
   .story-fig{
     position:relative;
-    width:57%;
-    margin:0 0 var(--sp-4) calc(-1 * var(--sp-6));
+    width:70%;
+    margin:0 0 var(--sp-5) calc(-1 * var(--sp-6));
   }
   .story-fig::after{
     content:''; position:absolute; inset:0;
@@ -360,9 +360,17 @@
     font-family:var(--serif); font-size:96px; line-height:1;
     color:rgba(207,159,63,.28);
   }
-  .story blockquote{ font-family:var(--script); font-style:italic; font-weight:500; font-size:21px; line-height:1.5; color:var(--cream); text-align:left; }
+  .story blockquote{ font-family:var(--script); font-style:italic; font-weight:500; font-size:22px; line-height:1.48; color:var(--cream); text-align:left; }
   .story cite{ display:block; margin-top:var(--sp-3); font-weight:600; font-size:12px; letter-spacing:.14em; color:var(--gold); text-align:left; font-style:normal; }
   .story cite::before{ content:''; display:block; width:36px; height:1px; background:rgba(207,159,63,.7); margin-bottom:var(--sp-3); }
+  /* Màn hình thấp (thanh công cụ Safari mở hết cỡ, hoặc lời trích dẫn dài do tên
+     khách dài) — thu gọn thêm để khối ảnh+trích dẫn luôn vừa khung, không bị
+     đẩy lên cao/hụt phía dưới; ở màn hình bình thường không đổi gì. */
+  @media (max-height: 700px){
+    .story-fig{ width:54%; margin-bottom:var(--sp-3); }
+    .story blockquote{ font-size:18.5px; line-height:1.4; }
+    .story cite{ margin-top:var(--sp-2); }
+  }
 
   /* ---------- dress code (gộp cuối section Chung vui cùng) ---------- */
   .dress-inline{ margin-top:var(--sp-8); }
