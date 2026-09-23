@@ -421,7 +421,8 @@
   .gift-card{ flex:0 0 100%; scroll-snap-align:center; padding:0 2px; }
   .gift-inner{ background:#fff; border:1px solid rgba(207,159,63,.5); border-radius:2px; padding:var(--sp-4); text-align:center; box-shadow:0 12px 28px rgba(76,12,23,.08); }
   .gift-qr{ width:100%; height:auto; display:block; border-radius:2px; }
-  .gift-dl{ display:block; width:100%; margin-top:calc(-1 * var(--sp-3)); background:transparent; border:none; padding:0; font-family:var(--sans); font-size:12px; letter-spacing:.03em; color:var(--gold-line); text-decoration:underline; text-underline-offset:3px; text-decoration-thickness:.5px; }
+  .gift-dl{ display:flex; align-items:center; justify-content:center; gap:6px; width:100%; margin-top:calc(-1 * var(--sp-3)); background:transparent; border:none; padding:0; font-family:var(--sans); font-size:12px; letter-spacing:.03em; color:var(--gold-line); text-decoration:underline; text-underline-offset:3px; text-decoration-thickness:.5px; }
+  .gift-dl svg{ width:13px; height:13px; flex:none; }
 
   /* ---------- footer ---------- */
   .footer{ background:var(--red-deep); color:var(--cream); text-align:center; padding:var(--sp-9) var(--sp-6) var(--sp-7); }
@@ -606,7 +607,7 @@
       </div>
       <div class="note-box" id="noteBox">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M3 13h13l4 4v-9a1 1 0 0 0-1-1H3z"/><circle cx="7.5" cy="18" r="1.6"/><circle cx="16.5" cy="18" r="1.6"/></svg>
-        <p id="noteBoxText"><span data-vi>Khách ở TP.HCM đừng lo đường xa nhé — cô dâu chú rể sẽ sắp xe đưa đón về Vũng Tàu. Bạn chỉ cần báo mình trong lời nhắn RSVP bên dưới!</span><span data-en>Coming from HCMC? No need to worry about the drive — we'll arrange a shuttle to Vung Tau for you. Just let us know in the RSVP below!</span></p>
+        <p id="noteBoxText"><span data-vi>Khách ở TP.HCM đừng lo đường xa nhé — cô dâu chú rể sẽ sắp xe đưa đón về Vũng Tàu. Chỉ cần báo cho cô dâu chú rể trong lời nhắn RSVP bên dưới!</span><span data-en>Coming from HCMC? No need to worry about the drive — we'll arrange a shuttle to Vung Tau for you. Just let us know in the RSVP below!</span></p>
       </div>
     </div>
   </section>
@@ -635,7 +636,7 @@
           <div class="tl-icon"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"><path d="M7 3h10l-1.2 6.5a3.8 3.8 0 0 1-3.8 3.1 3.8 3.8 0 0 1-3.8-3.1L7 3z"/><path d="M12 12.6V19M8.5 19h7"/></svg></div>
           <div class="tl-time" id="tlTime1">10:00</div>
           <div class="tl-title"><span data-vi>Đón khách</span><span data-en>Guests arrive</span></div>
-          <div class="tl-desc" id="tlDesc1"><span data-vi>Chụp vài tấm ở photobooth và để lại đôi dòng cảm nghĩ cho chúng mình nhé</span><span data-en>Take a few photos at the booth and leave us a note</span></div>
+          <div class="tl-desc" id="tlDesc1"><span data-vi>Chụp vài tấm ở photobooth và để lại đôi dòng cảm nghĩ cho cô dâu chú rể nhé</span><span data-en>Take a few photos at the booth and leave us a note</span></div>
         </div>
         <div class="tl-sep"></div>
         <div class="tl-item">
@@ -753,11 +754,11 @@
         <div class="gift-rail" id="giftRail">
           <div class="gift-card"><div class="gift-inner">
             <img class="gift-qr" id="qrGroom" src="images/qr-chu-re.png" alt="Mã QR chuyển khoản Đào Hoàng Sơn" loading="lazy" decoding="async">
-            <button type="button" class="gift-dl" data-file="qr-chu-re.png"><span data-vi>Chạm vào đây để tải mã QR</span><span data-en>Tap here to save the QR code</span></button>
+            <button type="button" class="gift-dl" data-file="qr-chu-re.png"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 19h16"/></svg><span data-vi>Tải mã QR</span><span data-en>Tap here to save the QR code</span></button>
           </div></div>
           <div class="gift-card"><div class="gift-inner">
             <img class="gift-qr" src="images/qr-co-dau.png" alt="Mã QR chuyển khoản Phùng Nguyễn Phương Thảo" loading="lazy" decoding="async">
-            <button type="button" class="gift-dl" data-file="qr-co-dau.png"><span data-vi>Chạm vào đây để tải mã QR</span><span data-en>Tap here to save the QR code</span></button>
+            <button type="button" class="gift-dl" data-file="qr-co-dau.png"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 19h16"/></svg><span data-vi>Tải mã QR</span><span data-en>Tap here to save the QR code</span></button>
           </div></div>
         </div>
       </div>
@@ -1056,9 +1057,9 @@
   // Thay "chúng mình"/"mình" bằng pronounHost, "bạn" bằng guestName ở các chỗ đang viết cứng
   bi('countdownLead', 'đến giây phút ' + rsvpHost + ' chính thức về chung một nhà', 'until we officially become family');
   bi('venueHeading', 'Chung vui cùng ' + rsvpHost, 'Join the celebration');
-  bi('noteBoxText', 'Khách ở TP.HCM đừng lo đường xa nhé — cô dâu chú rể sẽ sắp xe đưa đón về Vũng Tàu. Chỉ cần báo ' + rsvpHost + ' trong lời nhắn RSVP bên dưới!',
+  bi('noteBoxText', 'Khách ở TP.HCM đừng lo đường xa nhé — cô dâu chú rể sẽ sắp xe đưa đón về Vũng Tàu. Chỉ cần báo cho cô dâu chú rể trong lời nhắn RSVP bên dưới!',
      "Coming from HCMC? No need to worry about the drive — we'll arrange a shuttle to Vung Tau for you. Just let us know in the RSVP below!");
-  bi('tlDesc1', 'Chụp vài tấm ở photobooth và để lại đôi dòng cảm nghĩ cho ' + rsvpHost + ' nhé', 'Take a few photos at the booth and leave us a note');
+  bi('tlDesc1', 'Chụp vài tấm ở photobooth và để lại đôi dòng cảm nghĩ cho cô dâu chú rể nhé', 'Take a few photos at the booth and leave us a note');
   bi('galleryHeading', 'Vài khoảnh khắc của ' + rsvpHost, 'A few of our favourite shots');
   bi('dressLead', rsvpHostCap + ' sẽ rất vui nếu ' + rsvpGuestFullLower + ' diện trang phục hoà cùng tông màu của bữa tiệc', "We'd love it if your outfit echoed the palette of the evening");
   bi('rsvpLead', rsvpGuestFull + ' hồi âm đôi dòng để ' + rsvpHost + ' chuẩn bị được chu đáo hơn nhé.', 'A short reply helps us prepare for you.');
