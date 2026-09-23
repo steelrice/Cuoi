@@ -240,12 +240,12 @@
      hình cuộn nữa, mượt hơn hẳn so với kiểu position:fixed tự mô phỏng trước đây). */
   .scrollstage{ position:relative; height:380vh; }
   .sticky-view{
-    position:sticky; top:0; height:100vh; min-height:560px;
+    position:sticky; top:0; height:100vh; height:100svh; min-height:560px;
     overflow:hidden;
   }
   .intro-inner{ position:relative; width:100%; height:100%; }
 
-  .duo-stage{ position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:94%; max-width:380px; aspect-ratio:240/410; }
+  .duo-stage{ position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:94%; max-width:380px; aspect-ratio:240/460; }
 
   .solo-card{
     position:absolute; border-radius:2px; overflow:hidden;
@@ -406,7 +406,7 @@
   #lb-count{ position:absolute; bottom:var(--sp-6); left:0; right:0; text-align:center; font-family:var(--serif); font-size:15px; letter-spacing:.1em; color:var(--cream-dim); }
 
   /* ---------- location ---------- */
-  .loc-card{ margin-top:var(--sp-6); }
+  .loc-card{ margin-top:0; }
   .loc-body{ padding:0; text-align:center; }
   .note-box{ margin-top:var(--sp-6); text-align:left; display:flex; gap:var(--sp-3); align-items:flex-start; background:rgba(207,159,63,.12); border:1px solid rgba(207,159,63,.4); border-radius:8px; padding:var(--sp-4) var(--sp-5); }
   .note-box svg{ width:20px; height:20px; flex:none; margin-top:2px; color:var(--gold); }
@@ -416,9 +416,9 @@
   .loc-parents .plaque-rule{ display:flex; align-items:center; justify-content:center; gap:9px; }
   .loc-parents .plaque-rule i{ width:38px; height:1px; background:rgba(207,159,63,.65); }
   .loc-parents .plaque-rule .dot{ width:6px; height:6px; background:var(--gold); border-radius:1px; transform:rotate(45deg); flex:none; }
-  .loc-parents .parents-eyebrow{ margin-top:12px; font-family:var(--script); font-style:italic; font-weight:500; font-size:15px; letter-spacing:.06em; color:var(--gold); }
-  .loc-parents .parents-names{ margin-top:9px; font-family:var(--serif); font-weight:400; font-size:18px; line-height:1.5; color:var(--ink); }
-  .loc-parents .parents-names .amp{ display:block; font-family:var(--script); font-style:italic; font-weight:500; font-size:15px; color:var(--gold-line); margin:1px 0; }
+  .loc-parents .parents-eyebrow{ margin-top:12px; font-family:var(--script); font-style:italic; font-weight:500; font-size:19px; color:var(--red-mid); }
+  .loc-parents .parents-names{ margin-top:10px; font-family:var(--serif); font-weight:400; font-size:21px; line-height:1.4; color:var(--ink); }
+  .loc-parents .parents-names .amp{ display:block; font-family:var(--script); font-style:italic; font-weight:500; font-size:16px; color:var(--gold-line); margin:3px 0; }
   .loc-addr{ font-weight:400; font-size:13.5px; color:var(--ink-soft); margin-top:var(--sp-4); line-height:1.6; }
   .loc-addr b{ font-weight:500; color:var(--ink); }
   .loc-map{ display:block; margin-top:var(--sp-5); border:1px solid rgba(207,159,63,.35); border-radius:2px; overflow:hidden; }
@@ -697,7 +697,6 @@
   <!-- ============ LOCATION (gộp chung Gợi ý trang phục ở cuối, không tách section riêng) ============ -->
   <section>
     <div class="wrap center">
-      <h2 class="title" id="venueHeading"><span data-vi>Chung vui cùng chúng mình</span><span data-en>Join the celebration</span></h2>
       <div class="loc-card">
         <div class="loc-body">
           <div class="loc-name" id="locName">Nhà hàng Merastis</div>
@@ -1303,7 +1302,6 @@
 
   // Thay "chúng mình"/"mình" bằng pronounHost, "bạn" bằng guestName ở các chỗ đang viết cứng
   bi('countdownLead', 'đến giây phút ' + rsvpHost + ' chính thức về chung một nhà', 'until we officially become family');
-  bi('venueHeading', 'Chung vui cùng ' + rsvpHost, 'Join the celebration');
   bi('noteBoxText', 'Khách ở TP.HCM đừng lo đường xa nhé — cô dâu chú rể sẽ sắp xe đưa đón về Vũng Tàu. Chỉ cần báo cho cô dâu chú rể trong lời nhắn RSVP bên dưới!',
      "Coming from HCMC? No need to worry about the drive — we'll arrange a shuttle to Vung Tau for you. Just let us know in the RSVP below!");
   bi('tlDesc1', 'Chụp vài tấm ở photobooth và để lại đôi dòng cảm nghĩ cho cô dâu chú rể nhé', 'Take a few photos at the booth and leave us a note');
