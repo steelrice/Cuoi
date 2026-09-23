@@ -218,7 +218,7 @@
   .stage.compact-more .s-cta{ margin-top:var(--sp-3); }
   /* Còn dư nhiều khoảng trống — giãn thêm các dòng thông tin chính (tên khách, tên lễ,
      ngày, địa điểm) chứ không giãn đều mọi thứ, giữ đúng trọng tâm nội dung quan trọng */
-  .stage.roomy .s-guest{ margin-top:var(--sp-6); }
+  .stage.roomy .s-guest{ margin-top:var(--sp-6); font-size:clamp(30px,8.5vw,38px); }
   .stage.roomy .s-event{ margin-top:var(--sp-7); }
   .stage.roomy .s-date{ margin-top:var(--sp-7); }
   .stage.roomy .s-venue{ margin-top:var(--sp-7); }
@@ -1391,6 +1391,9 @@
     var mark = document.getElementById('d' + EV.day);
     if(mark){ mark.className = 'day marked'; mark.innerHTML = '<span></span><em>' + EV.day + '</em>'; }
     fitCoverStage();
+    // .roomy (nếu vừa được gắn) đổi cỡ chữ gốc của tên khách — tính lại xem có cần
+    // co nhỏ để vừa 1 dòng ở cỡ chữ mới không, thay vì giữ nguyên kết quả tính lúc trước.
+    fitGuestName();
   }
   applyEvent();
   window.addEventListener('resize', fitCoverStage);
@@ -1507,6 +1510,7 @@
     syncSelectLang(toEn ? 'en' : 'vi');
     fitGuestName();
     fitCoverStage();
+    fitGuestName();
   });
 
   var target = new Date(EV.target).getTime();
