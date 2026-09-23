@@ -412,7 +412,15 @@
   .note-box svg{ width:20px; height:20px; flex:none; margin-top:2px; color:var(--gold); }
   .note-box p{ font-size:13px; line-height:1.6; color:var(--ink-soft); }
   .loc-name{ font-family:var(--serif); font-weight:400; font-size:21px; color:var(--ink); }
-  .loc-addr{ font-weight:400; font-size:13.5px; color:var(--ink-soft); margin-top:var(--sp-2); line-height:1.6; }
+  .loc-parents{ margin-top:var(--sp-5); }
+  .loc-parents .plaque-rule{ display:flex; align-items:center; justify-content:center; gap:9px; }
+  .loc-parents .plaque-rule i{ width:38px; height:1px; background:rgba(207,159,63,.65); }
+  .loc-parents .plaque-rule .dot{ width:6px; height:6px; background:var(--gold); border-radius:1px; transform:rotate(45deg); flex:none; }
+  .loc-parents .parents-eyebrow{ margin-top:12px; font-family:var(--script); font-style:italic; font-weight:500; font-size:15px; letter-spacing:.06em; color:var(--gold); }
+  .loc-parents .parents-names{ margin-top:9px; font-family:var(--serif); font-weight:400; font-size:18px; line-height:1.5; color:var(--ink); }
+  .loc-parents .parents-names .amp{ display:block; font-family:var(--script); font-style:italic; font-weight:500; font-size:15px; color:var(--gold-line); margin:1px 0; }
+  .loc-addr{ font-weight:400; font-size:13.5px; color:var(--ink-soft); margin-top:var(--sp-4); line-height:1.6; }
+  .loc-addr b{ font-weight:500; color:var(--ink); }
   .loc-map{ display:block; margin-top:var(--sp-5); border:1px solid rgba(207,159,63,.35); border-radius:2px; overflow:hidden; }
   .loc-map img{ width:100%; height:auto; display:block; }
   .loc-credit{ font-size:10.5px; letter-spacing:.04em; color:var(--ink-soft); opacity:.7; margin-top:var(--sp-2); }
@@ -693,9 +701,18 @@
       <div class="loc-card">
         <div class="loc-body">
           <div class="loc-name" id="locName">Nhà hàng Merastis</div>
+          <div class="loc-parents" id="locParents" hidden>
+            <div class="plaque-rule"><i></i><span class="dot"></span><i></i></div>
+            <div class="parents-eyebrow"><span data-vi>Song thân chú rể</span><span data-en>Groom's parents</span></div>
+            <div class="parents-names">
+              <span data-vi>Ông Đào Minh Hoan</span><span data-en>Mr. Đào Minh Hoan</span>
+              <span class="amp">&amp;</span>
+              <span data-vi>Bà Trần Thị Nhung</span><span data-en>Mrs. Trần Thị Nhung</span>
+            </div>
+          </div>
           <div class="loc-addr" id="locAddr">
-            <span data-vi>Sảnh 2 · 356A-358 Trương Công Định<br>TP. Vũng Tàu</span>
-            <span data-en>Hall 2 · 356A-358 Truong Cong Dinh St.<br>Vung Tau City</span>
+            <span data-vi><b>Địa chỉ:</b> Sảnh 2 · 356A-358 Trương Công Định<br>TP. Vũng Tàu</span>
+            <span data-en><b>Address:</b> Hall 2 · 356A-358 Truong Cong Dinh St.<br>Vung Tau City</span>
           </div>
           <a class="loc-map" id="locMapLink" href="#" target="_blank" rel="noopener">
             <img id="mapVT" src="images/map-vungtau.jpg" alt="Bản đồ vị trí Nhà hàng Merastis, Vũng Tàu" loading="lazy">
@@ -1241,7 +1258,7 @@
     bi('sVenue',    v.venue, e.venue);
     bi('sAddr',     v.addr, e.addr);
     bi('locName',   v.locName, e.locName);
-    bi('locAddr',   v.locAddr, e.locAddr);
+    bi('locAddr',   '<b>Địa chỉ:</b> ' + v.locAddr, '<b>Address:</b> ' + e.locAddr);
     bi('thanks',    v.thanks, e.thanks);
     bi('credit',    v.credit, e.credit);
 
@@ -1274,6 +1291,8 @@
     if(locMapLink) locMapLink.href = EV.maps;
     if(mapVT) mapVT.style.display = isHY ? 'none' : 'block';
     if(mapHY) mapHY.style.display = isHY ? 'block' : 'none';
+    var locParents = document.getElementById('locParents');
+    if(locParents) locParents.hidden = !isHY;
     var note = document.getElementById('noteBox');
     if(note && !EV.shuttle) note.style.display = 'none';
 
