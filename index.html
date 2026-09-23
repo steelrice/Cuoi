@@ -1398,6 +1398,15 @@
   }
   applyEvent();
   window.addEventListener('resize', fitCoverStage);
+  if(window.visualViewport) window.visualViewport.addEventListener('resize', fitCoverStage);
+  // Script giờ chạy ngay khi trang vừa tải (không đợi font tải xong nữa — xem phần
+  // <link rel="preload"> ở <head>), nên lúc fitCoverStage() đo lần đầu, font Prata/
+  // Cormorant Garamond CHƯA về kịp, đang đo theo font dự phòng của hệ thống — cao/
+  // thấp khác font thật, nên .roomy/.compact có thể chốt sai. Đo lại đúng 1 lần khi
+  // font thật đã tải xong và chữ đã "vẽ lại" theo đúng kích thước cuối cùng.
+  if(document.fonts && document.fonts.ready){
+    document.fonts.ready.then(function(){ fitGuestName(); fitCoverStage(); });
+  }
 
   // Thay "chúng mình"/"mình" bằng pronounHost, "bạn" bằng guestName ở các chỗ đang viết cứng
   bi('countdownLead', 'đến giây phút ' + rsvpHost + ' chính thức về chung một nhà', 'until we officially become family');
