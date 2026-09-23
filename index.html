@@ -1035,15 +1035,19 @@
       }, typeMs + 1500);
     }
 
-    var io = new IntersectionObserver(function(entries){
-      entries.forEach(function(entry){
-        if(entry.isIntersecting && !introPlayed){
-          playIntro();
-          io.disconnect();
-        }
-      });
-    }, { threshold: 0.3 });
-    io.observe(view);
+    /* Chạy animation đúng lúc khách chạm mở thiệp — không dùng IntersectionObserver ở đây vì
+       #introStage đã nằm sẵn trong khung nhìn ngay từ lúc trang vừa tải (còn bị bìa che), nên
+       IO sẽ báo "đang hiện" và chạy hết animation ngay từ đầu, trước khi khách kịp chạm mở —
+       lúc khách chạm vào thì mọi thứ đã chạy xong từ trước, không thấy animation nào cả.
+       520ms khớp với lúc openInvite() thêm class 'show' cho #card (bắt đầu hiện nội dung). */
+    var openBtn = document.getElementById('openBtn');
+    if(openBtn){
+      openBtn.addEventListener('click', function(){
+        setTimeout(function(){
+          if(!introPlayed) playIntro();
+        }, 600);
+      }, { once: true });
+    }
 
     /* #app có overflow:hidden nên position:sticky không ghim được — tự tính p (0 → 1)
        từ vị trí thật của #introStage trong tài liệu và scrollY, rồi tự chuyển sticky-view
