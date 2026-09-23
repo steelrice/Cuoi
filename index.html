@@ -289,7 +289,7 @@
 
   /* Khối ảnh chung + trích dẫn cuối — TÁI DÙNG .story-fig/.story (không tạo class trùng lặp),
      chỉ thêm định vị tuyệt đối theo tâm màn hình để ghim đúng vị trí trong lúc hội tụ/ghép ảnh */
-  #finalStage{ position:absolute; top:76px; left:50%; transform:translateX(-50%); width:100%; opacity:0; will-change:transform, opacity; }
+  #finalStage{ position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:100%; opacity:0; will-change:transform, opacity; }
   #finalStage .story-fig{ will-change:transform; }
   #finalStage .story{ will-change:opacity, transform; }
 
@@ -344,7 +344,7 @@
   .story-fig{
     position:relative;
     width:78%;
-    margin:0 0 var(--sp-6) calc(-1 * var(--sp-6));
+    margin:0 0 var(--sp-7) calc(-1 * var(--sp-6));
   }
   .story-fig::after{
     content:''; position:absolute; inset:0;
@@ -363,14 +363,6 @@
   .story blockquote{ font-family:var(--script); font-style:italic; font-weight:500; font-size:23px; line-height:1.6; color:var(--cream); text-align:left; }
   .story cite{ display:block; margin-top:var(--sp-5); font-weight:600; font-size:12px; letter-spacing:.14em; color:var(--gold); text-align:left; font-style:normal; }
   .story cite::before{ content:''; display:block; width:36px; height:1px; background:rgba(207,159,63,.7); margin-bottom:var(--sp-3); }
-  /* Màn hình thấp (thanh công cụ Safari mở hết cỡ, hoặc lời trích dẫn dài do tên
-     khách dài) — thu gọn thêm để khối ảnh+trích dẫn luôn vừa khung, không bị
-     đẩy lên cao/hụt phía dưới; ở màn hình bình thường không đổi gì. */
-  @media (max-height: 700px){
-    .story-fig{ width:54%; margin-bottom:var(--sp-3); }
-    .story blockquote{ font-size:18.5px; line-height:1.4; }
-    .story cite{ margin-top:var(--sp-2); }
-  }
 
   /* ---------- dress code (gộp cuối section Chung vui cùng) ---------- */
   .dress-inline{ margin-top:var(--sp-8); }
