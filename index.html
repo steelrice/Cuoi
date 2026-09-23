@@ -240,7 +240,7 @@
      hình cuộn nữa, mượt hơn hẳn so với kiểu position:fixed tự mô phỏng trước đây). */
   .scrollstage{ position:relative; height:380vh; }
   .sticky-view{
-    position:sticky; top:0; height:100vh; height:100svh; min-height:560px;
+    position:sticky; top:0; height:100vh; height:100svh; height:100dvh; min-height:560px;
     overflow:hidden;
   }
   .intro-inner{ position:relative; width:100%; height:100%; }
@@ -256,9 +256,9 @@
   .solo-card.groom{ top:19%; left:40%; width:50%; aspect-ratio:4/5; }
   .solo-card.bride{ top:52%; left:2%; width:50%; aspect-ratio:4/5; }
 
-  .solo-label{ position:absolute; width:max-content; will-change:transform, opacity; }
-  .solo-label .lk{ font-family:var(--script); font-style:italic; font-weight:600; font-size:20px; color:var(--gold); }
-  .solo-label .ln{ font-family:var(--serif); font-weight:400; font-size:26px; color:var(--cream); margin-top:5px; line-height:1.2; letter-spacing:.01em; white-space:nowrap; }
+  .solo-label{ position:absolute; width:max-content; max-width:36%; will-change:transform, opacity; }
+  .solo-label .lk{ font-family:var(--script); font-style:italic; font-weight:600; font-size:17px; color:var(--gold); }
+  .solo-label .ln{ font-family:var(--serif); font-weight:400; font-size:21px; color:var(--cream); margin-top:5px; line-height:1.25; letter-spacing:.01em; }
   .solo-label.groom{ top:33%; left:0; text-align:left; }
   .solo-label.bride{ top:67%; right:0; text-align:right; }
 
@@ -343,8 +343,8 @@
   /* ---------- story: editorial offset photo ---------- */
   .story-fig{
     position:relative;
-    width:78%;
-    margin:0 0 var(--sp-7) calc(-1 * var(--sp-6));
+    width:57%;
+    margin:0 0 var(--sp-4) calc(-1 * var(--sp-6));
   }
   .story-fig::after{
     content:''; position:absolute; inset:0;
@@ -360,8 +360,8 @@
     font-family:var(--serif); font-size:96px; line-height:1;
     color:rgba(207,159,63,.28);
   }
-  .story blockquote{ font-family:var(--script); font-style:italic; font-weight:500; font-size:23px; line-height:1.6; color:var(--cream); text-align:left; }
-  .story cite{ display:block; margin-top:var(--sp-5); font-weight:600; font-size:12px; letter-spacing:.14em; color:var(--gold); text-align:left; font-style:normal; }
+  .story blockquote{ font-family:var(--script); font-style:italic; font-weight:500; font-size:21px; line-height:1.5; color:var(--cream); text-align:left; }
+  .story cite{ display:block; margin-top:var(--sp-3); font-weight:600; font-size:12px; letter-spacing:.14em; color:var(--gold); text-align:left; font-style:normal; }
   .story cite::before{ content:''; display:block; width:36px; height:1px; background:rgba(207,159,63,.7); margin-bottom:var(--sp-3); }
 
   /* ---------- dress code (gộp cuối section Chung vui cùng) ---------- */
