@@ -189,6 +189,25 @@
               seal-pulse 2.4s ease-in-out calc(1.15s + var(--d,0s) + .8s) infinite;
   }
 
+  /* Màn hình thấp: khối thông tin trên bìa (đặc biệt bản tiếng Anh — chữ dài hơn,
+     "OUR WEDDING CEREMONY"/"AT THE GROOM'S FAMILY RESIDENCE" dễ xuống 2 dòng) có thể
+     cao hơn màn hình — khối này canh giữa dọc nên phần tràn bị cắt đều ở cả 2 đầu,
+     mất chữ "With Great Pleasure!" phía trên lẫn nút "Tap to open" phía dưới. Siết
+     bớt khoảng cách giữa các dòng khi màn hình thấp thay vì để tràn ra ngoài. */
+  @media (max-height: 700px){
+    .s-guest{ margin-top:var(--sp-3); }
+    .s-guest .companion{ margin-top:4px; }
+    .s-join{ margin-top:var(--sp-2); }
+    .s-rule{ margin-top:4px; }
+    .s-event{ margin-top:var(--sp-3); }
+    .s-time{ margin-top:var(--sp-2); }
+    .s-date{ margin-top:var(--sp-3); }
+    .s-venue{ margin-top:var(--sp-3); }
+    .s-addr{ margin-top:4px; }
+    .s-cta{ margin-top:var(--sp-3); }
+    .stage .seal-btn{ margin-top:var(--sp-3); }
+  }
+
   /* tàn lửa vàng bay lên */
   .petal{
     position:absolute; bottom:-6vh; width:4px; height:4px; border-radius:50%;
