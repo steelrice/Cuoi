@@ -178,7 +178,7 @@
   }
   .s-cta:hover{ background:rgba(207,159,63,.12); border-color:var(--gold); }
 
-  .stage .seal-btn{ margin-top:var(--sp-7); animation:none; }
+  .stage .seal-btn{ margin-top:var(--sp-5); animation:none; }
   #cover.parted .stage .seal-btn.r{
     animation:elegantReveal .8s cubic-bezier(.16,1,.3,1) calc(1.15s + var(--d,0s)) both,
               seal-pulse 2.4s ease-in-out calc(1.15s + var(--d,0s) + .8s) infinite;
@@ -1218,11 +1218,32 @@
     return companion ? part + ((lang === 'en') ? ' and ' : ' và ') + companion : part;
   }
 
+  /* Tên khách (+ người đi cùng) dài xuống 2-3 dòng sẽ làm khối bìa cao hơn màn hình —
+     do khối này canh giữa dọc trong khung cố định nên phần tràn bị cắt đều ở cả 2 đầu
+     (mất chữ "Trân trọng kính mời" phía trên lẫn nút mở thiệp phía dưới). Co dần cỡ chữ
+     tên khách tới khi vừa 1 dòng, hoặc chạm mức nhỏ nhất, thay vì để tràn ra ngoài. */
+  function fitGuestName(){
+    var el = document.getElementById('sGuest');
+    if(!el) return;
+    el.style.fontSize = '';
+    var minSize = 18;
+    var guard = 0;
+    var oneLine = parseFloat(getComputedStyle(el).lineHeight);
+    while(oneLine && el.scrollHeight > oneLine * 1.35 && guard < 8){
+      var size = parseFloat(getComputedStyle(el).fontSize) - 2;
+      if(size < minSize) break;
+      el.style.fontSize = size + 'px';
+      oneLine = parseFloat(getComputedStyle(el).lineHeight);
+      guard++;
+    }
+  }
+
   function applyEvent(){
     var v = EV.vi, e = EV.en;
     bi('coverDate', v.coverDate, e.coverDate);
     bi('sKicker',   'Trân trọng kính mời!', 'With Great Pleasure!');
     bi('sGuest',    guestLine('vi'), guestLine('en'));
+    fitGuestName();
     bi('sJoin',     'tới dự', 'to join us at');
     bi('sEvent',    v.title, e.title);
     bi('sTime',     v.time + '<b>' + v.hi + '</b>', e.time + '<b>' + e.hi + '</b>');
@@ -1383,6 +1404,7 @@
     document.body.classList.toggle('lang-en', toEn);
     document.documentElement.lang = toEn ? 'en' : 'vi';
     syncSelectLang(toEn ? 'en' : 'vi');
+    fitGuestName();
   });
 
   var target = new Date(EV.target).getTime();
