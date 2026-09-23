@@ -458,18 +458,19 @@
   .note-box{ margin-top:var(--sp-6); text-align:left; display:flex; gap:var(--sp-3); align-items:flex-start; background:rgba(207,159,63,.12); border:1px solid rgba(207,159,63,.4); border-radius:8px; padding:var(--sp-4) var(--sp-5); }
   .note-box svg{ width:20px; height:20px; flex:none; margin-top:2px; color:var(--gold); }
   .note-box p{ font-size:14.5px; line-height:1.6; color:var(--ink-soft); }
-  .loc-name{ font-family:var(--serif); font-weight:400; font-size:27px; color:var(--ink); }
-  .loc-parents{
-    margin-top:var(--sp-5); background:rgba(207,159,63,.10); border:1px solid rgba(207,159,63,.35);
-    border-radius:8px; padding:var(--sp-4) var(--sp-4) 18px;
-  }
-  .loc-parents .parents-seal{
-    width:34px; height:34px; margin:0 auto; border-radius:50%; border:1.5px solid rgba(207,159,63,.85);
-    display:flex; align-items:center; justify-content:center;
-  }
-  .loc-parents .parents-seal span{ font-family:'Noto Serif SC', var(--serif); font-size:17px; line-height:1; color:var(--gold-line); }
-  .loc-parents .parents-eyebrow{ margin-top:var(--sp-2); font-family:var(--script); font-style:italic; font-weight:500; font-size:17px; color:var(--ink-soft); }
-  .loc-parents .parents-names{ margin-top:var(--sp-1); font-family:var(--serif); font-weight:400; font-size:16.5px; line-height:1.45; color:var(--ink); }
+  .loc-head{ display:flex; flex-direction:column; align-items:center; gap:4px; }
+  .loc-kicker{ font-family:var(--script); font-style:italic; font-weight:500; font-size:19px; color:var(--gold-line); }
+  .loc-big{ font-family:var(--serif); font-weight:400; font-size:clamp(36px,10.5vw,50px); line-height:1.05; color:var(--red-deep); text-wrap:balance; }
+
+  .loc-parents{ margin-top:var(--sp-6); }
+  .loc-parents .parents-label{ font-family:var(--script); font-style:italic; font-weight:500; font-size:19px; color:var(--gold-line); }
+  .loc-parents .parents-cols{ margin-top:var(--sp-3); display:grid; grid-template-columns:1fr 1px 1fr; align-items:center; gap:var(--sp-3); }
+  .loc-parents .parents-vline{ height:46px; background:rgba(207,159,63,.5); }
+  .loc-parents .parents-role{ font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--ink-soft); opacity:.75; }
+  .loc-parents .parents-name{ margin-top:5px; font-family:var(--serif); font-weight:400; font-size:17px; line-height:1.3; color:var(--ink); }
+  .loc-parents .parents-divider{ margin-top:var(--sp-5); display:flex; align-items:center; gap:10px; }
+  .loc-parents .parents-divider span{ flex:1; height:1px; background:rgba(207,159,63,.4); }
+  .loc-parents .parents-divider i{ width:6px; height:6px; background:var(--gold); transform:rotate(45deg); flex:none; }
   .loc-addr{ font-weight:400; font-size:14.5px; color:var(--ink-soft); margin-top:var(--sp-5); line-height:1.65; }
   .loc-addr b{ font-weight:500; color:var(--ink); }
   .loc-map{ display:block; margin-top:var(--sp-5); border:1px solid rgba(207,159,63,.35); border-radius:2px; overflow:hidden; }
@@ -761,14 +762,24 @@
     <div class="wrap center">
       <div class="loc-card">
         <div class="loc-body">
-          <div class="loc-name" id="locName">Nhà hàng Merastis</div>
+          <div class="loc-head">
+            <div class="loc-kicker" id="locKicker">Nhà hàng</div>
+            <div class="loc-big" id="locBig">Merastis</div>
+          </div>
           <div class="loc-parents" id="locParents" hidden>
-            <div class="parents-seal" aria-hidden="true"><span>囍</span></div>
-            <div class="parents-eyebrow"><span data-vi>Song thân chú rể</span><span data-en>Groom's parents</span></div>
-            <div class="parents-names">
-              <span data-vi>Ông Đào Minh Hoan</span><span data-en>Mr. Đào Minh Hoan</span><br>
-              <span data-vi>Bà Trần Thị Nhung</span><span data-en>Mrs. Trần Thị Nhung</span>
+            <div class="parents-label"><span data-vi>Song thân chú rể</span><span data-en>Groom's parents</span></div>
+            <div class="parents-cols">
+              <div class="parents-col">
+                <div class="parents-role"><span data-vi>Ông</span><span data-en>Father</span></div>
+                <div class="parents-name">Đào Minh Hoan</div>
+              </div>
+              <div class="parents-vline"></div>
+              <div class="parents-col">
+                <div class="parents-role"><span data-vi>Bà</span><span data-en>Mother</span></div>
+                <div class="parents-name">Trần Thị Nhung</div>
+              </div>
             </div>
+            <div class="parents-divider" aria-hidden="true"><span></span><i></i><span></span></div>
           </div>
           <div class="loc-addr" id="locAddr">
             <span data-vi><b>Địa chỉ:</b> Sảnh 2 · 356A-358 Trương Công Định<br>TP. Vũng Tàu</span>
@@ -1239,14 +1250,14 @@
            lunar:'Tức ngày 13 tháng 10', yearLunar:'Năm Bính Ngọ',
            venue:'TẠI SẢNH 2 MERASTIS TOWER', addr:'356 - 358 Trương Công Định, Tam Thắng, TP. Vũng Tàu',
            coverDate:'21 · 11 · 2026 · Vũng Tàu', heroDate:'Thứ Bảy · 21 Tháng 11, 2026 · Vũng Tàu',
-           locName:'Nhà hàng Merastis', locAddr:'Sảnh 2 · 356A-358 Trương Công Định<br>TP. Vũng Tàu',
+           locKicker:'Nhà hàng', locBig:'Merastis', locAddr:'Sảnh 2 · 356A-358 Trương Công Định<br>TP. Vũng Tàu',
            thanks:'Cảm ơn ' + rsvpGuestFullLower + ' đã dành thời gian đọc hết thiệp mời của ' + rsvpHost + '. Hẹn gặp ' + rsvpGuestPronounOnlyLower + ' ngày 21.11.2026 tại Vũng Tàu!',
            credit:'21 · 11 · 2026 — VŨNG TÀU' },
       en:{ title:'OUR CELEBRATION PARTY', time:'To be held at ', hi:'10:30 AM, Saturday',
            lunar:'(Lunar Calendar: October 13th)', yearLunar:'Year of the Fire Horse',
            venue:'AT HALL 2, MERASTIS TOWER', addr:'356 - 358 Trương Công Định Street, Tam Thắng Ward, Vũng Tàu City',
            coverDate:'11 · 21 · 2026 · Vung Tau', heroDate:'Saturday · November 21, 2026 · Vung Tau',
-           locName:'Merastis Restaurant', locAddr:'Hall 2 · 356A-358 Truong Cong Dinh St.<br>Vung Tau City',
+           locKicker:'Restaurant', locBig:'Merastis', locAddr:'Hall 2 · 356A-358 Truong Cong Dinh St.<br>Vung Tau City',
            thanks:'Thank you for taking the time to read through our invitation. See you on 11.21.2026 in Vung Tau!',
            credit:'11 · 21 · 2026 — VUNG TAU' }
     },
@@ -1257,14 +1268,14 @@
            lunar:'Tức ngày 20 tháng 10', yearLunar:'Năm Bính Ngọ',
            venue:'TẠI TƯ GIA NHÀ TRAI', addr:'QL39A, xã Tân Hưng, TP. Hưng Yên',
            coverDate:'28 · 11 · 2026 · Hưng Yên', heroDate:'Thứ Bảy · 28 Tháng 11, 2026 · Hưng Yên',
-           locName:'Tư gia nhà trai', locAddr:'QL39A · xã Tân Hưng<br>TP. Hưng Yên',
+           locKicker:'Tại tư gia', locBig:'Nhà Trai', locAddr:'QL39A · xã Tân Hưng<br>TP. Hưng Yên',
            thanks:'Cảm ơn ' + rsvpGuestFullLower + ' đã dành thời gian đọc hết thiệp mời của ' + rsvpHost + '. Hẹn gặp ' + rsvpGuestPronounOnlyLower + ' ngày 28.11.2026 tại Hưng Yên!',
            credit:'28 · 11 · 2026 — HƯNG YÊN' },
       en:{ title:'OUR WEDDING CEREMONY', time:'To be held at ', hi:'9:00 AM, Saturday',
            lunar:'(Lunar Calendar: October 20th)', yearLunar:'Year of the Fire Horse',
            venue:"AT THE GROOM'S FAMILY RESIDENCE", addr:'National Highway 39A, Tân Hưng Commune, Hưng Yên City',
            coverDate:'11 · 28 · 2026 · Hung Yen', heroDate:'Saturday · November 28, 2026 · Hung Yen',
-           locName:"The groom's family home", locAddr:'National Highway 39A · Tân Hưng Commune<br>Hưng Yên City',
+           locKicker:'At the', locBig:"Groom's Home", locAddr:'National Highway 39A · Tân Hưng Commune<br>Hưng Yên City',
            thanks:'Thank you for taking the time to read through our invitation. See you on 11.28.2026 in Hung Yen!',
            credit:'11 · 28 · 2026 — HUNG YEN' }
     }
@@ -1350,7 +1361,8 @@
     bi('sYearLunar',v.yearLunar, e.yearLunar);
     bi('sVenue',    v.venue, e.venue);
     bi('sAddr',     v.addr, e.addr);
-    bi('locName',   v.locName, e.locName);
+    bi('locKicker', v.locKicker, e.locKicker);
+    bi('locBig',    v.locBig, e.locBig);
     bi('locAddr',   '<b>Địa chỉ:</b> ' + v.locAddr, '<b>Address:</b> ' + e.locAddr);
     bi('thanks',    v.thanks, e.thanks);
     bi('credit',    v.credit, e.credit);
