@@ -15,16 +15,24 @@ Mỗi lần đẩy thay đổi lên `main`, trang tự cập nhật sau vài ch�
 
 Gắn vào sau đường dẫn để cá nhân hoá từng khách.
 
-| Tham số | Giá trị | Mặc định | Tác dụng |
-|---|---|---|---|
-| `date` | `21` hoặc `28` | `21` | `21` = tiệc Vũng Tàu, `28` = lễ Hưng Yên |
-| `guestName` | tên khách | *(trống)* | Không truyền thì hiện "Quý khách" |
-| `pronounGuest` | `Bạn`, `Anh`, `Chị`, `Cô`, `Chú`… | *(trống)* | Cách xưng hô, chỉ áp dụng bản tiếng Việt. Không truyền thì chỉ hiện tên (không tự thêm "Bạn") — dùng khi `guestName` đã có sẵn xưng hô trong đó, vd `guestName=Chế lớn` |
-| `genderEn` | `m` hoặc `f` | *(trống)* | `m` → Mr., `f` → Ms., bỏ trống thì không có danh xưng |
-| `companionName` | tên người đi cùng | *(trống)* | Hiện thành "… và …" |
-| `pronounHost` | `chúng mình`, `tụi mình`, `em`, `cháu`… | `chúng mình` | Cách cô dâu chú rể tự xưng ở phần xe đưa đón |
+| Tham số | Viết tắt | Giá trị | Mặc định | Tác dụng |
+|---|---|---|---|---|
+| `date` | `d` | `21` hoặc `28` | `21` | `21` = tiệc Vũng Tàu, `28` = lễ Hưng Yên |
+| `guestName` | `gn` | tên khách | *(trống)* | Không truyền thì hiện "Quý khách" |
+| `pronounGuest` | `pg` | `Bạn`, `Anh`, `Chị`, `Cô`, `Chú`… | *(trống)* | Cách xưng hô, chỉ áp dụng bản tiếng Việt. Không truyền thì chỉ hiện tên (không tự thêm "Bạn") — dùng khi `guestName` đã có sẵn xưng hô trong đó, vd `guestName=Chế lớn` |
+| `genderEn` | `ge` | `m` hoặc `f` | *(trống)* | `m` → Mr., `f` → Ms., bỏ trống thì không có danh xưng |
+| `companionName` | `cn` | tên người đi cùng | *(trống)* | Hiện thành "… và …" |
+| `pronounHost` | `ph` | `chúng mình`, `tụi mình`, `em`, `cháu`… | `chúng mình` | Cách cô dâu chú rể tự xưng ở phần xe đưa đón |
 
-Ví dụ:
+Dùng tên viết tắt để link ngắn hơn (khuyên dùng khi tạo link mời hàng loạt); tên đầy đủ vẫn đọc được bình thường, không cần đổi các link cũ đã gửi.
+
+Ví dụ (rút gọn):
+
+```
+?d=21&gn=Lan&pg=Chị&ge=f&cn=anh%20Minh
+```
+
+Ví dụ (tên đầy đủ, tương đương):
 
 ```
 ?date=21&guestName=Lan&pronounGuest=Chị&genderEn=f&companionName=anh%20Minh

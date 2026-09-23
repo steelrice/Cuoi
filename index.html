@@ -903,9 +903,16 @@
   // ===== Hiển thị theo ?date : 21 = buổi tiệc chung vui, 28/trống = lễ thành hôn =====
   // "--" là giá trị placeholder của ô dropdown chưa chọn trong Google Sheet (companionName, pronounHost...)
   // — coi như trống luôn ở đây, khỏi phải lọc riêng từng chỗ dùng.
+  // Tên param rút gọn dùng trong link mời để URL đỡ dài (date=d, guestName=gn...).
+  // Vẫn đọc được tên param đầy đủ nếu link cũ còn dùng dạng cũ.
+  var SHORT_PARAM = {
+    date:'d', guestName:'gn', pronounGuest:'pg', genderEn:'ge',
+    companionName:'cn', pronounHost:'ph'
+  };
   function getUrlParam(k){
     try{
-      var v = new URLSearchParams(window.location.search).get(k) || '';
+      var qs = new URLSearchParams(window.location.search);
+      var v = qs.get(SHORT_PARAM[k] || k) || qs.get(k) || '';
       return /^-+$/.test(v.trim()) ? '' : v;
     }catch(e){ return ''; }
   }
