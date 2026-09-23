@@ -216,6 +216,13 @@
   .stage.compact-more .s-date{ margin-top:var(--sp-3); }
   .stage.compact-more .s-venue{ margin-top:var(--sp-3); }
   .stage.compact-more .s-cta{ margin-top:var(--sp-3); }
+  /* Còn dư nhiều khoảng trống — giãn thêm các dòng thông tin chính (tên khách, tên lễ,
+     ngày, địa điểm) chứ không giãn đều mọi thứ, giữ đúng trọng tâm nội dung quan trọng */
+  .stage.roomy .s-guest{ margin-top:var(--sp-6); }
+  .stage.roomy .s-event{ margin-top:var(--sp-7); }
+  .stage.roomy .s-date{ margin-top:var(--sp-7); }
+  .stage.roomy .s-venue{ margin-top:var(--sp-7); }
+  .stage.roomy .seal-btn{ margin-top:var(--sp-6); }
 
   /* tàn lửa vàng bay lên */
   .petal{
@@ -1313,16 +1320,20 @@
   /* Đo đúng chiều cao thật của khối thông tin trên bìa so với khung nhìn hiện có —
      chỉ siết khoảng cách khi THỰC SỰ tràn (thường chỉ bản tiếng Anh hoặc tên/người đi
      cùng dài), để bản tiếng Việt bình thường luôn được giãn cách thoáng đầy đủ thay vì
-     bị đoán nhầm theo chiều cao màn hình chung chung. */
+     bị đoán nhầm theo chiều cao màn hình chung chung. Ngược lại, nếu màn hình còn dư
+     nhiều khoảng trống (>100px) so với nội dung mặc định, giãn thêm các dòng quan
+     trọng (tên khách, tên lễ, ngày, địa điểm) cho dễ nhìn thay vì để trống phí. */
   function fitCoverStage(){
     var stageEl = document.querySelector('.stage');
     var stageIn = document.querySelector('.stage-in');
     if(!stageEl || !stageIn) return;
-    stageEl.classList.remove('compact', 'compact-more');
+    stageEl.classList.remove('compact', 'compact-more', 'roomy');
     var padY = parseFloat(getComputedStyle(stageEl).paddingTop) || 0;
     var avail = window.innerHeight - padY * 2;
+    var slack = avail - stageIn.scrollHeight;
     if(stageIn.scrollHeight > avail) stageEl.classList.add('compact');
     if(stageIn.scrollHeight > avail) stageEl.classList.add('compact-more');
+    if(!stageEl.classList.contains('compact') && slack > 100) stageEl.classList.add('roomy');
   }
 
   function applyEvent(){
