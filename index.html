@@ -282,6 +282,16 @@
   .solo-label.groom{ top:33%; left:0; text-align:left; max-width:44%; }
   .solo-label.bride{ top:67%; right:0; text-align:right; max-width:52%; }
 
+  /* Trái tim nét vàng — vẽ dần đúng vào khe hở giữa hai khung ảnh, TRƯỚC khi ảnh
+     trượt/mờ đi (không phải sau) — xem mốc pHeartIn/pOut trong update() */
+  .heart-wrap{
+    position:absolute; top:52%; left:47%; transform:translate(-50%,-50%);
+    width:90px; height:90px; opacity:0; pointer-events:none; z-index:3;
+  }
+  .heart-wrap svg{ width:100%; height:100%; overflow:visible; }
+  .heart-wrap path{ fill:none; stroke:var(--gold); stroke-width:5; stroke-linecap:round; stroke-linejoin:round; }
+  .heart-wrap .glow{ filter:drop-shadow(0 2px 3px rgba(0,0,0,.35)); }
+
   /* "Xin giới thiệu" — tiêu đề mở màn, cỡ lớn ngang .s-kicker của bìa, gõ chữ dần */
   .intro-kicker{ position:absolute; top:0; left:50%; transform:translateX(-50%); width:100%; text-align:center; opacity:0; transition:opacity .5s ease, transform .5s ease; will-change:opacity, transform; }
   .intro-kicker.intro-in{ opacity:1; }
@@ -630,6 +640,12 @@
         <div class="solo-label bride" id="labelBride">
           <div class="lk"><span data-vi>Cô dâu</span><span data-en>Bride</span></div>
           <div class="ln">Phương Thảo</div>
+        </div>
+
+        <div class="heart-wrap" id="heartWrap" aria-hidden="true">
+          <svg viewBox="0 0 100 90">
+            <path class="glow" id="heartPath" d="M50,85 C20,62 0,42 0,22 C0,8 13,0 25,0 C36,0 46,7 50,18 C54,7 64,0 75,0 C87,0 100,8 100,22 C100,42 80,62 50,85 Z"/>
+          </svg>
         </div>
       </div>
       <div class="wrap" id="finalStage">
@@ -1006,6 +1022,11 @@
     var frameWrap   = document.getElementById('frameWrap');
     var storyBlock  = finalStage.querySelector('.story');
     var introHint   = document.getElementById('introHint');
+    var heartWrap   = document.getElementById('heartWrap');
+    var heartPath   = document.getElementById('heartPath');
+    var heartLen    = heartPath.getTotalLength();
+    heartPath.style.strokeDasharray = heartLen;
+    heartPath.style.strokeDashoffset = heartLen;
     var fadeEls     = [cardGroom, cardBride, labelGroom, labelBride, kicker, introHint];
 
     var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -1100,9 +1121,17 @@
       var rect = stage.getBoundingClientRect();
       var p = total > 0 ? clamp(-rect.top / total, 0, 1) : 0;
 
-      var pOut = ease(remap(p, 0.1, 0.48));
-      var pImg = ease(remap(p, 0.32, 0.7));
-      var pTxt = ease(remap(p, 0.55, 0.92));
+      /* --- trái tim: vẽ nét TRƯỚC, ngay khi ảnh còn đứng yên tại chỗ, đúng vào khe hở
+         giữa hai khung ảnh — rồi mới đến lượt ảnh trượt/mờ đi (xem heart-preview đã duyệt) */
+      var pHeartIn = ease(remap(p, 0.06, 0.34));
+      var pHeartOut = ease(remap(p, 0.38, 0.48));
+      heartPath.style.strokeDashoffset = String(heartLen * (1 - pHeartIn));
+      heartWrap.style.opacity = String(pHeartIn * (1 - pHeartOut));
+      heartWrap.style.transform = 'translate(-50%, -50%) scale(' + mix(0.85, 1, pHeartIn) + ')';
+
+      var pOut = ease(remap(p, 0.38, 0.66));
+      var pImg = ease(remap(p, 0.66, 0.9));
+      var pTxt = ease(remap(p, 0.86, 1));
 
       kicker.style.opacity = String(1 - pOut);
       kicker.style.transform = 'translate(-50%, ' + mix(0,-16,pOut) + 'px)';
