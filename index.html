@@ -40,7 +40,7 @@
   body.lang-en [data-vi]{display:none;}
   body.lang-en [data-en]{display:inline;}
 
-  #app{ max-width:520px; margin:0 auto; background:var(--cream); box-shadow:var(--shadow); position:relative; overflow:hidden; }
+  #app{ max-width:520px; margin:0 auto; background:var(--cream); box-shadow:var(--shadow); position:relative; }
   .wrap{ max-width:400px; margin:0 auto; padding:0 var(--sp-6); }
 
   /* Nút đổi ngôn ngữ: huy hiệu tròn khắc cờ, chỉ hiện lúc còn ở bìa thiệp
@@ -234,22 +234,14 @@
   #card.show{ opacity:1; transform:none; }
 
   /* ================= XIN GIỚI THIỆU — thay cho HERO: 2 ảnh chéo hội tụ dọc, ghép thành ảnh
-     chung (dùng lại đúng .story-fig/.story bên dưới), ghim 1 màn hình khi cuộn.
-     #app có overflow:hidden nên position:sticky bị vô hiệu hoá — tự quản lý việc ghim
-     bằng position:fixed/absolute qua JS (xem update() bên dưới), mô phỏng lại đúng khung
-     canh giữa max-width:520px + đệm 20px hai bên mà #app/#card vẫn dùng cho mọi section. */
+     chung (dùng lại đúng .story-fig/.story bên dưới), ghim 1 màn hình khi cuộn — dùng
+     position:sticky thật (trình duyệt tự lo phần ghim, không cần JS chạy theo mỗi khung
+     hình cuộn nữa, mượt hơn hẳn so với kiểu position:fixed tự mô phỏng trước đây). */
   .scrollstage{ position:relative; height:380vh; }
   .sticky-view{
-    position:absolute; top:0; left:0; width:100%; height:100vh; min-height:560px;
+    position:sticky; top:0; height:100vh; min-height:560px;
     overflow:hidden;
   }
-  .sticky-view.is-fixed{
-    position:fixed; top:0; left:50%; transform:translateX(-50%);
-    width:100%; max-width:520px; padding:0 20px; box-sizing:border-box; z-index:1;
-  }
-  .sticky-view.is-bottom{ position:absolute; top:auto; bottom:0; left:0; width:100%; }
-  /* wrapper luồng bình thường — kế thừa đúng bề rộng đã trừ đệm của sticky-view (dù đệm 0 hay
-     20px), để .duo-stage/#finalStage định vị theo % không bị tính nhầm trên hộp đệm (padding box) */
   .intro-inner{ position:relative; width:100%; height:100%; }
 
   .duo-stage{ position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:94%; max-width:380px; aspect-ratio:240/410; }
@@ -1052,24 +1044,18 @@
       }, { once: true });
     }
 
-    /* #app có overflow:hidden nên position:sticky không ghim được — tự tính p (0 → 1)
-       từ vị trí thật của #introStage trong tài liệu và scrollY, rồi tự chuyển sticky-view
-       giữa position:fixed (đang ghim, còn trong đoạn cuộn) và position:absolute;bottom:0
-       (đã cuộn hết đoạn, nằm yên ở đáy #introStage, trôi lên cùng trang như bình thường) —
-       hai trạng thái này khớp pixel với nhau đúng tại thời điểm chuyển nên không bị giật. */
+    /* .sticky-view ghim bằng position:sticky thật (CSS/trình duyệt tự lo, không cần JS ở
+       đây nữa) — JS chỉ còn tính tiến độ cuộn p (0 → 1) trong đoạn ghim để lái hiệu ứng
+       mờ dần/hội tụ/ghép ảnh theo từng khung hình. */
     var ticking = false;
     function update(){
       ticking = false;
+      if(!introPlayed) return;
+
       var vh = window.innerHeight;
       var total = stage.offsetHeight - vh;
-      var stageDocTop = stage.getBoundingClientRect().top + window.scrollY;
-      var raw = total > 0 ? (window.scrollY - stageDocTop) / total : 0;
-      var p = clamp(raw, 0, 1);
-
-      view.classList.toggle('is-fixed', raw < 1);
-      view.classList.toggle('is-bottom', raw >= 1);
-
-      if(!introPlayed) return;
+      var rect = stage.getBoundingClientRect();
+      var p = total > 0 ? clamp(-rect.top / total, 0, 1) : 0;
 
       var pOut = ease(remap(p, 0.1, 0.48));
       var pImg = ease(remap(p, 0.32, 0.7));
@@ -1104,7 +1090,6 @@
       requestAnimationFrame(update);
     }
 
-    requestUpdate();
     window.addEventListener('scroll', requestUpdate, { passive: true });
     window.addEventListener('resize', requestUpdate);
   })();
