@@ -391,6 +391,9 @@
   .mag-count b{ font-family:var(--serif); font-weight:400; font-size:26px; color:var(--red-deep); }
   .mag-count span{ font-size:11.5px; letter-spacing:.12em; color:var(--ink-soft); }
   .gallery-hint{ font-size:11.5px; letter-spacing:.04em; color:var(--ink-soft); margin-top:var(--sp-4); opacity:.75; }
+  .band-red .mag-count b{ color:var(--gold); }
+  .band-red .mag-count span{ color:var(--cream-dim); }
+  .band-red .gallery-hint{ color:var(--cream-dim); }
 
   #lightbox{ position:fixed; inset:0; background:rgba(12,2,4,.95); z-index:900; display:none; align-items:center; justify-content:center; padding:var(--sp-6); touch-action:none; overscroll-behavior:contain; }
   #lightbox.show{ display:flex; }
@@ -410,7 +413,7 @@
   .loc-body{ padding:var(--sp-5) var(--sp-5) var(--sp-6); text-align:center; }
   .note-box{ margin-top:var(--sp-6); text-align:left; display:flex; gap:var(--sp-3); align-items:flex-start; background:rgba(207,159,63,.12); border:1px solid rgba(207,159,63,.4); border-radius:8px; padding:var(--sp-4) var(--sp-5); }
   .note-box svg{ width:20px; height:20px; flex:none; margin-top:2px; color:var(--gold); }
-  .note-box p{ font-size:13px; line-height:1.6; color:var(--cream-dim); }
+  .note-box p{ font-size:13px; line-height:1.6; color:var(--ink-soft); }
   .loc-name{ font-family:var(--serif); font-weight:400; font-size:21px; color:var(--ink); }
   .loc-addr{ font-weight:400; font-size:13.5px; color:var(--ink-soft); margin-top:var(--sp-2); line-height:1.6; }
   .loc-map{ display:block; margin-top:var(--sp-5); border:1px solid rgba(207,159,63,.35); border-radius:2px; overflow:hidden; }
@@ -702,7 +705,7 @@
   </section>
 
   <!-- ============ LOCATION ============ -->
-  <section class="band-red">
+  <section>
     <div class="wrap center">
       <h2 class="title" id="venueHeading"><span data-vi>Chung vui cùng chúng mình</span><span data-en>Join the celebration</span></h2>
       <div class="loc-card">
@@ -731,7 +734,7 @@
   </section>
 
   <!-- ============ GALLERY ============ -->
-  <section>
+  <section class="band-red">
     <div class="wrap">
       <h2 class="title center" id="galleryHeading"><span data-vi>Vài khoảnh khắc của chúng mình</span><span data-en>A few of our favourite shots</span></h2>
       <div class="mag-rail" id="gallery"></div>
