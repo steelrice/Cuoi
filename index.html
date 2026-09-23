@@ -310,6 +310,9 @@
 
   /* ================= SECTION frame ================= */
   section{ padding:var(--sp-9) 0; position:relative; }
+  /* hai section liền kề cùng nền kem (không có mốc màu để tách) thì bớt khoảng đệm ở giữa,
+     tránh khoảng trắng quá lớn khiến nội dung như bị đứt quãng thay vì nối liền mạch */
+  section:not(.band-red) + section:not(.band-red){ padding-top:var(--sp-5); }
   .kicker{ font-family:var(--script); font-style:italic; font-weight:500; font-size:19px; color:var(--red-mid); margin-bottom:var(--sp-2); }
   h2.title{ font-family:var(--serif); font-weight:400; font-size:27px; color:var(--ink); line-height:1.25; letter-spacing:.005em; }
   .lead{ font-weight:400; font-size:14.5px; line-height:1.7; color:var(--ink-soft); margin-top:var(--sp-3); }
