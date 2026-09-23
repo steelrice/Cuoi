@@ -195,17 +195,24 @@
      mất chữ "With Great Pleasure!" phía trên lẫn nút "Tap to open" phía dưới. Siết
      bớt khoảng cách giữa các dòng khi màn hình thấp thay vì để tràn ra ngoài. */
   @media (max-height: 700px){
-    .s-guest{ margin-top:var(--sp-3); }
-    .s-guest .companion{ margin-top:4px; }
-    .s-join{ margin-top:var(--sp-2); }
-    .s-rule{ margin-top:4px; }
-    .s-event{ margin-top:var(--sp-3); }
+    .s-guest{ margin-top:var(--sp-4); }
+    .s-guest .companion{ margin-top:6px; }
+    .s-join{ margin-top:var(--sp-3); }
+    .s-rule{ margin-top:6px; }
+    .s-event{ margin-top:var(--sp-4); }
     .s-time{ margin-top:var(--sp-2); }
+    .s-date{ margin-top:var(--sp-4); }
+    .s-venue{ margin-top:var(--sp-4); }
+    .s-addr{ margin-top:6px; }
+    .s-cta{ margin-top:var(--sp-4); }
+    .stage .seal-btn{ margin-top:var(--sp-4); }
+  }
+  /* Màn hình quá thấp (≤620px) + tên/người đi cùng dài — mức trên vẫn chưa đủ,
+     siết thêm chút ở 3 khoảng lớn nhất thay vì siết lại toàn bộ. */
+  @media (max-height: 620px){
     .s-date{ margin-top:var(--sp-3); }
     .s-venue{ margin-top:var(--sp-3); }
-    .s-addr{ margin-top:4px; }
     .s-cta{ margin-top:var(--sp-3); }
-    .stage .seal-btn{ margin-top:var(--sp-3); }
   }
 
   /* tàn lửa vàng bay lên */
