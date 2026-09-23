@@ -930,6 +930,13 @@
   var rsvpGuestFull = isEmGuest ? guestNameRaw : guestFull;
   var rsvpGuestPronounOnly = isEmGuest ? guestNameRaw : guestPronounOnly;
 
+  // Bản viết thường xưng hô khách (Chị/Anh/Cô/Chú...) dùng ở giữa câu văn xuôi
+  // (dressLead/storyQuote/giftLead/thanks) — Em/Bạn vẫn chỉ dùng tên, không đổi.
+  var guestPronounMidSentence = (getUrlParam('pronounGuest') || 'bạn').toLowerCase();
+  var guestFullMidSentence = (guestPronounMidSentence + ' ' + guestNameRaw).trim();
+  var rsvpGuestFullLower = isEmGuest ? guestNameRaw : guestFullMidSentence;
+  var rsvpGuestPronounOnlyLower = isEmGuest ? guestNameRaw : guestPronounMidSentence;
+
   var EVENTS = {
     '21': {
       day:'21', maps:'https://maps.app.goo.gl/tdT1LGaSET7pAMx68', shuttle:true,
@@ -939,7 +946,7 @@
            venue:'TẠI SẢNH 2 MERASTIS TOWER', addr:'356 - 358 Trương Công Định, Tam Thắng, TP. Vũng Tàu',
            coverDate:'21 · 11 · 2026 · Vũng Tàu', heroDate:'Thứ Bảy · 21 Tháng 11, 2026 · Vũng Tàu',
            locName:'Nhà hàng Merastis', locAddr:'Sảnh 2 · 356A-358 Trương Công Định<br>TP. Vũng Tàu',
-           thanks:'Cảm ơn ' + rsvpGuestFull + ' đã dành thời gian đọc hết thiệp mời của ' + rsvpHost + '. Hẹn gặp ' + rsvpGuestPronounOnly + ' ngày 21.11.2026 tại Vũng Tàu!',
+           thanks:'Cảm ơn ' + rsvpGuestFullLower + ' đã dành thời gian đọc hết thiệp mời của ' + rsvpHost + '. Hẹn gặp ' + rsvpGuestPronounOnlyLower + ' ngày 21.11.2026 tại Vũng Tàu!',
            credit:'21 · 11 · 2026 — VŨNG TÀU' },
       en:{ title:'OUR CELEBRATION PARTY', time:'To be held at ', hi:'10:30 AM, Saturday',
            lunar:'(Lunar Calendar: October 13th)', yearLunar:'Year of the Fire Horse',
@@ -957,7 +964,7 @@
            venue:'TẠI TƯ GIA NHÀ TRAI', addr:'QL39A, xã Tân Hưng, TP. Hưng Yên',
            coverDate:'28 · 11 · 2026 · Hưng Yên', heroDate:'Thứ Bảy · 28 Tháng 11, 2026 · Hưng Yên',
            locName:'Tư gia nhà trai', locAddr:'QL39A · xã Tân Hưng<br>TP. Hưng Yên',
-           thanks:'Cảm ơn ' + rsvpGuestFull + ' đã dành thời gian đọc hết thiệp mời của ' + rsvpHost + '. Hẹn gặp ' + rsvpGuestPronounOnly + ' ngày 28.11.2026 tại Hưng Yên!',
+           thanks:'Cảm ơn ' + rsvpGuestFullLower + ' đã dành thời gian đọc hết thiệp mời của ' + rsvpHost + '. Hẹn gặp ' + rsvpGuestPronounOnlyLower + ' ngày 28.11.2026 tại Hưng Yên!',
            credit:'28 · 11 · 2026 — HƯNG YÊN' },
       en:{ title:'OUR WEDDING CEREMONY', time:'To be held at ', hi:'9:00 AM, Saturday',
            lunar:'(Lunar Calendar: October 20th)', yearLunar:'Year of the Fire Horse',
@@ -1053,17 +1060,17 @@
      "Coming from HCMC? No need to worry about the drive — we'll arrange a shuttle to Vung Tau for you. Just let us know in the RSVP below!");
   bi('tlDesc1', 'Chụp vài tấm ở photobooth và để lại đôi dòng cảm nghĩ cho ' + rsvpHost + ' nhé', 'Take a few photos at the booth and leave us a note');
   bi('galleryHeading', 'Vài khoảnh khắc của ' + rsvpHost, 'A few of our favourite shots');
-  bi('dressLead', rsvpHostCap + ' sẽ rất vui nếu ' + rsvpGuestFull + ' diện trang phục hoà cùng tông màu của bữa tiệc', "We'd love it if your outfit echoed the palette of the evening");
+  bi('dressLead', rsvpHostCap + ' sẽ rất vui nếu ' + rsvpGuestFullLower + ' diện trang phục hoà cùng tông màu của bữa tiệc', "We'd love it if your outfit echoed the palette of the evening");
   bi('rsvpLead', rsvpGuestFull + ' hồi âm đôi dòng để ' + rsvpHost + ' chuẩn bị được chu đáo hơn nhé.', 'A short reply helps us prepare for you.');
   bi('rsvpAttendLabel', rsvpGuestPronounOnly + ' sẽ đến tham dự chứ', 'Will you be joining us');
-  bi('rsvpHeading', 'Rất mong được đón tiếp ' + rsvpGuestPronounOnly, 'We hope to see you there');
-  bi('attendYesBtn', rsvpGuestPronounOnly + ' sẽ có mặt', "I'll be there");
-  bi('attendNoBtn', rsvpGuestPronounOnly + ' không đến được', "I can't make it");
-  bi('moveSelfBtn', rsvpGuestPronounOnly + ' tự di chuyển', "I'll make my own way");
-  bi('moveShuttleBtn', rsvpGuestPronounOnly + ' đi xe chung', "I'll ride along");
-  bi('storyQuote', 'Từ những buổi hẹn đầu còn ngại ngùng đến hôm nay, hai đứa đã đi cùng nhau một quãng đường đủ dài để tin rằng đây chính là người mình muốn nắm tay đi hết phần đời còn lại. Chỉ mong ' + guestFull + ' sẽ đến chung vui trong ngày trọng đại và hạnh phúc này.',
+  bi('rsvpHeading', 'Rất mong được đón tiếp ' + rsvpGuestPronounOnlyLower, 'We hope to see you there');
+  bi('attendYesBtn', 'Sẽ có mặt', "I'll be there");
+  bi('attendNoBtn', 'Không đến được', "I can't make it");
+  bi('moveSelfBtn', 'Tự di chuyển', "I'll make my own way");
+  bi('moveShuttleBtn', 'Đi xe chung', "I'll ride along");
+  bi('storyQuote', 'Từ những buổi hẹn đầu còn ngại ngùng đến hôm nay, hai đứa đã đi cùng nhau một quãng đường đủ dài để tin rằng đây chính là người mình muốn nắm tay đi hết phần đời còn lại. Chỉ mong ' + rsvpGuestFullLower + ' sẽ đến chung vui trong ngày trọng đại và hạnh phúc này.',
      "From a shy first date to today, we've come far enough together to know this is the hand we want to hold for the rest of the way. And we hope to have you beside us on the day.");
-  bi('giftLead', 'Sự hiện diện của ' + rsvpGuestFull + ' là món quà ý nghĩa nhất', 'Your presence is the greatest gift of all');
+  bi('giftLead', 'Sự hiện diện của ' + rsvpGuestFullLower + ' là món quà ý nghĩa nhất', 'Your presence is the greatest gift of all');
 
   var card = document.getElementById('card');
   var langSwitch = document.getElementById('langSwitch');
