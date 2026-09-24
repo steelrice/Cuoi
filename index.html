@@ -378,12 +378,13 @@
 
   /* ---------- countdown (không khung, nằm thẳng trên nền kem) ---------- */
   .cd-kicker{ font-family:var(--script); font-style:italic; font-weight:500; font-size:24px; color:#8A5E24; line-height:1.2; }
-  .countdown{ display:flex; justify-content:center; align-items:center; margin-top:var(--sp-6); }
-  .cd-box{ text-align:center; padding:0 var(--sp-4); }
-  .cd-num{ font-family:var(--serif); font-weight:400; font-size:34px; color:var(--red-deep); font-variant-numeric:tabular-nums; line-height:1; }
+  .countdown{ --cd-size:clamp(34px,10vw,40px); display:flex; justify-content:center; align-items:flex-start; margin-top:var(--sp-6); }
+  .cd-box{ flex:1; min-width:0; text-align:center; }
+  .cd-num{ font-family:var(--serif); font-weight:400; font-size:var(--cd-size); color:var(--red-deep); font-variant-numeric:tabular-nums; line-height:1; }
   .cd-label{ font-size:11px; letter-spacing:.1em; margin-top:var(--sp-2); color:var(--ink-soft); text-transform:uppercase; }
-  .cd-dot{ width:3px; height:3px; border-radius:50%; background:var(--gold); align-self:flex-end; margin-bottom:18px; }
-  .cal-split{ width:100%; height:1px; background-image:linear-gradient(to right, transparent, rgba(207,159,63,.55) 50%, transparent); margin:var(--sp-7) 0; }
+  .cd-dot{ flex:none; width:4px; height:4px; margin-left:2px; margin-right:2px; border-radius:50%; background:var(--gold); margin-top:calc(var(--cd-size) / 2 - 2px); }
+  #countdownLead{ margin-top:var(--sp-4); text-wrap:balance; }
+  .cal-split{ width:100%; height:1px; background-image:linear-gradient(to right, transparent, rgba(207,159,63,.55) 50%, transparent); margin:var(--sp-6) 0; }
 
   /* ---------- calendar ---------- */
   .cal-card{ margin-top:var(--sp-6); }
