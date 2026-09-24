@@ -166,7 +166,23 @@
   }
   .cover-kicker{ font-family:var(--script); font-style:italic; font-weight:500; font-size:16px; letter-spacing:.1em; color:var(--gold); }
   .cover-names{ font-family:var(--serif); font-weight:400; font-size:clamp(30px,9vw,42px); color:var(--cream); margin-top:var(--sp-3); line-height:1.25; letter-spacing:.01em; }
-  .cover-date{ margin-top:var(--sp-2); font-size:13px; letter-spacing:.05em; color:var(--cream-dim); }
+  .cover-date{ margin-top:var(--sp-3); font-size:13px; letter-spacing:.05em; color:var(--cream-dim); }
+  /* tên 3 dòng: Hoàng Sơn / & / Phương Thảo — dấu & nghiêng vàng (Cormorant) */
+  .cover-names .cn-row{ display:block; }
+  .cover-names .cn-amp{ font-family:var(--script); font-style:italic; font-weight:500; font-size:1.15em; line-height:.95; color:var(--gold); margin:2px 0 0; }
+  /* chờ tải: từng chữ của tên hiện dần + nhô lên, rồi đường chỉ vàng kẻ ra từ giữa, cuối cùng là ngày.
+     Bắt đầu khi font bìa đã tải (class .names-in, xem waitCoverFonts) để chữ không đổi font giữa chừng */
+  .cover-names .cn-w{ display:inline-block; opacity:0; transform:translateY(12px); }
+  #cover.names-in .cn-w{ animation:nameWord .6s cubic-bezier(.16,1,.3,1) calc(var(--i) * .12s) both; }
+  @keyframes nameWord{ to{ opacity:1; transform:none; } }
+  .cover-rule{ width:140px; height:1px; margin:var(--sp-4) auto 0; background:linear-gradient(90deg, transparent, var(--gold) 30%, var(--gold) 70%, transparent); transform:scaleX(0); }
+  #cover.names-in .cover-rule{ transform:scaleX(1); transition:transform .6s cubic-bezier(.65,0,.35,1) .55s; }
+  .cover-center .cover-date{ opacity:0; }
+  #cover.names-in .cover-date{ opacity:1; transition:opacity .5s ease .85s; }
+  @media (prefers-reduced-motion: reduce){
+    #cover.names-in .cn-w{ animation:none; opacity:1; transform:none; }
+    #cover.names-in .cover-rule, #cover.names-in .cover-date{ transition:none; }
+  }
 
   .seal-btn{
     margin-top:var(--sp-7); width:78px; height:78px; border-radius:50%; border:none; cursor:pointer;
@@ -682,7 +698,12 @@
 
   <!-- lúc rèm còn đóng -->
   <div class="cover-center">
-    <div class="cover-names">Hoàng Sơn &amp; Phương Thảo</div>
+    <div class="cover-names" aria-label="Hoàng Sơn &amp; Phương Thảo">
+      <span class="cn-row"><span class="cn-w" style="--i:0">Hoàng</span> <span class="cn-w" style="--i:1">Sơn</span></span>
+      <span class="cn-row cn-amp"><span class="cn-w" style="--i:2">&amp;</span></span>
+      <span class="cn-row"><span class="cn-w" style="--i:3">Phương</span> <span class="cn-w" style="--i:4">Thảo</span></span>
+    </div>
+    <div class="cover-rule" aria-hidden="true"></div>
     <div class="cover-date" id="coverDate"><span data-vi>21 · 11 · 2026 · Vũng Tàu</span><span data-en>11 · 21 · 2026 · Vung Tau</span></div>
   </div>
 
@@ -1633,11 +1654,13 @@
     });
   }
 
-  /* rèm tự kéo hé: chờ font của bìa (Prata + Cormorant Garamond) tải xong để chữ không nhảy,
-     rồi giữ thêm 0.7s cho khách đọc tên. Mạng chậm thì tối đa 2.5s là mở, không chờ mãi.
+  /* rèm tự kéo hé: chờ font của bìa (Prata + Cormorant Garamond) tải xong rồi mới cho tên hiện
+     dần (class .names-in) để chữ không đổi font giữa chừng; mạng chậm thì tối đa 1s là hiện luôn.
+     Hiệu ứng tên + chỉ vàng + ngày dài ~1.35s, giữ thêm ~0.45s cho khách đọc rồi mới kéo rèm
+     → rèm mở sau khoảng 2s (mạng tốt) đến tối đa 2.8s.
      Không dùng document.fonts.ready vì fonts.css nạp trễ — lúc đầu chưa có font nào để chờ
      nên nó báo xong ngay; kiểm tra thẳng trạng thái 2 font thật. */
-  var curtainParted = false;
+  var curtainParted = false, namesShown = false;
   function partCurtain(){
     if(curtainParted) return;
     curtainParted = true;
@@ -1652,12 +1675,18 @@
     });
     return ok['Prata'] && ok['Cormorant Garamond'];
   }
-  var CURTAIN_HOLD = 700, CURTAIN_MAX = 2500;
-  setTimeout(partCurtain, CURTAIN_MAX);
+  var NAMES_MAX_WAIT = 1000, NAMES_ANIM_HOLD = 1800;
+  function showNames(){
+    if(namesShown) return;
+    namesShown = true;
+    cover.classList.add('names-in');
+    setTimeout(partCurtain, NAMES_ANIM_HOLD);
+  }
+  setTimeout(showNames, NAMES_MAX_WAIT);
   (function waitCoverFonts(){
-    if(curtainParted) return;
-    if(coverFontsLoaded()) setTimeout(partCurtain, CURTAIN_HOLD);
-    else setTimeout(waitCoverFonts, 80);
+    if(namesShown) return;
+    if(coverFontsLoaded()) showNames();
+    else setTimeout(waitCoverFonts, 60);
   })();
 
   /* xem lại thiệp chính (khối trên bìa) sau khi đã mở: nút phong bì góc phải trên + link ở footer */
