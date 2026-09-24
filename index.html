@@ -104,7 +104,16 @@
   /* vòng sáng vàng lan ra (giống nút đổi ngôn ngữ) để khách chú ý — chỉ 4 nhịp rồi dừng,
      khách đã bấm lần nào thì tắt hẳn */
   #reviewToggle.show:not(.seen){ animation:langRing 3.2s ease-out .6s 4; }
-  #reviewToggle svg{ width:46px; height:46px; overflow:visible; }
+  /* thêm cú nghiêng nhẹ qua lại lúc nút mới hiện; 30s sau chưa bấm thì nhắc lại 1 lần (class .nudge) */
+  #reviewToggle.show:not(.seen) svg{ animation:reviewWiggle .8s ease-in-out .6s; }
+  #reviewToggle.nudge:not(.seen){ animation:langRing 3.2s ease-out; }
+  #reviewToggle.nudge:not(.seen) svg{ animation:reviewWiggle .8s ease-in-out; }
+  @keyframes reviewWiggle{
+    0%,100%{ transform:rotate(0); }
+    20%{ transform:rotate(-12deg); } 45%{ transform:rotate(10deg); }
+    65%{ transform:rotate(-6deg); } 85%{ transform:rotate(3deg); }
+  }
+  #reviewToggle svg{ width:46px; height:46px; overflow:visible; transform-origin:50% 50%; }
   #reviewToggle .ic-close{ opacity:0; transition:opacity .25s ease; }
   #reviewToggle .ic-env{ transition:opacity .25s ease; }
   #reviewToggle.is-on .ic-close{ opacity:1; }
@@ -188,6 +197,7 @@
   #cover.review #openBtn{ display:none; }
   @keyframes elegantReveal{ from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:none;} }
 
+  .s-hy{ font-size:28px; line-height:1; color:var(--gold); margin-bottom:var(--sp-3); }
   .s-kicker{ font-family:var(--script); font-style:italic; font-weight:500; font-size:28px; color:var(--gold); }
   .s-guest{ font-family:var(--serif); font-weight:400; font-size:clamp(26px,7.5vw,32px); color:var(--cream); margin-top:var(--sp-5); line-height:1.2; letter-spacing:.01em; }
   .s-guest .gline{ display:block; }
@@ -631,6 +641,7 @@
   <!-- sân khấu — lộ ra sau khi rèm kéo -->
   <div class="stage">
     <div class="stage-in">
+      <div class="s-hy r" style="--d:0s" aria-hidden="true">囍</div>
       <div class="s-kicker r" id="sKicker" style="--d:.05s"><span data-vi>Trân trọng kính mời!</span><span data-en>You are cordially invited!</span></div>
       <div class="s-guest r" id="sGuest" style="--d:.4s"><span data-vi>Quý khách</span><span data-en>Dear guest</span></div>
       <div class="s-join r" id="sJoin" style="--d:.75s"><span data-vi>tới dự</span><span data-en>to attend</span></div>
@@ -1674,6 +1685,7 @@
     setTimeout(function(){
       cover.classList.add('opened');
       reviewToggle.classList.add('show');
+      setTimeout(function(){ reviewToggle.classList.add('nudge'); }, 30000);
     }, 1300);
     // khách vừa có cử chỉ thật (chạm mở thiệp) — mở tiếng nhạc đã phát sẵn, fade âm lượng lên
     revealMusic();
