@@ -103,9 +103,10 @@ audio/
   bg-music.mp3      nhạc nền — placeholder, tự thêm file thật (xem mục "Việc còn tồn")
 images/
   album/            ảnh album — xem mục dưới
-    01.jpg
-    02.jpg
+    01.webp
+    02.webp
     ...
+  footer.webp       ảnh nền mờ ở chân trang
   story.webp        ảnh phần lời tâm sự
   map-vungtau.webp  bản đồ Merastis
   map-hungyen.webp  bản đồ QL39A
@@ -118,20 +119,17 @@ images/
 
 ## Thêm ảnh vào album
 
-Thả ảnh vào `images/album/` và đặt tên theo số thứ tự hai chữ số:
+Hai bước:
 
+1. Chép ảnh vào `images/album/`, đặt tên theo số thứ tự: `06.webp`, `07.webp`...
+2. Thêm tên file vào mảng `ALBUM_FILES` trong `index.html` (tìm dòng `var ALBUM_FILES`), đúng thứ tự muốn hiện:
+
+```js
+var ALBUM_FILES = ['01.webp', '02.webp', '03.webp', '04.webp', '05.webp', '06.webp'];
 ```
-01.jpg  02.jpg  03.jpg  04.jpg ...
-```
 
-Không phải sửa `index.html`. Trang tự dò từ `01` trở đi và dừng khi gặp số không tồn tại.
+Số đếm "01 / 06" tự cập nhật theo độ dài mảng.
 
-Ba điều cần nhớ:
+Vì sao phải khai báo: trước đây trang tự dò `01, 02, 03...` bằng cách tải thử từng ảnh một, nối đuôi nhau, nên mạng chậm là album hiện rất lâu. Khai báo sẵn thì cả album tải song song. (Để mảng rỗng `[]` thì trang quay về cách tự dò cũ.)
 
-- **Tên phải liên tục.** Có `01, 02, 04` thì trang chỉ nhận `01, 02` rồi dừng ở `03`.
-- **Đuôi file** chấp nhận `.jpg`, `.jpeg`, `.png`, `.webp`.
-- **Tối đa 60 ảnh.** Muốn hơn thì sửa `ALBUM_MAX` trong `index.html`.
-
-Về dung lượng: ảnh album hiển thị rộng khoảng 1000px trên iPhone Pro Max, nên ảnh khoảng 1000–1200px bề ngang là đủ nét. Mỗi ảnh nên dưới 150KB. Ảnh chỉ tải khi khách cuộn tới nên nhiều ảnh không làm chậm lúc mở thiệp, nhưng vẫn tốn dung lượng mạng của khách.
-
-Ảnh trang đầu được ưu tiên tải trước, các ảnh còn lại chỉ tải khi cuộn tới.
+Về dung lượng: ảnh album nên rộng khoảng 800–1000px, định dạng WebP, mỗi ảnh dưới ~110KB. Ảnh đầu tải ngay; các ảnh còn lại tải trước ngay sau khi trang tải xong phần đầu, nên lúc khách kéo tới album thì ảnh đã sẵn. Ảnh nào chưa tải xong sẽ hiện khung vàng có vệt sáng và vòng xoay.

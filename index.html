@@ -446,7 +446,17 @@
   /* ---------- gallery: tap chi (magazine) horizontal swipe ---------- */
   .mag-rail{ margin-top:var(--sp-6); margin-left:calc(-1 * var(--sp-6)); margin-right:calc(-1 * var(--sp-6)); display:flex; gap:12px; overflow-x:auto; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch; scrollbar-width:none; padding:0 var(--sp-6); }
   .mag-rail::-webkit-scrollbar{ display:none; }
-  .mag-slide{ flex:0 0 82%; scroll-snap-align:center; }
+  .mag-slide{ flex:0 0 82%; scroll-snap-align:center; position:relative; }
+  .mag-slide img{ transition:opacity .5s ease; }
+  /* ảnh album chưa tải xong: vệt sáng vàng lướt qua + vòng xoay vàng nhỏ */
+  .mag-slide.is-loading{ background:linear-gradient(100deg, rgba(207,159,63,.05) 30%, rgba(207,159,63,.16) 50%, rgba(207,159,63,.05) 70%); background-size:220% 100%; animation:magShimmer 1.5s linear infinite; outline:1px solid rgba(207,159,63,.35); outline-offset:-1px; }
+  .mag-slide.is-loading img{ opacity:0; }
+  .mag-slide.is-loading::after{ content:''; position:absolute; top:50%; left:50%; width:26px; height:26px; margin:-13px 0 0 -13px; border-radius:50%; border:1.5px solid rgba(207,159,63,.25); border-top-color:var(--gold); animation:magSpin .9s linear infinite; }
+  .mag-slide.is-broken img{ opacity:0; }
+  .mag-slide.is-broken{ outline:1px solid rgba(207,159,63,.35); outline-offset:-1px; }
+  @keyframes magShimmer{ from{ background-position:120% 0; } to{ background-position:-120% 0; } }
+  @keyframes magSpin{ to{ transform:rotate(360deg); } }
+  @media (prefers-reduced-motion: reduce){ .mag-slide.is-loading, .mag-slide.is-loading::after{ animation:none; } }
   .mag-slide img{ width:100%; height:min(78vw,420px); object-fit:cover; border-radius:0; border:1px solid var(--gold); box-shadow:0 16px 32px rgba(0,0,0,.16); cursor:zoom-in; display:block; }
   .mag-count{ padding:var(--sp-4) 0 0; display:flex; justify-content:center; align-items:baseline; gap:10px; }
   .mag-count b{ font-family:var(--serif); font-weight:400; font-size:26px; color:var(--red-deep); }
@@ -1623,16 +1633,53 @@
   }
   tick(); setInterval(tick, 1000);
 
-  /* ---------- album: tu do anh trong images/album/ ----------
-     Chi can tha anh vao thu muc theo ten 01.jpg, 02.jpg, 03.jpg...
-     Trang se tu nhan. Ten phai lien tuc, thieu so nao thi dung o do.
-     Doi duoi anh khac thi them vao mang ALBUM_EXT ben duoi. */
+  /* ---------- album ----------
+     ALBUM_FILES: danh sách ảnh trong images/album/, theo đúng thứ tự hiển thị.
+     Thêm ảnh = chép file vào thư mục + thêm tên file vào mảng này.
+     (Để trống mảng thì trang tự dò 01, 02, 03... như cách cũ — chậm hơn.)
+     Ảnh 1 tải ngay; các ảnh còn lại tải trước ngay khi trang tải xong phần đầu,
+     nên lúc khách kéo tới album thì ảnh đã sẵn. Ảnh chưa tải xong có vệt sáng + vòng xoay vàng. */
   var ALBUM_DIR = 'images/album/';
+  var ALBUM_FILES = ['01.webp', '02.webp', '03.webp', '04.webp', '05.webp'];
   var ALBUM_EXT = ['webp','jpg','jpeg','png'];
   var ALBUM_MAX = 60;
 
   var gallery = document.getElementById('gallery');
 
+  var pageLoaded = document.readyState === 'complete';
+  var deferred = [];
+  window.addEventListener('load', function(){
+    pageLoaded = true;
+    deferred.forEach(function(im){ im.src = im.dataset.src; });
+    deferred = [];
+  });
+
+  function addSlide(src, i){
+    var wrap = document.createElement('div');
+    wrap.className = 'mag-slide is-loading';
+    var im = document.createElement('img');
+    im.alt = '';
+    im.decoding = 'async';
+    im.dataset.src = src;
+    im.addEventListener('load', function(){ wrap.classList.remove('is-loading'); });
+    im.addEventListener('error', function(){ wrap.classList.remove('is-loading'); wrap.classList.add('is-broken'); });
+    wrap.appendChild(im);
+    gallery.appendChild(wrap);
+    if(i === 1 || pageLoaded) im.src = src;
+    else deferred.push(im);
+  }
+
+  function setTotal(count){
+    var magTotEl = document.getElementById('magTot');
+    if(magTotEl) magTotEl.textContent = String(count).padStart(2,'0');
+  }
+
+  function hideAlbum(){
+    var sec = gallery.closest('section');
+    if(sec) sec.style.display = 'none';
+  }
+
+  /* cách cũ (khi ALBUM_FILES rỗng): dò lần lượt 01, 02... bằng ảnh thật */
   function tryLoad(src){
     return new Promise(function(resolve){
       var im = new Image();
@@ -1641,7 +1688,6 @@
       im.src = src;
     });
   }
-
   async function findImage(n){
     var pad = String(n).padStart(2,'0');
     for(var e = 0; e < ALBUM_EXT.length; e++){
@@ -1651,32 +1697,21 @@
     return null;
   }
 
-  function addSlide(src, i){
-    var wrap = document.createElement('div');
-    wrap.className = 'mag-slide';
-    var im = document.createElement('img');
-    im.src = src;
-    im.alt = '';
-    im.decoding = 'async';
-    if(i > 1) im.loading = 'lazy';
-    wrap.appendChild(im);
-    gallery.appendChild(wrap);
-  }
-
   async function buildAlbum(){
-    var magTotEl = document.getElementById('magTot');
+    if(ALBUM_FILES.length){
+      ALBUM_FILES.forEach(function(f, i){ addSlide(ALBUM_DIR + f, i + 1); });
+      setTotal(ALBUM_FILES.length);
+      return;
+    }
     var count = 0;
     for(var n = 1; n <= ALBUM_MAX; n++){
       var src = await findImage(n);
       if(!src) break;
       count++;
       addSlide(src, count);
-      if(magTotEl) magTotEl.textContent = String(count).padStart(2,'0');
+      setTotal(count);
     }
-    if(count === 0){
-      var sec = gallery.closest('section');
-      if(sec) sec.style.display = 'none';
-    }
+    if(count === 0) hideAlbum();
   }
   buildAlbum();
 
@@ -1703,7 +1738,7 @@
     lightboxImg.classList.add(step > 0 ? 'slide-l' : 'slide-r');
     setTimeout(function(){
       lbIdx = n;
-      lightboxImg.src = lbImgs[lbIdx].src;
+      lightboxImg.src = lbImgs[lbIdx].src || lbImgs[lbIdx].dataset.src;
       lightboxImg.alt = lbImgs[lbIdx].alt || '';
       lbMeta();
       lightboxImg.classList.remove('slide-l','slide-r');
@@ -1719,7 +1754,7 @@
   function lbOpen(i){
     lbIdx = i;
     lightboxImg.classList.remove('slide-l','slide-r');
-    lightboxImg.src = lbImgs[i].src;
+    lightboxImg.src = lbImgs[i].src || lbImgs[i].dataset.src;
     lightboxImg.alt = lbImgs[i].alt || '';
     lbMeta();
     lightbox.classList.add('show');
