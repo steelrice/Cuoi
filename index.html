@@ -373,6 +373,7 @@
   .band-red .lead{ color:var(--cream-dim); }
 
   /* ---------- countdown (không khung, nằm thẳng trên nền kem) ---------- */
+  .cd-kicker{ font-family:var(--script); font-style:italic; font-weight:500; font-size:24px; color:#8A5E24; line-height:1.2; }
   .countdown{ display:flex; justify-content:center; align-items:center; margin-top:var(--sp-6); }
   .cd-box{ text-align:center; padding:0 var(--sp-4); }
   .cd-num{ font-family:var(--serif); font-weight:400; font-size:34px; color:var(--red-deep); font-variant-numeric:tabular-nums; line-height:1; }
@@ -382,6 +383,8 @@
 
   /* ---------- calendar ---------- */
   .cal-card{ margin-top:var(--sp-6); }
+  .cd-kicker + .cal-card{ margin-top:0; }
+  .cd-kicker + .cal-card .countdown{ margin-top:var(--sp-3); }
   .cal-month{ font-family:var(--script); font-style:italic; font-weight:600; font-size:22px; color:var(--red-mid); text-align:center; margin-bottom:var(--sp-4); }
   .cal-grid{ display:grid; grid-template-columns:repeat(7,1fr); gap:6px; text-align:center; }
   .cal-grid .dow{ font-size:10.5px; letter-spacing:.04em; color:var(--ink-soft); font-weight:500; padding-bottom:4px; }
@@ -715,7 +718,7 @@
   <!-- ============ COUNTDOWN + CALENDAR (gộp chung 1 card) ============ -->
   <section>
     <div class="wrap center">
-      <h2 class="title"><span data-vi>Chỉ còn</span><span data-en>Counting down</span></h2>
+      <div class="cd-kicker"><span data-vi>Chỉ còn</span><span data-en>Counting down</span></div>
       <div class="cal-card">
         <div class="countdown">
           <div class="cd-box"><div class="cd-num" id="cd-d">00</div><div class="cd-label"><span data-vi>ngày</span><span data-en>days</span></div></div>
