@@ -501,6 +501,9 @@
   .rsvp-card{ background:var(--cream); border:1px solid rgba(76,12,23,.14); border-radius:6px; padding:var(--sp-5) var(--sp-5) var(--sp-6); box-shadow:var(--shadow); }
   .band-red .rsvp-card h2.title{ color:var(--ink); }
   .band-red .rsvp-card .lead{ color:var(--ink-soft); }
+  .band-red .rsvp-frame{ background:var(--cream); }
+  .band-red .rsvp-frame h2.title{ color:var(--ink); }
+  .band-red .rsvp-frame .lead{ color:var(--ink-soft); }
   .band-red .rsvp-card .kicker{ color:var(--red-mid); }
   .rsvp-form{ margin-top:var(--sp-6); display:flex; flex-direction:column; gap:var(--sp-6); }
   .field label{ display:block; font-weight:500; font-size:14px; letter-spacing:.01em; color:var(--ink-soft); opacity:.8; margin-bottom:var(--sp-3); }
@@ -910,10 +913,11 @@
     </div>
   </section>
 
-  <!-- ============ GIFT (mang thiết kế band-red + card trắng của RSVP cũ) ============ -->
+  <!-- ============ GIFT (mang khung góc bo giống RSVP, nền kem nổi trên band-red) ============ -->
   <section class="band-red">
     <div class="wrap">
-      <div class="rsvp-card">
+      <div class="rsvp-frame">
+        <span class="rsvp-corner corner-tl" aria-hidden="true"></span><span class="rsvp-corner corner-tr" aria-hidden="true"></span><span class="rsvp-corner corner-bl" aria-hidden="true"></span><span class="rsvp-corner corner-br" aria-hidden="true"></span>
         <div class="center">
           <h2 class="title"><span data-vi>Gửi lời chúc phúc</span><span data-en>Wishes &amp; gifts</span></h2>
           <p class="lead"><span id="giftLead"><span data-vi>Sự hiện diện của bạn là món quà ý nghĩa nhất</span><span data-en>Your presence is the greatest gift of all</span></span><i class="heart" aria-hidden="true"></i></p>
