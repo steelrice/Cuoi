@@ -195,6 +195,8 @@
   #cover.review .stage{ opacity:1; }
   #cover.review .stage .r{ opacity:1; animation:none; }
   #cover.review #openBtn{ display:none; }
+  /* không còn nút mở thiệp → dư chỗ; phóng to đều cả khối cho cân (hệ số tính trong fitReviewStage) */
+  #cover.review .stage-in{ transform:scale(var(--review-scale,1)); }
   @keyframes elegantReveal{ from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:none;} }
 
   .s-hy{ font-size:28px; line-height:1; color:var(--gold); margin-bottom:var(--sp-3); }
@@ -1656,8 +1658,20 @@
 
   /* xem lại thiệp chính (khối trên bìa) sau khi đã mở: nút phong bì góc phải trên + link ở footer */
   var reviewToggle = document.getElementById('reviewToggle');
+  // phóng to khối thiệp khi xem lại: tối đa 1.2 lần, chừa chỗ cho 2 nút tròn ở góc trên
+  // (~70px mỗi đầu) và không vượt 92% bề ngang màn hình
+  function fitReviewStage(){
+    var stageIn = document.querySelector('.stage-in');
+    if(!stageIn || !cover.classList.contains('review')) return;
+    var availH = window.innerHeight - 140;
+    var availW = Math.min(window.innerWidth, 520) * 0.92;
+    var k = Math.min(1.2, availH / stageIn.offsetHeight, availW / stageIn.offsetWidth);
+    stageIn.style.setProperty('--review-scale', Math.max(1, k).toFixed(3));
+  }
+  window.addEventListener('resize', fitReviewStage);
   function setReview(on){
     cover.classList.toggle('review', on);
+    fitReviewStage();
     document.documentElement.classList.toggle('no-scroll', on);
     reviewToggle.classList.toggle('is-on', on);
     reviewToggle.classList.add('seen');
