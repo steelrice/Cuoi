@@ -1083,6 +1083,10 @@
 </div>
 
 <script>
+  // tải lại trang (reload) luôn bắt đầu từ đầu: tắt việc trình duyệt tự nhớ vị trí cuộn cũ.
+  // Quay lại tab/app hay bấm Back (bfcache) không chạy lại script này nên vẫn giữ chỗ đang xem.
+  if('scrollRestoration' in history) history.scrollRestoration = 'manual';
+  window.scrollTo(0, 0);
 (function(){
   var cover = document.getElementById('cover');
   for(var i=0;i<14;i++){
@@ -1721,6 +1725,7 @@
   function openInvite(){
     if(cover.classList.contains('open')) return;
     cover.classList.add('open');
+    window.scrollTo(0, 0);
     document.body.classList.remove('locked');
     // khoá đổi ngôn ngữ ngay từ lúc chạm mở thiệp — chỉ đổi được lúc còn ở bìa
     langSwitch.classList.remove('show');
