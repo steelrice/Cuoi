@@ -422,7 +422,7 @@
   /* ---------- dress code (gộp cuối section Chung vui cùng) ---------- */
   .dress-inline{ margin-top:var(--sp-8); }
   .dress-swatches{ display:flex; justify-content:center; gap:var(--sp-3); margin-top:var(--sp-6); flex-wrap:wrap; }
-  .swatch{ width:44px; height:44px; border-radius:50%; box-shadow:0 3px 8px rgba(0,0,0,.15), inset 0 0 0 3px rgba(253,248,239,.9); }
+  .swatch{ width:44px; height:44px; border-radius:50%; box-shadow:inset 0 0 0 3px rgba(253,248,239,.9); }
 
   /* ---------- timeline ---------- */
   .tl{ margin-top:var(--sp-3); }
@@ -441,7 +441,7 @@
   .mag-rail{ margin-top:var(--sp-6); margin-left:calc(-1 * var(--sp-6)); margin-right:calc(-1 * var(--sp-6)); display:flex; gap:12px; overflow-x:auto; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch; scrollbar-width:none; padding:0 var(--sp-6); }
   .mag-rail::-webkit-scrollbar{ display:none; }
   .mag-slide{ flex:0 0 82%; scroll-snap-align:center; }
-  .mag-slide img{ width:100%; height:min(78vw,420px); object-fit:cover; border-radius:5px; box-shadow:0 16px 32px rgba(0,0,0,.16); cursor:zoom-in; display:block; }
+  .mag-slide img{ width:100%; height:min(78vw,420px); object-fit:cover; border-radius:0; border:1px solid var(--gold); box-shadow:0 16px 32px rgba(0,0,0,.16); cursor:zoom-in; display:block; }
   .mag-count{ padding:var(--sp-4) var(--sp-6) 0; display:flex; align-items:baseline; gap:10px; }
   .mag-count b{ font-family:var(--serif); font-weight:400; font-size:26px; color:var(--red-deep); }
   .mag-count span{ font-size:11.5px; letter-spacing:.12em; color:var(--ink-soft); }

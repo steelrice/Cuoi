@@ -106,7 +106,6 @@ images/
     01.jpg
     02.jpg
     ...
-  hero.jpg          ảnh trang đầu
   story.webp        ảnh phần lời tâm sự
   map-vungtau.webp  bản đồ Merastis
   map-hungyen.webp  bản đồ QL39A
