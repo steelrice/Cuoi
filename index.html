@@ -428,7 +428,7 @@
   .dress-inline{ margin-top:var(--sp-8); }
   .dress-inline .lead{ text-wrap:balance; }
   .dress-swatches{ display:flex; justify-content:center; gap:var(--sp-3); margin-top:var(--sp-6); flex-wrap:wrap; }
-  .swatch{ width:44px; height:44px; border-radius:50%; box-shadow:inset 0 0 0 3px rgba(253,248,239,.9); }
+  .swatch{ width:44px; height:44px; border-radius:50%; padding:3px; background-clip:content-box; border:1px solid rgba(169,127,46,.45); }
 
   /* ---------- timeline ---------- */
   .tl{ margin-top:var(--sp-3); }
@@ -565,8 +565,8 @@
   .gift-qr{ width:100%; height:auto; display:block; border-radius:2px; }
   .gift-dl{ display:flex; align-items:center; justify-content:center; gap:6px; width:100%; margin-top:calc(-1 * var(--sp-3)); background:transparent; border:none; padding:0; font-family:var(--sans); font-size:12px; letter-spacing:.03em; color:var(--gold-line); text-decoration:underline; text-underline-offset:3px; text-decoration-thickness:.5px; }
   .gift-dl svg{ width:13px; height:13px; flex:none; }
-  .cal-add{ display:inline-flex; align-items:center; justify-content:center; gap:6px; font-family:var(--sans); font-size:12px; letter-spacing:.03em; color:var(--gold-line); text-decoration:underline; text-underline-offset:3px; text-decoration-thickness:.5px; }
-  .cal-add svg{ width:14px; height:14px; flex:none; }
+  .cal-add{ display:inline-flex; align-items:center; justify-content:center; gap:6px; font-family:var(--sans); font-size:13.5px; letter-spacing:.03em; color:var(--gold-line); text-decoration:underline; text-underline-offset:4px; text-decoration-thickness:.5px; }
+  .cal-add svg{ width:16px; height:16px; flex:none; }
   .cal-add-wrap{ text-align:center; margin-top:var(--sp-5); }
   .rsvp-cal[hidden]{ display:none; }
   .rsvp-cal{ text-align:center; margin-top:calc(-1 * var(--sp-4)); }
@@ -837,8 +837,8 @@
             <div class="parents-divider" aria-hidden="true"><span></span><i></i><span></span></div>
           </div>
           <div class="loc-addr" id="locAddr">
-            <span data-vi><b>Địa chỉ:</b> Sảnh 2 · 356A-358 Trương Công Định<br>TP. Vũng Tàu</span>
-            <span data-en><b>Address:</b> Hall 2 · 356A-358 Truong Cong Dinh St.<br>Vung Tau City</span>
+            <span data-vi><b>Địa chỉ:</b> Sảnh 2 · 356 - 358 Trương Công Định<br>TP. Vũng Tàu</span>
+            <span data-en><b>Address:</b> Hall 2 · 356 - 358 Truong Cong Dinh St.<br>Vung Tau City</span>
           </div>
           <a class="loc-map" id="locMapLink" href="#" target="_blank" rel="noopener">
             <img id="mapVT" src="images/map-vungtau.webp" alt="Bản đồ vị trí Nhà hàng Merastis, Vũng Tàu" loading="lazy">
@@ -860,11 +860,11 @@
         <h2 class="title"><span data-vi>Trang phục</span><span data-en>Dress code</span></h2>
         <p class="lead" id="dressLead"><span data-vi>Chúng mình sẽ rất vui nếu bạn diện trang phục hoà cùng tông màu của bữa tiệc</span><span data-en>We'd love it if your outfit echoed the palette of the evening</span></p>
         <div class="dress-swatches">
-          <div class="swatch" style="background:#7a1524;"></div>
-          <div class="swatch" style="background:#cf9f3f;"></div>
-          <div class="swatch" style="background:#f4e6d3;"></div>
-          <div class="swatch" style="background:#2a1414;"></div>
-          <div class="swatch" style="background:#a5566b;"></div>
+          <div class="swatch" style="background-color:#7a1524;"></div>
+          <div class="swatch" style="background-color:#cf9f3f;"></div>
+          <div class="swatch" style="background-color:#f4e6d3;"></div>
+          <div class="swatch" style="background-color:#2a1414;"></div>
+          <div class="swatch" style="background-color:#a5566b;"></div>
         </div>
       </div>
     </div>
@@ -1316,14 +1316,14 @@
            lunar:'Tức ngày 13 tháng 10', yearLunar:'Năm Bính Ngọ',
            venue:'TẠI SẢNH 2 MERASTIS TOWER', addr:'356 - 358 Trương Công Định, Tam Thắng, TP. Vũng Tàu',
            coverDate:'21 · 11 · 2026 · Vũng Tàu', heroDate:'Thứ Bảy · 21 Tháng 11, 2026 · Vũng Tàu',
-           locKicker:'Nhà hàng', locBig:'Merastis', locAddr:'Sảnh 2 · <span class="nowrap">356A-358</span> Trương Công Định<br>TP. Vũng Tàu',
+           locKicker:'Nhà hàng', locBig:'Merastis', locAddr:'Sảnh 2 · <span class="nowrap">356 - 358</span> Trương Công Định<br>TP. Vũng Tàu',
            thanks:'Cảm ơn ' + rsvpGuestFullLower + ' đã dành thời gian đọc hết thiệp mời của ' + rsvpHost + '. Hẹn gặp ' + rsvpGuestPronounOnlyLower + ' ngày 21.11.2026 tại Vũng Tàu!',
            credit:'21 · 11 · 2026 — VŨNG TÀU' },
       en:{ title:'OUR CELEBRATION PARTY', time:'To be held at ', hi:'10:30 AM, Saturday',
            lunar:'(Lunar Calendar: October 13th)', yearLunar:'Year of the Fire Horse',
            venue:'AT HALL 2, MERASTIS TOWER', addr:'356 - 358 Trương Công Định Street, Tam Thắng Ward, Vũng Tàu City',
            coverDate:'11 · 21 · 2026 · Vung Tau', heroDate:'Saturday · November 21, 2026 · Vung Tau',
-           locKicker:'Restaurant', locBig:'Merastis', locAddr:'Hall 2 · <span class="nowrap">356A-358</span> Truong Cong Dinh St.<br>Vung Tau City',
+           locKicker:'Restaurant', locBig:'Merastis', locAddr:'Hall 2 · <span class="nowrap">356 - 358</span> Truong Cong Dinh St.<br>Vung Tau City',
            thanks:'Thank you for taking the time to read through our invitation. See you on 11.21.2026 in Vung Tau!',
            credit:'11 · 21 · 2026 — VUNG TAU' }
     },
