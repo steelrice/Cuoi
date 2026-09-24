@@ -1358,7 +1358,8 @@
     var out = '<span class="gline">' + mainLine + '</span>';
     /* người đi cùng xuống dòng riêng, nhẹ hơn — để không kéo cỡ chữ tên khách chính
        bị co nhỏ theo chỉ vì dòng cộng lại quá dài */
-    if(companion) out += '<span class="companion">' + ((lang === 'en') ? 'and ' : 'và ') + companion + '</span>';
+    /* bản tiếng Anh không hiện người đi cùng: giá trị cn là tiếng Việt (gia đình, người thương...), không dịch được */
+    if(companion && lang !== 'en') out += '<span class="companion">và ' + companion + '</span>';
     return out;
   }
 
