@@ -803,7 +803,7 @@
                 <div class="tl-dots"></div>
                 <div class="tl-time" id="tlTime3">11:30</div>
               </div>
-              <div class="tl-desc"><span data-vi>Cùng nâng ly và ở lại dùng bữa trưa thân mật với hai bên gia đình</span><span data-en>Raise a glass and stay for lunch with both families</span></div>
+              <div class="tl-desc" id="tlDesc3"><span data-vi>Cùng nâng ly và ở lại dùng bữa trưa thân mật với hai bên gia đình</span><span data-en>Raise a glass and stay for lunch with both families</span></div>
             </div>
           </div>
         </div>
@@ -1448,6 +1448,8 @@
     } else {
       bi('tlTitle2', 'Lễ thành hôn', 'Wedding ceremony');
       bi('tlDesc2',  'Nghi lễ chính của ngày hôm ấy, cũng là lúc hai đứa nên duyên vợ chồng', 'The heart of the day — the moment we become husband and wife');
+      // ngày 28 khai tiệc 9:30 sáng — chưa phải bữa trưa
+      bi('tlDesc3',  'Cùng nâng ly và ở lại dùng bữa tiệc thân mật với hai bên gia đình', 'Raise a glass and stay for a warm meal with both families');
     }
 
     var sDay = document.getElementById('sDay');
@@ -1491,7 +1493,11 @@
   bi('countdownLead', 'đến giây phút ' + rsvpHost + ' chính thức về chung một nhà', 'until we officially become family');
   bi('noteBoxText', 'Khách ở TP.HCM đừng lo đường xa nhé — cô dâu chú rể sẽ sắp xe đưa đón về Vũng Tàu. Chỉ cần báo cho cô dâu chú rể trong lời nhắn RSVP bên dưới!',
      "Coming from HCMC? No need to worry about the drive — we'll arrange a shuttle to Vung Tau for you. Just let us know in the RSVP below!");
-  bi('tlDesc1', 'Chụp vài tấm ở photobooth và để lại đôi dòng cảm nghĩ cho cô dâu chú rể nhé', 'Take a few photos at the booth and leave us a note');
+  if(EV.day === '28'){
+    bi('tlDesc1', 'Cùng lưu lại vài khoảnh khắc kỷ niệm và gửi lời chúc đến cô dâu chú rể nhé', 'Capture a few memories with us and share your wishes for the couple');
+  } else {
+    bi('tlDesc1', 'Chụp vài tấm ở photobooth và để lại đôi dòng cảm nghĩ cho cô dâu chú rể nhé', 'Take a few photos at the booth and leave us a note');
+  }
   bi('dressLead', rsvpHostCap + ' sẽ rất vui nếu ' + rsvpGuestFullLower + ' diện trang phục hoà cùng tông màu của bữa tiệc', "We'd love it if your outfit echoed the palette of the evening");
   bi('rsvpLead', rsvpGuestFull + ' hồi âm đôi dòng để ' + rsvpHost + ' chuẩn bị được chu đáo hơn nhé.', 'A short reply helps us prepare for you.');
   bi('rsvpAttendLabel', rsvpGuestPronounOnly + ' sẽ đến tham dự chứ', 'Will you be joining us');
