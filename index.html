@@ -758,9 +758,12 @@
   .gift-box{ display:grid; grid-template-rows:0fr; transition:grid-template-rows .45s ease; }
   .gift-box-in{ overflow:hidden; min-height:0; }
   .gift-box.open{ grid-template-rows:1fr; }
-  .gift-tabs{ margin-top:var(--sp-6); display:flex; gap:var(--sp-3); }
-  .gift-tabs button{ flex:1; padding:12px 8px; border-radius:2px; border:1px solid rgba(207,159,63,.45); background:transparent; color:var(--ink-soft); font-size:12.5px; letter-spacing:.06em; }
-  .gift-tabs button.active{ background:var(--red-mid); border-color:var(--red-mid); color:var(--cream); }
+  /* chọn QR Chú rể / Cô dâu: chữ Prata, tên đang chọn đậm màu + gạch chân vàng (không dùng khối vuông) */
+  .gift-tabs{ margin-top:var(--sp-6); display:flex; justify-content:center; gap:var(--sp-6); }
+  .gift-tabs button{ position:relative; flex:0 0 auto; padding:6px 2px 8px; border:none; border-radius:0; background:none; cursor:pointer; font-family:var(--serif); font-size:17px; letter-spacing:.02em; color:rgba(42,20,20,.45); transition:color .3s ease; }
+  .gift-tabs button::after{ content:''; position:absolute; left:50%; bottom:0; width:0; height:1px; background:var(--gold-line); transform:translateX(-50%); transition:width .3s ease; }
+  .gift-tabs button.active{ color:var(--red-deep); }
+  .gift-tabs button.active::after{ width:100%; }
   .gift-rail{ margin-top:var(--sp-5); display:flex; overflow-x:auto; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch; scrollbar-width:none; }
   .gift-rail::-webkit-scrollbar{ display:none; }
   .gift-card{ flex:0 0 100%; scroll-snap-align:center; padding:0 2px; }
