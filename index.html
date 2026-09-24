@@ -175,14 +175,14 @@
   .s-time{ font-size:14px; color:var(--cream-dim); margin-top:var(--sp-3); line-height:1.5; }
   .s-time b{ color:var(--cream); font-weight:600; }
 
-  .s-date{ display:flex; align-items:center; justify-content:center; gap:var(--sp-4); width:100%; margin-top:var(--sp-6); }
+  .s-date{ display:flex; align-items:flex-start; justify-content:center; gap:var(--sp-4); width:100%; margin-top:var(--sp-6); }
   .s-date .col{ flex:1; min-width:0; }
   .s-date .cap{ font-size:12px; font-weight:600; letter-spacing:.08em; color:var(--gold); }
   .s-date .hr{ height:1px; background:rgba(207,159,63,.35); margin-top:var(--sp-2); }
   .s-date .sub{ font-size:12px; color:var(--cream-dim); margin-top:var(--sp-2); line-height:1.4; }
-  .s-date .day{ font-family:var(--serif); font-weight:400; font-size:52px; color:var(--cream); line-height:1; }
+  .s-date .day{ font-family:var(--serif); font-weight:400; font-size:52px; color:var(--cream); line-height:1; align-self:center; }
 
-  .s-venue{ font-family:var(--serif); font-weight:400; font-size:17px; color:var(--gold); margin-top:var(--sp-6); }
+  .s-venue{ font-family:var(--serif); font-weight:400; font-size:17px; color:var(--gold); margin-top:var(--sp-6); text-wrap:balance; }
   .s-addr{ font-size:13px; color:var(--cream-dim); margin-top:var(--sp-2); line-height:1.5; }
 
   .s-cta{
@@ -359,6 +359,10 @@
   /* ================= SECTION frame ================= */
   section{ padding:var(--sp-9) 0; position:relative; }
   .kicker{ font-family:var(--script); font-style:italic; font-weight:500; font-size:19px; color:var(--red-mid); margin-bottom:var(--sp-2); }
+  .sec-kicker{ font-family:var(--script); font-style:italic; font-weight:500; font-size:25px; line-height:1.2; color:var(--gold-line); }
+  .band-red .sec-kicker{ color:var(--gold); }
+  .band-red .rsvp-frame .sec-kicker{ color:var(--gold-line); }
+  .sec-kicker + h2.title{ margin-top:var(--sp-3); }
   h2.title{ font-family:var(--serif); font-weight:400; font-size:27px; color:var(--ink); line-height:1.25; letter-spacing:.005em; }
   .lead{ font-weight:400; font-size:14.5px; line-height:1.7; color:var(--ink-soft); margin-top:var(--sp-3); }
   .center{ text-align:center; }
@@ -377,7 +381,7 @@
   .countdown{ display:flex; justify-content:center; align-items:center; margin-top:var(--sp-6); }
   .cd-box{ text-align:center; padding:0 var(--sp-4); }
   .cd-num{ font-family:var(--serif); font-weight:400; font-size:34px; color:var(--red-deep); font-variant-numeric:tabular-nums; line-height:1; }
-  .cd-label{ font-size:10px; letter-spacing:.1em; margin-top:var(--sp-2); color:var(--ink-soft); text-transform:uppercase; }
+  .cd-label{ font-size:11px; letter-spacing:.1em; margin-top:var(--sp-2); color:var(--ink-soft); text-transform:uppercase; }
   .cd-dot{ width:3px; height:3px; border-radius:50%; background:var(--gold); align-self:flex-end; margin-bottom:18px; }
   .cal-split{ width:100%; height:1px; background-image:linear-gradient(to right, transparent, rgba(207,159,63,.55) 50%, transparent); margin:var(--sp-7) 0; }
 
@@ -391,7 +395,7 @@
   .cal-grid .day{ font-family:var(--sans); font-size:13px; color:var(--ink); padding:6px 0; }
   .cal-grid .day.blank{ visibility:hidden; }
   .cal-grid .day.marked{ position:relative; color:var(--cream); font-weight:600; }
-  .cal-grid .day.marked span{ position:absolute; inset:1px; background:var(--red-mid); border-radius:50%; display:flex; align-items:center; justify-content:center; z-index:1; }
+  .cal-grid .day.marked span{ position:absolute; top:50%; left:50%; width:32px; height:32px; transform:translate(-50%,-50%); background:var(--red-mid); border-radius:50%; display:flex; align-items:center; justify-content:center; z-index:1; }
   .cal-grid .day.marked em{ position:relative; z-index:2; font-style:normal; }
 
   /* ---------- story ---------- */
@@ -421,6 +425,7 @@
 
   /* ---------- dress code (gộp cuối section Chung vui cùng) ---------- */
   .dress-inline{ margin-top:var(--sp-8); }
+  .dress-inline .lead{ text-wrap:balance; }
   .dress-swatches{ display:flex; justify-content:center; gap:var(--sp-3); margin-top:var(--sp-6); flex-wrap:wrap; }
   .swatch{ width:44px; height:44px; border-radius:50%; box-shadow:inset 0 0 0 3px rgba(253,248,239,.9); }
 
@@ -442,7 +447,7 @@
   .mag-rail::-webkit-scrollbar{ display:none; }
   .mag-slide{ flex:0 0 82%; scroll-snap-align:center; }
   .mag-slide img{ width:100%; height:min(78vw,420px); object-fit:cover; border-radius:0; border:1px solid var(--gold); box-shadow:0 16px 32px rgba(0,0,0,.16); cursor:zoom-in; display:block; }
-  .mag-count{ padding:var(--sp-4) var(--sp-6) 0; display:flex; align-items:baseline; gap:10px; }
+  .mag-count{ padding:var(--sp-4) 0 0; display:flex; justify-content:center; align-items:baseline; gap:10px; }
   .mag-count b{ font-family:var(--serif); font-weight:400; font-size:26px; color:var(--red-deep); }
   .mag-count span{ font-size:11.5px; letter-spacing:.12em; color:var(--ink-soft); }
   .gallery-hint{ font-size:11.5px; letter-spacing:.04em; color:var(--ink-soft); margin-top:var(--sp-4); opacity:.75; }
@@ -469,7 +474,7 @@
   .note-box{ margin-top:var(--sp-6); text-align:left; display:flex; gap:var(--sp-3); align-items:flex-start; background:rgba(207,159,63,.12); border:1px solid rgba(207,159,63,.4); border-radius:8px; padding:var(--sp-4) var(--sp-5); }
   .note-box svg{ width:20px; height:20px; flex:none; margin-top:2px; color:var(--gold); }
   .note-box p{ font-size:14.5px; line-height:1.6; color:var(--ink-soft); }
-  .loc-head{ display:flex; flex-direction:column; align-items:center; gap:4px; }
+  .loc-head{ display:flex; flex-direction:column; align-items:center; gap:var(--sp-3); }
   .loc-kicker{ font-family:var(--script); font-style:italic; font-weight:500; font-size:25px; color:var(--gold-line); }
   .loc-big{ font-family:var(--serif); font-weight:400; font-size:clamp(24px,7vw,32px); line-height:1.1; color:var(--red-deep); text-wrap:balance; }
 
@@ -484,7 +489,8 @@
   .loc-parents .parents-divider-top{ margin-top:0; margin-bottom:var(--sp-4); }
   .loc-parents .parents-divider span{ flex:1; height:1px; background:rgba(207,159,63,.4); }
   .loc-parents .parents-divider i{ width:6px; height:6px; background:var(--gold); transform:rotate(45deg); flex:none; }
-  .loc-addr{ font-weight:400; font-size:14.5px; color:var(--ink-soft); margin-top:var(--sp-5); line-height:1.65; }
+  .loc-addr{ font-weight:400; font-size:14.5px; color:var(--ink-soft); margin-top:var(--sp-5); line-height:1.65; text-wrap:balance; }
+  .nowrap{ white-space:nowrap; }
   .loc-addr b{ font-weight:500; color:var(--ink); }
   .loc-map{ display:block; margin-top:var(--sp-5); border:1px solid rgba(207,159,63,.35); border-radius:2px; overflow:hidden; }
   .loc-map img{ width:100%; height:auto; display:block; }
@@ -839,7 +845,8 @@
         <p id="noteBoxText"><span data-vi>Khách ở TP.HCM đừng lo đường xa nhé — cô dâu chú rể sẽ sắp xe đưa đón về Vũng Tàu. Chỉ cần báo cho cô dâu chú rể trong lời nhắn RSVP bên dưới!</span><span data-en>Coming from HCMC? No need to worry about the drive — we'll arrange a shuttle to Vung Tau for you. Just let us know in the RSVP below!</span></p>
       </div>
       <div class="dress-inline">
-        <h2 class="title"><span data-vi>Gợi ý trang phục</span><span data-en>Dress code</span></h2>
+        <div class="sec-kicker"><span data-vi>Gợi ý</span><span data-en>A gentle note</span></div>
+        <h2 class="title"><span data-vi>Trang phục</span><span data-en>Dress code</span></h2>
         <p class="lead" id="dressLead"><span data-vi>Chúng mình sẽ rất vui nếu bạn diện trang phục hoà cùng tông màu của bữa tiệc</span><span data-en>We'd love it if your outfit echoed the palette of the evening</span></p>
         <div class="dress-swatches">
           <div class="swatch" style="background:#7a1524;"></div>
@@ -855,7 +862,8 @@
   <!-- ============ GALLERY ============ -->
   <section class="band-red">
     <div class="wrap">
-      <h2 class="title center" id="galleryHeading"><span data-vi>Vài khoảnh khắc của chúng mình</span><span data-en>A few of our favourite shots</span></h2>
+      <div class="sec-kicker center"><span data-vi>Lưu giữ</span><span data-en>Treasured</span></div>
+      <h2 class="title center" id="galleryHeading"><span data-vi>Khoảnh khắc</span><span data-en>Moments</span></h2>
       <div class="mag-rail" id="gallery"></div>
       <div class="mag-count"><b id="magCur">01</b><span>/ <span id="magTot">06</span></span></div>
       <p class="gallery-hint center"><span data-vi>vuốt ngang để xem thêm · chạm để phóng to</span><span data-en>swipe for more · tap to zoom</span></p>
@@ -929,7 +937,8 @@
       <div class="rsvp-frame">
         <span class="rsvp-corner corner-tl" aria-hidden="true"></span><span class="rsvp-corner corner-tr" aria-hidden="true"></span><span class="rsvp-corner corner-bl" aria-hidden="true"></span><span class="rsvp-corner corner-br" aria-hidden="true"></span>
         <div class="center">
-          <h2 class="title"><span data-vi>Gửi lời chúc phúc</span><span data-en>Wishes &amp; gifts</span></h2>
+          <div class="sec-kicker"><span data-vi>Gửi gắm</span><span data-en>With love</span></div>
+          <h2 class="title"><span data-vi>Lời chúc phúc</span><span data-en>Wishes &amp; gifts</span></h2>
           <p class="lead"><span id="giftLead"><span data-vi>Sự hiện diện của bạn là món quà ý nghĩa nhất</span><span data-en>Your presence is the greatest gift of all</span></span><i class="heart" aria-hidden="true"></i></p>
         </div>
         <div class="gift-tabs">
@@ -1292,14 +1301,14 @@
            lunar:'Tức ngày 13 tháng 10', yearLunar:'Năm Bính Ngọ',
            venue:'TẠI SẢNH 2 MERASTIS TOWER', addr:'356 - 358 Trương Công Định, Tam Thắng, TP. Vũng Tàu',
            coverDate:'21 · 11 · 2026 · Vũng Tàu', heroDate:'Thứ Bảy · 21 Tháng 11, 2026 · Vũng Tàu',
-           locKicker:'Nhà hàng', locBig:'Merastis', locAddr:'Sảnh 2 · 356A-358 Trương Công Định<br>TP. Vũng Tàu',
+           locKicker:'Nhà hàng', locBig:'Merastis', locAddr:'Sảnh 2 · <span class="nowrap">356A-358</span> Trương Công Định<br>TP. Vũng Tàu',
            thanks:'Cảm ơn ' + rsvpGuestFullLower + ' đã dành thời gian đọc hết thiệp mời của ' + rsvpHost + '. Hẹn gặp ' + rsvpGuestPronounOnlyLower + ' ngày 21.11.2026 tại Vũng Tàu!',
            credit:'21 · 11 · 2026 — VŨNG TÀU' },
       en:{ title:'OUR CELEBRATION PARTY', time:'To be held at ', hi:'10:30 AM, Saturday',
            lunar:'(Lunar Calendar: October 13th)', yearLunar:'Year of the Fire Horse',
            venue:'AT HALL 2, MERASTIS TOWER', addr:'356 - 358 Trương Công Định Street, Tam Thắng Ward, Vũng Tàu City',
            coverDate:'11 · 21 · 2026 · Vung Tau', heroDate:'Saturday · November 21, 2026 · Vung Tau',
-           locKicker:'Restaurant', locBig:'Merastis', locAddr:'Hall 2 · 356A-358 Truong Cong Dinh St.<br>Vung Tau City',
+           locKicker:'Restaurant', locBig:'Merastis', locAddr:'Hall 2 · <span class="nowrap">356A-358</span> Truong Cong Dinh St.<br>Vung Tau City',
            thanks:'Thank you for taking the time to read through our invitation. See you on 11.21.2026 in Vung Tau!',
            credit:'11 · 21 · 2026 — VUNG TAU' }
     },
@@ -1467,7 +1476,6 @@
   bi('noteBoxText', 'Khách ở TP.HCM đừng lo đường xa nhé — cô dâu chú rể sẽ sắp xe đưa đón về Vũng Tàu. Chỉ cần báo cho cô dâu chú rể trong lời nhắn RSVP bên dưới!',
      "Coming from HCMC? No need to worry about the drive — we'll arrange a shuttle to Vung Tau for you. Just let us know in the RSVP below!");
   bi('tlDesc1', 'Chụp vài tấm ở photobooth và để lại đôi dòng cảm nghĩ cho cô dâu chú rể nhé', 'Take a few photos at the booth and leave us a note');
-  bi('galleryHeading', 'Vài khoảnh khắc của ' + rsvpHost, 'A few of our favourite shots');
   bi('dressLead', rsvpHostCap + ' sẽ rất vui nếu ' + rsvpGuestFullLower + ' diện trang phục hoà cùng tông màu của bữa tiệc', "We'd love it if your outfit echoed the palette of the evening");
   bi('rsvpLead', rsvpGuestFull + ' hồi âm đôi dòng để ' + rsvpHost + ' chuẩn bị được chu đáo hơn nhé.', 'A short reply helps us prepare for you.');
   bi('rsvpAttendLabel', rsvpGuestPronounOnly + ' sẽ đến tham dự chứ', 'Will you be joining us');
