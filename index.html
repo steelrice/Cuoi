@@ -92,6 +92,22 @@
     100%{ box-shadow:0 0 0 0 rgba(207,159,63,0); }
   }
 
+  /* Nút "Xem lại thiệp": cùng vị trí với nút đổi ngôn ngữ (góc phải trên) — nút đó ẩn sau khi
+     mở thiệp nên chỗ này trống. Hình phong bì; đang xem lại thì đổi thành dấu ✕ để đóng. */
+  #reviewToggle{
+    position:fixed; top:var(--sp-4); right:var(--sp-4); z-index:1500;
+    width:46px; height:46px; padding:0; border:none; border-radius:50%;
+    background:none; cursor:pointer;
+    opacity:0; pointer-events:none; transition:opacity .5s ease .15s;
+  }
+  #reviewToggle.show{ opacity:1; pointer-events:auto; }
+  #reviewToggle svg{ width:46px; height:46px; overflow:visible; }
+  #reviewToggle .ic-close{ opacity:0; transition:opacity .25s ease; }
+  #reviewToggle .ic-env{ transition:opacity .25s ease; }
+  #reviewToggle.is-on .ic-close{ opacity:1; }
+  #reviewToggle.is-on .ic-env{ opacity:0; }
+  html.no-scroll{ overflow:hidden; }
+
   /* ================= COVER — velvet curtain reveal ================= */
   #cover{ position:fixed; top:0; bottom:0; left:0; right:0; max-width:520px; margin:0 auto; z-index:1000; overflow:hidden; transition:visibility .9s; }
   /* sau khi mở: giữ nguyên rèm làm hai dải hai bên, chỉ tắt phông và bỏ chặn thao tác */
@@ -161,6 +177,12 @@
     animation:elegantReveal .8s cubic-bezier(.16,1,.3,1) calc(1.15s + var(--d,0s)) both;
   }
   #cover.open .stage{ opacity:0; transition:opacity .45s ease; }
+  /* xem lại thiệp: bật lại phông + khối thông tin, rèm vẫn ở hai mép; không chạy lại hiệu ứng */
+  #cover.review{ z-index:1400; pointer-events:auto; }
+  #cover.review .cover-back{ opacity:1; }
+  #cover.review .stage{ opacity:1; }
+  #cover.review .stage .r{ opacity:1; animation:none; }
+  #cover.review #openBtn{ display:none; }
   @keyframes elegantReveal{ from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:none;} }
 
   .s-kicker{ font-family:var(--script); font-style:italic; font-weight:500; font-size:28px; color:var(--gold); }
@@ -590,6 +612,7 @@
   .footer .mono{ font-family:var(--script); font-style:italic; font-weight:600; font-size:40px; color:var(--gold); }
   .footer .names{ font-family:var(--serif); font-weight:400; font-size:20px; margin-top:var(--sp-2); }
   .footer .thanks{ font-weight:400; font-size:14.5px; margin-top:var(--sp-4); line-height:1.7; max-width:300px; margin-left:auto; margin-right:auto; color:var(--cream-dim); }
+  .footer .review-link{ margin-top:var(--sp-5); padding:6px 2px; border:none; background:none; cursor:pointer; font-family:var(--script); font-style:italic; font-weight:500; font-size:18px; color:var(--gold); text-decoration:underline; text-decoration-color:rgba(207,159,63,.5); text-underline-offset:4px; }
   .footer .credit{ margin-top:var(--sp-6); font-size:10.5px; letter-spacing:.12em; color:rgba(239,226,201,.5); }
   /* Đánh dấu bản deploy đang thử nghiệm — xoá khi deploy chính thức */
   .version-tag{ font-size:9px; letter-spacing:.08em; color:rgba(239,226,201,.28); }
@@ -666,6 +689,20 @@
       <line x1="1.5" y1="23" x2="44.5" y2="23" stroke="#fff" stroke-width="14"/>
       <line x1="23" y1="1.5" x2="23" y2="44.5" stroke="#CF142B" stroke-width="7"/>
       <line x1="1.5" y1="23" x2="44.5" y2="23" stroke="#CF142B" stroke-width="7"/>
+    </g>
+  </svg>
+</button>
+
+<!-- ============ XEM LẠI THIỆP ============ -->
+<button type="button" id="reviewToggle" aria-label="xem lại thiệp mời / view the invitation again" aria-pressed="false">
+  <svg viewBox="0 0 46 46" aria-hidden="true">
+    <circle cx="23" cy="23" r="21.5" fill="var(--red-deep)" stroke="var(--gold-line)" stroke-width="1.2"/>
+    <g class="ic-env" fill="none" stroke="var(--gold)" stroke-width="1.4" stroke-linejoin="round">
+      <rect x="13.5" y="16.5" width="19" height="13.5" rx="1"/>
+      <path d="M13.5 17.3 23 24.4l9.5-7.1"/>
+    </g>
+    <g class="ic-close" stroke="var(--gold)" stroke-width="1.6" stroke-linecap="round">
+      <line x1="17.5" y1="17.5" x2="28.5" y2="28.5"/><line x1="28.5" y1="17.5" x2="17.5" y2="28.5"/>
     </g>
   </svg>
 </button>
@@ -987,6 +1024,7 @@
     <div class="names">Hoàng Sơn &amp; Phương Thảo</div>
     <div class="rule" aria-hidden="true"></div>
     <p class="thanks" id="thanks"><span data-vi>Cảm ơn bạn đã dành thời gian đọc hết thiệp mời của chúng mình. Hẹn gặp bạn ngày 21.11.2026 tại Vũng Tàu!</span><span data-en>Thank you for taking the time to read through our invitation. See you on 11.21.2026 in Vung Tau!</span></p>
+    <button type="button" class="review-link" id="reviewLink"><span data-vi>Xem lại thiệp mời</span><span data-en>View the invitation again</span></button>
     <div class="credit" id="credit"></div>
   </div>
 
@@ -1601,6 +1639,22 @@
     else setTimeout(waitCoverFonts, 80);
   })();
 
+  /* xem lại thiệp chính (khối trên bìa) sau khi đã mở: nút phong bì góc phải trên + link ở footer */
+  var reviewToggle = document.getElementById('reviewToggle');
+  function setReview(on){
+    cover.classList.toggle('review', on);
+    document.documentElement.classList.toggle('no-scroll', on);
+    reviewToggle.classList.toggle('is-on', on);
+    reviewToggle.setAttribute('aria-pressed', on ? 'true' : 'false');
+    var en = document.body.classList.contains('lang-en');
+    reviewToggle.setAttribute('aria-label', on
+      ? (en ? 'Close' : 'Đóng')
+      : (en ? 'View the invitation again' : 'Xem lại thiệp mời'));
+  }
+  reviewToggle.addEventListener('click', function(){ setReview(!cover.classList.contains('review')); });
+  document.getElementById('reviewLink').addEventListener('click', function(){ setReview(true); });
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && cover.classList.contains('review')) setReview(false); });
+
   function openInvite(){
     if(cover.classList.contains('open')) return;
     cover.classList.add('open');
@@ -1614,6 +1668,7 @@
     // rèm dừng đúng vị trí hai dải bên trong rồi hạ lớp bìa xuống, giữ nguyên rèm
     setTimeout(function(){
       cover.classList.add('opened');
+      reviewToggle.classList.add('show');
     }, 1300);
     // khách vừa có cử chỉ thật (chạm mở thiệp) — mở tiếng nhạc đã phát sẵn, fade âm lượng lên
     revealMusic();
