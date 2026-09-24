@@ -1272,8 +1272,10 @@
   var hostPronounLower = (getUrlParam('pronounHost') || 'chúng mình').toLowerCase();
   var hostPronounCap = hostPronounLower.charAt(0).toUpperCase() + hostPronounLower.slice(1);
   var guestNameRaw = getUrlParam('guestName') || 'bạn';
+  // Link không có tên khách: chỉ dùng xưng hô, không ghép thêm 'bạn' (tránh 'bạn bạn', 'anh bạn')
+  var hasGuestName = !!getUrlParam('guestName');
   // Ghép xưng hô + tên khi có, giống hệt cách trang mở đầu ghép (guestLine) — mềm mại hơn khi nhắc tới khách
-  var guestFull = (getUrlParam('pronounGuest') + ' ' + guestNameRaw).trim();
+  var guestFull = hasGuestName ? (getUrlParam('pronounGuest') + ' ' + guestNameRaw).trim() : (getUrlParam('pronounGuest') || 'bạn');
   // Chỉ riêng xưng hô (không kèm tên) — dùng ở những chỗ khách "tự xưng" qua nút bấm, hoặc câu chào ngắn
   var guestPronounOnly = getUrlParam('pronounGuest') || 'bạn';
 
@@ -1290,7 +1292,7 @@
   // Bản viết thường xưng hô khách (Chị/Anh/Cô/Chú...) dùng ở giữa câu văn xuôi
   // (dressLead/storyQuote/giftLead/thanks) — Em/Bạn vẫn chỉ dùng tên, không đổi.
   var guestPronounMidSentence = (getUrlParam('pronounGuest') || 'bạn').toLowerCase();
-  var guestFullMidSentence = (guestPronounMidSentence + ' ' + guestNameRaw).trim();
+  var guestFullMidSentence = hasGuestName ? (guestPronounMidSentence + ' ' + guestNameRaw).trim() : guestPronounMidSentence;
   var rsvpGuestFullLower = isEmGuest ? guestNameRaw : guestFullMidSentence;
   var rsvpGuestPronounOnlyLower = isEmGuest ? guestNameRaw : guestPronounMidSentence;
 
