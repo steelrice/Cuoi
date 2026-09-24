@@ -619,6 +619,9 @@
   .gift-note{ margin-top:var(--sp-3); font-size:14px; line-height:1.65; color:var(--ink-soft); text-wrap:balance; }
   .gift-open{ display:inline-flex; align-items:center; gap:8px; margin-top:var(--sp-5); padding:12px 26px; border:1px solid rgba(169,127,46,.6); border-radius:2px; background:transparent; color:var(--red-deep); font-family:var(--sans); font-size:12.5px; font-weight:500; letter-spacing:.1em; text-transform:uppercase; cursor:pointer; }
   .gift-open svg{ width:15px; height:15px; transition:transform .35s ease; }
+  /* icon phong thư dọc (nắp chữ V, tim niêm, 2 nếp gấp) bên trái chữ */
+  .gift-open .go-ic{ width:19px; height:19px; margin-right:2px; transition:none; }
+  .gift-open[aria-expanded="true"] .go-ic{ transform:none; }
   .gift-open .go-hide{ display:none; }
   .gift-open[aria-expanded="true"] .go-show{ display:none; }
   .gift-open[aria-expanded="true"] .go-hide{ display:inline; }
@@ -1045,7 +1048,7 @@
           <h2 class="title"><span data-vi>Hộp mừng cưới</span><span data-en>Wedding gift</span></h2>
           <p class="lead"><span id="giftLead"><span data-vi>Sự hiện diện của bạn là món quà ý nghĩa nhất</span><span data-en>Your presence is the greatest gift of all</span></span><i class="heart" aria-hidden="true"></i></p>
           <p class="gift-note" id="giftNote"><span data-vi>Nếu muốn gửi quà mừng từ xa, bạn có thể bấm vào nút bên dưới nhé.</span><span data-en>If you'd like to send a gift from afar, just tap the button below.</span></p>
-          <button type="button" class="gift-open" id="giftOpen" aria-expanded="false" aria-controls="giftBox"><span class="go-show"><span data-vi>Gửi quà mừng</span><span data-en>Send a gift</span></span><span class="go-hide"><span data-vi>Thu gọn</span><span data-en>Hide</span></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
+          <button type="button" class="gift-open" id="giftOpen" aria-expanded="false" aria-controls="giftBox"><svg class="go-ic" viewBox="0 0 24 24" fill="none" stroke="var(--gold-line)" stroke-width="1.3" stroke-linejoin="round" aria-hidden="true"><rect x="5.5" y="2.5" width="13" height="19" rx="1"/><path d="M5.5 3.4 12 9.6l6.5-6.2"/><path d="M5.5 21 10.3 15.2M18.5 21l-4.8-5.8" stroke-width=".9" opacity=".7"/><path d="M12 13.4c-1.75-1.1-2.65-1.95-2.65-2.95a1.33 1.33 0 0 1 2.65-.35 1.33 1.33 0 0 1 2.65.35c0 1-.9 1.85-2.65 2.95z" fill="var(--gold-line)" stroke="none"/></svg><span class="go-show"><span data-vi>Gửi quà mừng</span><span data-en>Send a gift</span></span><span class="go-hide"><span data-vi>Thu gọn</span><span data-en>Hide</span></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
         </div>
         <!-- QR chỉ hiện khi khách bấm "Gửi quà mừng" -->
         <div class="gift-box" id="giftBox"><div class="gift-box-in">
