@@ -1368,6 +1368,11 @@
     try{
       var qs = new URLSearchParams(window.location.search);
       var v = qs.get(SHORT_PARAM[k] || k) || qs.get(k) || '';
+      // một số app (Facebook, Messenger, Zalo…) mã hoá link thêm 1 lần nữa → "%20" còn sót
+      // lại sau khi đọc (Tiểu%20Vi). Còn dạng %xx thì giải mã tiếp, tối đa 3 lần, lỗi thì giữ nguyên
+      for(var n = 0; n < 3 && /%[0-9A-Fa-f]{2}/.test(v); n++){
+        try{ v = decodeURIComponent(v.replace(/\+/g, ' ')); }catch(e){ break; }
+      }
       return /^-+$/.test(v.trim()) ? '' : v;
     }catch(e){ return ''; }
   }
