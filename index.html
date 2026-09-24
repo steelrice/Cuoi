@@ -571,14 +571,8 @@
     padding:14px 24px; border-radius:3px; border:none; text-decoration:none;
   }
 
-  /* ---------- RSVP — khung góc bo (corner-frame) ---------- */
+  /* ---------- RSVP / lời chúc — khung viền mảnh ---------- */
   .rsvp-frame{ position:relative; border:1px solid rgba(169,127,46,.45); padding:var(--sp-7) var(--sp-4) var(--sp-6); }
-  .rsvp-corner{ position:absolute; width:20px; height:20px; border:2px solid var(--red-deep); }
-  .band-red .rsvp-corner{ border-color:var(--gold); }
-  .rsvp-corner.corner-tl{ top:-1px; left:-1px; border-right:0; border-bottom:0; }
-  .rsvp-corner.corner-tr{ top:-1px; right:-1px; border-left:0; border-bottom:0; }
-  .rsvp-corner.corner-bl{ bottom:-1px; left:-1px; border-right:0; border-top:0; }
-  .rsvp-corner.corner-br{ bottom:-1px; right:-1px; border-left:0; border-top:0; }
   .rsvp-kicker{ font-family:var(--script); font-style:italic; font-weight:500; font-size:25px; color:var(--gold-line); text-wrap:balance; }
   .rsvp-title{ font-family:var(--serif); font-weight:400; font-size:clamp(28px,8vw,36px); line-height:1.15; color:var(--red-deep); margin-top:var(--sp-3); text-wrap:balance; }
   .rsvp-title + .lead{ margin-top:var(--sp-4); }
@@ -974,7 +968,6 @@
   <section>
     <div class="wrap wrap-wide">
       <div class="rsvp-frame">
-        <span class="rsvp-corner corner-tl" aria-hidden="true"></span><span class="rsvp-corner corner-tr" aria-hidden="true"></span><span class="rsvp-corner corner-bl" aria-hidden="true"></span><span class="rsvp-corner corner-br" aria-hidden="true"></span>
         <div class="center">
           <div class="rsvp-kicker" id="rsvpKicker"><span data-vi>Rất mong được đón tiếp</span><span data-en>We hope to see you</span></div>
           <h2 class="rsvp-title" id="rsvpHeading"><span data-vi>bạn</span><span data-en>there</span></h2>
@@ -1032,11 +1025,10 @@
     </div>
   </section>
 
-  <!-- ============ GIFT (mang khung góc bo giống RSVP, nền kem nổi trên band-red) ============ -->
+  <!-- ============ GIFT (khung viền mảnh giống RSVP, nền kem nổi trên band-red) ============ -->
   <section class="band-red">
     <div class="wrap">
       <div class="rsvp-frame">
-        <span class="rsvp-corner corner-tl" aria-hidden="true"></span><span class="rsvp-corner corner-tr" aria-hidden="true"></span><span class="rsvp-corner corner-bl" aria-hidden="true"></span><span class="rsvp-corner corner-br" aria-hidden="true"></span>
         <div class="center">
           <div class="sec-kicker"><span data-vi>Gửi gắm</span><span data-en>With love</span></div>
           <h2 class="title"><span data-vi>Lời chúc phúc</span><span data-en>Wishes &amp; gifts</span></h2>
