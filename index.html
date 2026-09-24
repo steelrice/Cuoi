@@ -616,6 +616,17 @@
     background-image:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2022%22%20fill%3D%22none%22%20stroke%3D%22%23a97f2e%22%20stroke-width%3D%221.5%22%20stroke-linecap%3D%22round%22%20stroke-linejoin%3D%22round%22%3E%3Cpath%20d%3D%22M12%2020.2%20C12%2020.2%202.4%2014.4%202.4%207.9%20C2.4%204.5%205%202%208.1%202%20C10%202%2011.4%203%2012%204.4%20C12.6%203%2014%202%2015.9%202%20C19%202%2021.6%204.5%2021.6%207.9%20C21.6%2014.4%2012%2020.2%2012%2020.2%20Z%22%2F%3E%3C%2Fsvg%3E");
     background-size:contain; background-repeat:no-repeat; background-position:center;
   }
+  .gift-note{ margin-top:var(--sp-3); font-size:14px; line-height:1.65; color:var(--ink-soft); text-wrap:balance; }
+  .gift-open{ display:inline-flex; align-items:center; gap:8px; margin-top:var(--sp-5); padding:12px 26px; border:1px solid rgba(169,127,46,.6); border-radius:2px; background:transparent; color:var(--red-deep); font-family:var(--sans); font-size:12.5px; font-weight:500; letter-spacing:.1em; text-transform:uppercase; cursor:pointer; }
+  .gift-open svg{ width:15px; height:15px; transition:transform .35s ease; }
+  .gift-open .go-hide{ display:none; }
+  .gift-open[aria-expanded="true"] .go-show{ display:none; }
+  .gift-open[aria-expanded="true"] .go-hide{ display:inline; }
+  .gift-open[aria-expanded="true"] svg{ transform:rotate(180deg); }
+  /* hộp QR mở/đóng mượt bằng grid-rows 0fr → 1fr */
+  .gift-box{ display:grid; grid-template-rows:0fr; transition:grid-template-rows .45s ease; }
+  .gift-box-in{ overflow:hidden; min-height:0; }
+  .gift-box.open{ grid-template-rows:1fr; }
   .gift-tabs{ margin-top:var(--sp-6); display:flex; gap:var(--sp-3); }
   .gift-tabs button{ flex:1; padding:12px 8px; border-radius:2px; border:1px solid rgba(207,159,63,.45); background:transparent; color:var(--ink-soft); font-size:12.5px; letter-spacing:.06em; }
   .gift-tabs button.active{ background:var(--red-mid); border-color:var(--red-mid); color:var(--cream); }
@@ -1031,9 +1042,13 @@
       <div class="rsvp-frame">
         <div class="center">
           <div class="sec-kicker"><span data-vi>Gửi gắm</span><span data-en>With love</span></div>
-          <h2 class="title"><span data-vi>Lời chúc phúc</span><span data-en>Wishes &amp; gifts</span></h2>
+          <h2 class="title"><span data-vi>Hộp mừng cưới</span><span data-en>Wedding gift</span></h2>
           <p class="lead"><span id="giftLead"><span data-vi>Sự hiện diện của bạn là món quà ý nghĩa nhất</span><span data-en>Your presence is the greatest gift of all</span></span><i class="heart" aria-hidden="true"></i></p>
+          <p class="gift-note" id="giftNote"><span data-vi>Nếu muốn gửi quà mừng từ xa, bạn có thể bấm vào nút bên dưới nhé.</span><span data-en>If you'd like to send a gift from afar, just tap the button below.</span></p>
+          <button type="button" class="gift-open" id="giftOpen" aria-expanded="false" aria-controls="giftBox"><span class="go-show"><span data-vi>Gửi quà mừng</span><span data-en>Send a gift</span></span><span class="go-hide"><span data-vi>Thu gọn</span><span data-en>Hide</span></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg></button>
         </div>
+        <!-- QR chỉ hiện khi khách bấm "Gửi quà mừng" -->
+        <div class="gift-box" id="giftBox"><div class="gift-box-in">
         <div class="gift-tabs">
           <button type="button" class="gift-tab active" data-i="0"><span data-vi>Chú rể</span><span data-en>Groom</span></button>
           <button type="button" class="gift-tab" data-i="1"><span data-vi>Cô dâu</span><span data-en>Bride</span></button>
@@ -1048,6 +1063,7 @@
             <button type="button" class="gift-dl" data-file="qr-co-dau.png"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 19h16"/></svg><span data-vi>Tải mã QR</span><span data-en>Save QR code</span></button>
           </div></div>
         </div>
+        </div></div>
       </div>
     </div>
   </section>
@@ -1094,6 +1110,15 @@
   }
 
   /* chuyển qua lại giữa hai mã QR */
+  var giftOpen = document.getElementById('giftOpen');
+  var giftBox = document.getElementById('giftBox');
+  if(giftOpen && giftBox){
+    giftOpen.addEventListener('click', function(){
+      var on = !giftBox.classList.contains('open');
+      giftBox.classList.toggle('open', on);
+      giftOpen.setAttribute('aria-expanded', on ? 'true' : 'false');
+    });
+  }
   var giftRail = document.getElementById('giftRail');
   var giftTabs = document.querySelectorAll('.gift-tab');
   if(giftRail && giftTabs.length){
@@ -1601,6 +1626,7 @@
   bi('moveShuttleBtn', 'Đi xe chung', "I'll ride along");
   bi('storyQuote', 'Từ những buổi hẹn đầu còn ngại ngùng đến hôm nay, hai đứa đã đi cùng nhau một quãng đường đủ dài để tin rằng đây chính là người mình muốn nắm tay đi hết phần đời còn lại. Mong rằng ' + rsvpGuestFullLower + ' sẽ đến chung vui trong ngày trọng đại và hạnh phúc này.',
      "From a shy first date to today, we've come far enough together to know this is the hand we want to hold for the rest of the way. And we hope to have you beside us on the day.");
+  bi('giftNote', 'Nếu muốn gửi quà mừng từ xa, <span class="nowrap">' + rsvpGuestFullLower + '</span> có thể bấm vào nút bên dưới nhé.', "If you'd like to send a gift from afar, just tap the button below.");
   bi('giftLead', 'Sự hiện diện của ' + rsvpGuestFullLower + ' là món quà ý nghĩa nhất', 'Your presence is the greatest gift of all');
 
   var card = document.getElementById('card');
