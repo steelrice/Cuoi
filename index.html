@@ -492,10 +492,12 @@
   /* ---------- RSVP — khung góc bo (corner-frame) ---------- */
   .rsvp-frame{ position:relative; border:1px solid rgba(169,127,46,.45); padding:var(--sp-7) var(--sp-5) var(--sp-6); }
   .rsvp-corner{ position:absolute; width:20px; height:20px; border:2px solid var(--red-deep); }
-  .rsvp-corner.tl{ top:-1px; left:-1px; border-right:0; border-bottom:0; }
-  .rsvp-corner.tr{ top:-1px; right:-1px; border-left:0; border-bottom:0; }
-  .rsvp-corner.bl{ bottom:-1px; left:-1px; border-right:0; border-top:0; }
-  .rsvp-corner.br{ bottom:-1px; right:-1px; border-left:0; border-top:0; }
+  .rsvp-corner.corner-tl{ top:-1px; left:-1px; border-right:0; border-bottom:0; }
+  .rsvp-corner.corner-tr{ top:-1px; right:-1px; border-left:0; border-bottom:0; }
+  .rsvp-corner.corner-bl{ bottom:-1px; left:-1px; border-right:0; border-top:0; }
+  .rsvp-corner.corner-br{ bottom:-1px; right:-1px; border-left:0; border-top:0; }
+  .rsvp-kicker{ font-family:var(--script); font-style:italic; font-weight:500; font-size:22px; color:var(--gold-line); }
+  .rsvp-title{ font-family:var(--serif); font-weight:400; font-size:clamp(28px,8vw,36px); line-height:1.15; color:var(--red-deep); margin-top:4px; text-wrap:balance; }
   .rsvp-card{ background:var(--cream); border:1px solid rgba(76,12,23,.14); border-radius:6px; padding:var(--sp-5) var(--sp-5) var(--sp-6); box-shadow:var(--shadow); }
   .band-red .rsvp-card h2.title{ color:var(--ink); }
   .band-red .rsvp-card .lead{ color:var(--ink-soft); }
@@ -851,9 +853,10 @@
   <section>
     <div class="wrap">
       <div class="rsvp-frame">
-        <span class="rsvp-corner tl" aria-hidden="true"></span><span class="rsvp-corner tr" aria-hidden="true"></span><span class="rsvp-corner bl" aria-hidden="true"></span><span class="rsvp-corner br" aria-hidden="true"></span>
+        <span class="rsvp-corner corner-tl" aria-hidden="true"></span><span class="rsvp-corner corner-tr" aria-hidden="true"></span><span class="rsvp-corner corner-bl" aria-hidden="true"></span><span class="rsvp-corner corner-br" aria-hidden="true"></span>
         <div class="center">
-          <h2 class="title" id="rsvpHeading"><span data-vi>Rất mong được đón tiếp bạn</span><span data-en>We hope to see you there</span></h2>
+          <div class="rsvp-kicker" id="rsvpKicker"><span data-vi>Rất mong được đón tiếp</span><span data-en>We hope to see you</span></div>
+          <h2 class="rsvp-title" id="rsvpHeading"><span data-vi>bạn</span><span data-en>there</span></h2>
           <p class="lead" id="rsvpLead"><span data-vi>Bạn hồi âm đôi dòng để chúng mình chuẩn bị được chu đáo hơn nhé.</span><span data-en>A short reply helps us prepare for you.</span></p>
         </div>
         <form class="rsvp-form" id="rsvpForm">
@@ -1454,7 +1457,9 @@
   bi('dressLead', rsvpHostCap + ' sẽ rất vui nếu ' + rsvpGuestFullLower + ' diện trang phục hoà cùng tông màu của bữa tiệc', "We'd love it if your outfit echoed the palette of the evening");
   bi('rsvpLead', rsvpGuestFull + ' hồi âm đôi dòng để ' + rsvpHost + ' chuẩn bị được chu đáo hơn nhé.', 'A short reply helps us prepare for you.');
   bi('rsvpAttendLabel', rsvpGuestPronounOnly + ' sẽ đến tham dự chứ', 'Will you be joining us');
-  bi('rsvpHeading', 'Rất mong được đón tiếp ' + rsvpGuestPronounOnlyLower, 'We hope to see you there');
+  bi('rsvpKicker', 'Rất mong được đón tiếp', 'We hope to see you');
+  var rsvpGuestTitleCap = rsvpGuestPronounOnlyLower.charAt(0).toUpperCase() + rsvpGuestPronounOnlyLower.slice(1);
+  bi('rsvpHeading', rsvpGuestTitleCap, getUrlParam('guestName') ? guestNameRaw : 'there');
   bi('attendYesBtn', 'Sẽ có mặt', "I'll be there");
   bi('attendNoBtn', 'Không đến được', "I can't make it");
   bi('moveSelfBtn', 'Tự di chuyển', "I'll make my own way");
