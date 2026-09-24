@@ -565,6 +565,11 @@
   .gift-qr{ width:100%; height:auto; display:block; border-radius:2px; }
   .gift-dl{ display:flex; align-items:center; justify-content:center; gap:6px; width:100%; margin-top:calc(-1 * var(--sp-3)); background:transparent; border:none; padding:0; font-family:var(--sans); font-size:12px; letter-spacing:.03em; color:var(--gold-line); text-decoration:underline; text-underline-offset:3px; text-decoration-thickness:.5px; }
   .gift-dl svg{ width:13px; height:13px; flex:none; }
+  .cal-add{ display:inline-flex; align-items:center; justify-content:center; gap:6px; font-family:var(--sans); font-size:12px; letter-spacing:.03em; color:var(--gold-line); text-decoration:underline; text-underline-offset:3px; text-decoration-thickness:.5px; }
+  .cal-add svg{ width:14px; height:14px; flex:none; }
+  .cal-add-wrap{ text-align:center; margin-top:var(--sp-5); }
+  .rsvp-cal[hidden]{ display:none; }
+  .rsvp-cal{ text-align:center; margin-top:calc(-1 * var(--sp-4)); }
 
   /* ---------- footer ---------- */
   .footer{ background:var(--red-deep); color:var(--cream); text-align:center; padding:var(--sp-9) var(--sp-6) var(--sp-7); }
@@ -757,6 +762,7 @@
           <div class="day">23</div><div class="day">24</div><div class="day">25</div><div class="day">26</div><div class="day">27</div><div class="day" id="d28">28</div><div class="day">29</div>
           <div class="day">30</div>
         </div>
+        <div class="cal-add-wrap"><a class="cal-add js-cal-add" href="#" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="1.5"/><path d="M3.5 10h17"/><path d="M8 3v4"/><path d="M16 3v4"/><path d="M12 13v5"/><path d="M9.5 15.5h5"/></svg><span data-vi>Lưu vào lịch</span><span data-en>Add to calendar</span></a></div>
       </div>
     </div>
   </section>
@@ -927,6 +933,7 @@
         </div>
         <button type="submit" class="rsvp-submit"><span data-vi>Gửi hồi âm</span><span data-en>Send your reply</span></button>
         <div class="rsvp-note" id="rsvpNote"></div>
+        <div class="rsvp-cal" id="rsvpCal" hidden><a class="cal-add js-cal-add" href="#" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="1.5"/><path d="M3.5 10h17"/><path d="M8 3v4"/><path d="M16 3v4"/><path d="M12 13v5"/><path d="M9.5 15.5h5"/></svg><span data-vi>Lưu ngày cưới vào lịch</span><span data-en>Add the date to your calendar</span></a></div>
         </form>
       </div>
     </div>
@@ -1842,6 +1849,32 @@
 
   var isEn = function(){ return document.body.classList.contains('lang-en'); };
 
+  /* Lưu vào lịch: iPhone/iPad mở file .ics (cal/) để hiện hộp "Thêm sự kiện" của app Lịch;
+     máy khác mở Google Calendar điền sẵn. Giờ theo UTC (VN = UTC+7), kéo dài 3 tiếng, nhắc trước 1 ngày. */
+  var CAL = {
+    '21': { dates:'20261121T033000Z/20261121T063000Z', maps:EVENTS['21'].maps,
+      vi:{ t:'Tiệc chung vui · Hoàng Sơn & Phương Thảo', loc:'Sảnh 2 Merastis Tower, 356 - 358 Trương Công Định, Tam Thắng, TP. Vũng Tàu', d:'Đón khách từ 10:00, khai tiệc 11:00.\nChỉ đường: ' },
+      en:{ t:'Hoàng Sơn & Phương Thảo · Celebration Party', loc:'Hall 2, Merastis Tower, 356 - 358 Trương Công Định Street, Tam Thắng Ward, Vũng Tàu City', d:'Welcome from 10:00 AM, lunch at 11:00 AM.\nDirections: ' } },
+    '28': { dates:'20261128T020000Z/20261128T050000Z', maps:EVENTS['28'].maps,
+      vi:{ t:'Lễ thành hôn · Hoàng Sơn & Phương Thảo', loc:'Tư gia nhà trai, QL39A, xã Tân Hưng, TP. Hưng Yên', d:'Chỉ đường: ' },
+      en:{ t:'Hoàng Sơn & Phương Thảo · Wedding Ceremony', loc:"Groom's family residence, National Highway 39A, Tân Hưng Commune, Hưng Yên City", d:'Directions: ' } }
+  };
+  var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  function calHref(){
+    var key = EV.day, lang = isEn() ? 'en' : 'vi', c = CAL[key], L = c[lang];
+    if(isIOS) return 'cal/' + key + '-' + lang + '.ics';
+    return 'https://calendar.google.com/calendar/render?action=TEMPLATE'
+      + '&text=' + encodeURIComponent(L.t)
+      + '&dates=' + c.dates
+      + '&location=' + encodeURIComponent(L.loc)
+      + '&details=' + encodeURIComponent(L.d + c.maps);
+  }
+  document.querySelectorAll('.js-cal-add').forEach(function(a){
+    if(isIOS){ a.removeAttribute('target'); }
+    a.addEventListener('click', function(){ a.href = calHref(); });
+    a.href = calHref();
+  });
+
   document.getElementById('rsvpForm').addEventListener('submit', async function(e){
     e.preventDefault();
     var note = document.getElementById('rsvpNote');
@@ -1869,6 +1902,9 @@
       entry.move = moveVal;
       if(moveVal === 'shuttle' && pickupEl) entry.pickup = pickupEl.value || '';
     }
+    var rsvpCal = document.getElementById('rsvpCal');
+    var wasAttending = attendVal === 'yes';
+    if(rsvpCal) rsvpCal.hidden = true;
     note.textContent = isEn() ? 'Sending…' : 'Đang gửi…';
     try{
       if(!rsvpConfigured()){
@@ -1878,6 +1914,7 @@
       }
       note.textContent = isEn() ? "Thank you! If anything changes, feel free to resend this form."
         : 'Cảm ơn ' + rsvpGuestFull + ' đã gửi thông tin. Nếu có cập nhật gì hãy gửi lại form cho ' + rsvpHost + ' nhé.';
+      if(rsvpCal && wasAttending) rsvpCal.hidden = false;
       document.getElementById('rsvpForm').reset();
       guestCount=1; guestCountEl.textContent='1';
       moveVal='self';

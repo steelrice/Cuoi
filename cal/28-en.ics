@@ -1,0 +1,22 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Hoang Son & Phuong Thao//Wedding//VI
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:wedding-28-2026@steelrice.github.io
+DTSTAMP:20260924T000000Z
+DTSTART:20261128T020000Z
+DTEND:20261128T050000Z
+SUMMARY:Hoàng Sơn & Phương Thảo · Wedding Ceremony
+LOCATION:Groom's family residence\, National Highway 39A\, Tân Hưng Comm
+ une\, Hưng Yên City
+DESCRIPTION:Directions: https://maps.app.goo.gl/GCHuv1PDPoEEhdEt7
+URL:https://maps.app.goo.gl/GCHuv1PDPoEEhdEt7
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Hoàng Sơn & Phương Thảo · Wedding Ceremony
+TRIGGER:-P1D
+END:VALARM
+END:VEVENT
+END:VCALENDAR

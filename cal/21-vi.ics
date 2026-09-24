@@ -1,0 +1,23 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Hoang Son & Phuong Thao//Wedding//VI
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:wedding-21-2026@steelrice.github.io
+DTSTAMP:20260924T000000Z
+DTSTART:20261121T033000Z
+DTEND:20261121T063000Z
+SUMMARY:Tiệc chung vui · Hoàng Sơn & Phương Thảo
+LOCATION:Sảnh 2 Merastis Tower\, 356 - 358 Trương Công Định\, Tam 
+ Thắng\, TP. Vũng Tàu
+DESCRIPTION:Đón khách từ 10:00\, khai tiệc 11:00.\nChỉ đường:
+  https://maps.app.goo.gl/tdT1LGaSET7pAMx68
+URL:https://maps.app.goo.gl/tdT1LGaSET7pAMx68
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Tiệc chung vui · Hoàng Sơn & Phương Thảo
+TRIGGER:-P1D
+END:VALARM
+END:VEVENT
+END:VCALENDAR

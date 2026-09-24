@@ -1,0 +1,23 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Hoang Son & Phuong Thao//Wedding//VI
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:wedding-21-2026@steelrice.github.io
+DTSTAMP:20260924T000000Z
+DTSTART:20261121T033000Z
+DTEND:20261121T063000Z
+SUMMARY:Hoàng Sơn & Phương Thảo · Celebration Party
+LOCATION:Hall 2\, Merastis Tower\, 356 - 358 Trương Công Định Street
+ \, Tam Thắng Ward\, Vũng Tàu City
+DESCRIPTION:Welcome from 10:00 AM\, lunch at 11:00 AM.\nDirections: https:
+ //maps.app.goo.gl/tdT1LGaSET7pAMx68
+URL:https://maps.app.goo.gl/tdT1LGaSET7pAMx68
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Hoàng Sơn & Phương Thảo · Celebration Party
+TRIGGER:-P1D
+END:VALARM
+END:VEVENT
+END:VCALENDAR

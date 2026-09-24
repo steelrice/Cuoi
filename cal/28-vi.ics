@@ -1,0 +1,21 @@
+BEGIN:VCALENDAR
+VERSION:2.0
+PRODID:-//Hoang Son & Phuong Thao//Wedding//VI
+CALSCALE:GREGORIAN
+METHOD:PUBLISH
+BEGIN:VEVENT
+UID:wedding-28-2026@steelrice.github.io
+DTSTAMP:20260924T000000Z
+DTSTART:20261128T020000Z
+DTEND:20261128T050000Z
+SUMMARY:Lễ thành hôn · Hoàng Sơn & Phương Thảo
+LOCATION:Tư gia nhà trai\, QL39A\, xã Tân Hưng\, TP. Hưng Yên
+DESCRIPTION:Chỉ đường: https://maps.app.goo.gl/GCHuv1PDPoEEhdEt7
+URL:https://maps.app.goo.gl/GCHuv1PDPoEEhdEt7
+BEGIN:VALARM
+ACTION:DISPLAY
+DESCRIPTION:Lễ thành hôn · Hoàng Sơn & Phương Thảo
+TRIGGER:-P1D
+END:VALARM
+END:VEVENT
+END:VCALENDAR
