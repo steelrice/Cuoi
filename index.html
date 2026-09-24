@@ -101,6 +101,7 @@
     opacity:0; pointer-events:none; transition:opacity .5s ease .15s;
   }
   #reviewToggle.show{ opacity:1; pointer-events:auto; }
+  body.lb-open #reviewToggle{ opacity:0; pointer-events:none; }
   /* vòng sáng vàng lan ra (giống nút đổi ngôn ngữ) để khách chú ý — chỉ 4 nhịp rồi dừng,
      khách đã bấm lần nào thì tắt hẳn */
   #reviewToggle.show:not(.seen){ animation:langRing 3.2s ease-out .6s 4; }
@@ -505,6 +506,9 @@
 
   #lightbox{ position:fixed; inset:0; background:rgba(12,2,4,.95); z-index:900; display:none; align-items:center; justify-content:center; padding:var(--sp-6); touch-action:none; overscroll-behavior:contain; }
   #lightbox.show{ display:flex; }
+  /* ảnh lớn chưa tải xong: ẩn ảnh cũ, hiện vòng xoay vàng giống ô album đang tải */
+  #lightbox.is-loading img{ opacity:0; }
+  #lightbox.is-loading::after{ content:''; position:absolute; top:50%; left:50%; width:30px; height:30px; margin:-15px 0 0 -15px; border-radius:50%; border:1.5px solid rgba(207,159,63,.25); border-top-color:var(--gold); animation:magSpin .9s linear infinite; }
   #lightbox img{ max-width:100%; max-height:82vh; border-radius:3px; box-shadow:0 24px 60px rgba(0,0,0,.6); transition:opacity .16s ease, transform .16s ease; will-change:opacity, transform; }
   #lightbox img.slide-l{ opacity:0; transform:translateX(-26px); }
   #lightbox img.slide-r{ opacity:0; transform:translateX(26px); }
@@ -1828,6 +1832,14 @@
 
   var lightbox = document.getElementById('lightbox');
   var lightboxImg = document.getElementById('lightbox-img');
+  // đặt ảnh cho lightbox; ảnh chưa có sẵn (chưa tải xong) thì hiện vòng xoay tới khi load/error
+  function setLbSrc(src){
+    lightbox.classList.add('is-loading');
+    lightboxImg.src = src;
+    if(lightboxImg.complete && lightboxImg.naturalWidth) lightbox.classList.remove('is-loading');
+  }
+  lightboxImg.addEventListener('load', function(){ lightbox.classList.remove('is-loading'); });
+  lightboxImg.addEventListener('error', function(){ lightbox.classList.remove('is-loading'); });
   var lbPrev = document.getElementById('lb-prev');
   var lbNext = document.getElementById('lb-next');
   var lbCount = document.getElementById('lb-count');
@@ -1848,7 +1860,7 @@
     lightboxImg.classList.add(step > 0 ? 'slide-l' : 'slide-r');
     setTimeout(function(){
       lbIdx = n;
-      lightboxImg.src = lbImgs[lbIdx].src || lbImgs[lbIdx].dataset.src;
+      setLbSrc(lbImgs[lbIdx].src || lbImgs[lbIdx].dataset.src);
       lightboxImg.alt = lbImgs[lbIdx].alt || '';
       lbMeta();
       lightboxImg.classList.remove('slide-l','slide-r');
@@ -1864,7 +1876,7 @@
   function lbOpen(i){
     lbIdx = i;
     lightboxImg.classList.remove('slide-l','slide-r');
-    lightboxImg.src = lbImgs[i].src || lbImgs[i].dataset.src;
+    setLbSrc(lbImgs[i].src || lbImgs[i].dataset.src);
     lightboxImg.alt = lbImgs[i].alt || '';
     lbMeta();
     lightbox.classList.add('show');
