@@ -1574,8 +1574,32 @@
     });
   }
 
-  // rèm tự kéo hé sau 1.5s
-  setTimeout(function(){ cover.classList.add('parted'); }, 1500);
+  /* rèm tự kéo hé: chờ font của bìa (Prata + Cormorant Garamond) tải xong để chữ không nhảy,
+     rồi giữ thêm 0.7s cho khách đọc tên. Mạng chậm thì tối đa 2.5s là mở, không chờ mãi.
+     Không dùng document.fonts.ready vì fonts.css nạp trễ — lúc đầu chưa có font nào để chờ
+     nên nó báo xong ngay; kiểm tra thẳng trạng thái 2 font thật. */
+  var curtainParted = false;
+  function partCurtain(){
+    if(curtainParted) return;
+    curtainParted = true;
+    cover.classList.add('parted');
+  }
+  function coverFontsLoaded(){
+    if(!document.fonts || !document.fonts.forEach) return true;
+    var ok = { 'Prata':false, 'Cormorant Garamond':false };
+    document.fonts.forEach(function(f){
+      var fam = f.family.replace(/["']/g, '');
+      if(fam in ok && f.status === 'loaded') ok[fam] = true;
+    });
+    return ok['Prata'] && ok['Cormorant Garamond'];
+  }
+  var CURTAIN_HOLD = 700, CURTAIN_MAX = 2500;
+  setTimeout(partCurtain, CURTAIN_MAX);
+  (function waitCoverFonts(){
+    if(curtainParted) return;
+    if(coverFontsLoaded()) setTimeout(partCurtain, CURTAIN_HOLD);
+    else setTimeout(waitCoverFonts, 80);
+  })();
 
   function openInvite(){
     if(cover.classList.contains('open')) return;
