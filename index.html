@@ -1751,11 +1751,13 @@
     bi('tlDesc1', 'Chụp vài tấm ở photobooth và để lại đôi dòng cảm nghĩ cho cô dâu chú rể nhé', 'Take a few photos at the booth and leave us a note');
   }
   bi('dressLead', rsvpHostCap + ' sẽ rất vui nếu ' + rsvpGuestFullLower + ' diện trang phục hoà cùng tông màu của bữa tiệc', "We'd love it if your outfit echoed the palette of the evening");
-  bi('rsvpLead', rsvpGuestFull + ' hồi âm đôi dòng để ' + rsvpHost + ' chuẩn bị được chu đáo hơn nhé.', 'A short reply helps us prepare for you.');
-  bi('rsvpAttendLabel', rsvpGuestPronounOnly + ' sẽ đến tham dự chứ', 'Will you be joining us');
+  bi('rsvpLead', capFirst(rsvpGuestPronounOnly) + ' hồi âm đôi dòng để ' + rsvpHost + ' chuẩn bị được chu đáo hơn nhé.', 'A short reply helps us prepare for you.');
+  bi('rsvpAttendLabel', capFirst(rsvpGuestPronounOnly) + ' sẽ đến tham dự chứ', 'Will you be joining us');
   bi('rsvpKicker', 'Rất mong được đón tiếp', 'We hope to see you');
   var rsvpGuestTitleCap = rsvpGuestPronounOnlyLower.charAt(0).toUpperCase() + rsvpGuestPronounOnlyLower.slice(1);
-  bi('rsvpHeading', rsvpGuestTitleCap, getUrlParam('guestName') ? guestNameRaw : 'there');
+  function capFirst(t){ return t ? t.charAt(0).toUpperCase() + t.slice(1) : t; } // đầu câu: 'bạn' → 'Bạn'
+  // tiêu đề RSVP: có tên thì ghép xưng hô + tên giống bìa (Chị Tiểu Vi, Anh Chuẩn…); không tên thì chỉ xưng hô
+  bi('rsvpHeading', hasGuestName ? guestFull : rsvpGuestTitleCap, hasGuestName ? guestNameRaw : 'there');
   bi('attendYesBtn', 'Sẽ có mặt', "I'll be there");
   bi('attendNoBtn', 'Không đến được', "I can't make it");
   bi('moveSelfBtn', 'Tự di chuyển', "I'll make my own way");
