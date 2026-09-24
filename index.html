@@ -446,7 +446,7 @@
   /* ---------- gallery: tap chi (magazine) horizontal swipe ---------- */
   .mag-rail{ margin-top:var(--sp-6); margin-left:calc(-1 * var(--sp-6)); margin-right:calc(-1 * var(--sp-6)); display:flex; gap:12px; overflow-x:auto; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch; scrollbar-width:none; padding:0 var(--sp-6); }
   .mag-rail::-webkit-scrollbar{ display:none; }
-  .mag-slide{ flex:0 0 82%; scroll-snap-align:center; position:relative; }
+  .mag-slide{ flex:0 0 88%; scroll-snap-align:center; position:relative; }
   .mag-slide img{ transition:opacity .5s ease; }
   /* ảnh album chưa tải xong: vệt sáng vàng lướt qua + vòng xoay vàng nhỏ */
   .mag-slide.is-loading{ background:linear-gradient(100deg, rgba(207,159,63,.05) 30%, rgba(207,159,63,.16) 50%, rgba(207,159,63,.05) 70%); background-size:220% 100%; animation:magShimmer 1.5s linear infinite; outline:1px solid rgba(207,159,63,.35); outline-offset:-1px; }
@@ -457,7 +457,7 @@
   @keyframes magShimmer{ from{ background-position:120% 0; } to{ background-position:-120% 0; } }
   @keyframes magSpin{ to{ transform:rotate(360deg); } }
   @media (prefers-reduced-motion: reduce){ .mag-slide.is-loading, .mag-slide.is-loading::after{ animation:none; } }
-  .mag-slide img{ width:100%; height:min(78vw,420px); object-fit:cover; border-radius:0; border:1px solid var(--gold); box-shadow:0 16px 32px rgba(0,0,0,.16); cursor:zoom-in; display:block; }
+  .mag-slide img{ width:100%; height:auto; aspect-ratio:2 / 3; max-height:520px; object-fit:cover; border-radius:0; border:1px solid var(--gold); box-shadow:0 16px 32px rgba(0,0,0,.16); cursor:zoom-in; display:block; }
   .mag-count{ padding:var(--sp-4) 0 0; display:flex; justify-content:center; align-items:baseline; gap:10px; }
   .mag-count b{ font-family:var(--serif); font-weight:400; font-size:26px; color:var(--red-deep); }
   .mag-count span{ font-size:11.5px; letter-spacing:.12em; color:var(--ink-soft); }
