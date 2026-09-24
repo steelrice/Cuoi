@@ -572,10 +572,14 @@
   .rsvp-cal{ text-align:center; margin-top:calc(-1 * var(--sp-4)); }
 
   /* ---------- footer ---------- */
-  .footer{ background:var(--red-deep); color:var(--cream); text-align:center; padding:var(--sp-9) var(--sp-6) var(--sp-7); }
+  .footer{ position:relative; isolation:isolate; overflow:hidden; background:var(--red-deep); color:var(--cream); text-align:center; padding:var(--sp-9) var(--sp-6) var(--sp-7); }
+  /* ảnh cưới mờ phía sau (dùng lại ảnh album đã tải), phủ đỏ đậm để chữ vẫn rõ; mép trên đỏ đặc để nối liền phần trên */
+  .footer::before{ content:''; position:absolute; inset:-8px; z-index:-2; background:url(images/album/04.jpg) center 35%/cover no-repeat; filter:blur(2px) saturate(.75); }
+  .footer::after{ content:''; position:absolute; inset:0; z-index:-1; background:linear-gradient(to bottom, var(--red-deep) 0%, rgba(76,12,23,.66) 40%, rgba(76,12,23,.78) 100%); }
+  .footer .rule{ width:44px; height:1px; background:rgba(207,159,63,.65); margin:var(--sp-4) auto 0; }
   .footer .mono{ font-family:var(--script); font-style:italic; font-weight:600; font-size:40px; color:var(--gold); }
   .footer .names{ font-family:var(--serif); font-weight:400; font-size:20px; margin-top:var(--sp-2); }
-  .footer .thanks{ font-weight:400; font-size:14.5px; margin-top:var(--sp-5); line-height:1.7; max-width:300px; margin-left:auto; margin-right:auto; color:var(--cream-dim); }
+  .footer .thanks{ font-weight:400; font-size:14.5px; margin-top:var(--sp-4); line-height:1.7; max-width:300px; margin-left:auto; margin-right:auto; color:var(--cream-dim); }
   .footer .credit{ margin-top:var(--sp-6); font-size:10.5px; letter-spacing:.12em; color:rgba(239,226,201,.5); }
   /* Đánh dấu bản deploy đang thử nghiệm — xoá khi deploy chính thức */
   .version-tag{ font-size:9px; letter-spacing:.08em; color:rgba(239,226,201,.28); }
@@ -971,6 +975,7 @@
   <div class="footer">
     <div class="mono">S &amp; T</div>
     <div class="names">Hoàng Sơn &amp; Phương Thảo</div>
+    <div class="rule" aria-hidden="true"></div>
     <p class="thanks" id="thanks"><span data-vi>Cảm ơn bạn đã dành thời gian đọc hết thiệp mời của chúng mình. Hẹn gặp bạn ngày 21.11.2026 tại Vũng Tàu!</span><span data-en>Thank you for taking the time to read through our invitation. See you on 11.21.2026 in Vung Tau!</span></p>
     <div class="credit" id="credit"></div>
   </div>
