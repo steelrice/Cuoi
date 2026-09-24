@@ -107,10 +107,12 @@ images/
     02.jpg
     ...
   hero.jpg          ảnh trang đầu
-  story.jpg         ảnh phần lời tâm sự
-  map-vungtau.jpg   bản đồ Merastis
-  map-hungyen.jpg   bản đồ QL39A
-  qr-chu-re.png     mã QR chuyển khoản
+  story.webp        ảnh phần lời tâm sự
+  map-vungtau.webp  bản đồ Merastis
+  map-hungyen.webp  bản đồ QL39A
+  qr-chu-re.webp    mã QR hiển thị trên trang
+  qr-co-dau.webp
+  qr-chu-re.png     bản PNG cho nút "Tải mã QR" (app ngân hàng đọc chắc chắn)
   qr-co-dau.png
   icon-gmaps.png    biểu tượng trên nút chỉ đường
 ```

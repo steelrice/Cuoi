@@ -677,12 +677,12 @@
           <span class="txt"><span class="itxt itxt-vi">Xin giới thiệu</span><span class="itxt itxt-en">Allow us to introduce</span><span class="cursor" id="introCursor"></span></span>
           <div class="rule"></div>
         </div>
-        <div class="solo-card groom" id="cardGroom"><img src="images/groom-intro.jpg" alt="Chú rể Hoàng Sơn"></div>
+        <div class="solo-card groom" id="cardGroom"><img src="images/groom-intro.webp" alt="Chú rể Hoàng Sơn"></div>
         <div class="solo-label groom" id="labelGroom">
           <div class="lk"><span data-vi>Chú rể</span><span data-en>Groom</span></div>
           <div class="ln">Hoàng Sơn</div>
         </div>
-        <div class="solo-card bride" id="cardBride"><img src="images/bride-intro.jpg" alt="Cô dâu Phương Thảo"></div>
+        <div class="solo-card bride" id="cardBride"><img src="images/bride-intro.webp" alt="Cô dâu Phương Thảo"></div>
         <div class="solo-label bride" id="labelBride">
           <div class="lk"><span data-vi>Cô dâu</span><span data-en>Bride</span></div>
           <div class="ln">Phương Thảo</div>
@@ -696,7 +696,7 @@
       </div>
       <div class="wrap" id="finalStage">
         <div class="story-fig" id="frameWrap">
-          <img class="story-img" src="images/story.jpg" alt="Hoàng Sơn và Phương Thảo" loading="eager" fetchpriority="high" decoding="async">
+          <img class="story-img" src="images/story.webp" alt="Hoàng Sơn và Phương Thảo" loading="eager" fetchpriority="high" decoding="async">
         </div>
         <div class="story">
           <blockquote id="storyQuote">
@@ -823,8 +823,8 @@
             <span data-en><b>Address:</b> Hall 2 · 356A-358 Truong Cong Dinh St.<br>Vung Tau City</span>
           </div>
           <a class="loc-map" id="locMapLink" href="#" target="_blank" rel="noopener">
-            <img id="mapVT" src="images/map-vungtau.jpg" alt="Bản đồ vị trí Nhà hàng Merastis, Vũng Tàu" loading="lazy">
-            <img id="mapHY" src="images/map-hungyen.jpg" alt="Bản đồ vị trí tư gia nhà trai trên QL39A, Hưng Yên" loading="lazy">
+            <img id="mapVT" src="images/map-vungtau.webp" alt="Bản đồ vị trí Nhà hàng Merastis, Vũng Tàu" loading="lazy">
+            <img id="mapHY" src="images/map-hungyen.webp" alt="Bản đồ vị trí tư gia nhà trai trên QL39A, Hưng Yên" loading="lazy">
           </a>
           <div class="loc-credit" id="locCredit">Bản đồ: Google</div>
           <a class="btn-gold" id="locMaps" href="#" target="_blank" rel="noopener">
@@ -937,11 +937,11 @@
         </div>
         <div class="gift-rail" id="giftRail">
           <div class="gift-card"><div class="gift-inner">
-            <img class="gift-qr" id="qrGroom" src="images/qr-chu-re.png" alt="Mã QR chuyển khoản Đào Hoàng Sơn" loading="lazy" decoding="async">
+            <img class="gift-qr" id="qrGroom" src="images/qr-chu-re.webp" alt="Mã QR chuyển khoản Đào Hoàng Sơn" loading="lazy" decoding="async">
             <button type="button" class="gift-dl" data-file="qr-chu-re.png"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 19h16"/></svg><span data-vi>Tải mã QR</span><span data-en>Tap here to save the QR code</span></button>
           </div></div>
           <div class="gift-card"><div class="gift-inner">
-            <img class="gift-qr" src="images/qr-co-dau.png" alt="Mã QR chuyển khoản Phùng Nguyễn Phương Thảo" loading="lazy" decoding="async">
+            <img class="gift-qr" src="images/qr-co-dau.webp" alt="Mã QR chuyển khoản Phùng Nguyễn Phương Thảo" loading="lazy" decoding="async">
             <button type="button" class="gift-dl" data-file="qr-co-dau.png"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 19h16"/></svg><span data-vi>Tải mã QR</span><span data-en>Tap here to save the QR code</span></button>
           </div></div>
         </div>
@@ -1053,7 +1053,7 @@
       var img = card ? card.querySelector('.gift-qr') : null;
       if(!img || !img.src) return;
       var a = document.createElement('a');
-      a.href = img.src;
+      a.href = 'images/' + (btn.getAttribute('data-file') || 'qr.png');
       a.download = btn.getAttribute('data-file') || 'qr.png';
       document.body.appendChild(a);
       a.click();
@@ -1597,7 +1597,7 @@
      Trang se tu nhan. Ten phai lien tuc, thieu so nao thi dung o do.
      Doi duoi anh khac thi them vao mang ALBUM_EXT ben duoi. */
   var ALBUM_DIR = 'images/album/';
-  var ALBUM_EXT = ['jpg','jpeg','png','webp'];
+  var ALBUM_EXT = ['webp','jpg','jpeg','png'];
   var ALBUM_MAX = 60;
 
   var gallery = document.getElementById('gallery');
