@@ -43,6 +43,7 @@
 
   #app{ max-width:520px; margin:0 auto; background:var(--cream); box-shadow:var(--shadow); position:relative; }
   .wrap{ max-width:400px; margin:0 auto; padding:0 var(--sp-6); }
+  .wrap-wide{ padding:0 var(--sp-4); }
 
   /* Nút đổi ngôn ngữ: huy hiệu tròn khắc cờ, chỉ hiện lúc còn ở bìa thiệp
      (ẩn hẳn ngay khi khách chạm "Chạm để mở thiệp", xem #openBtn trong script) */
@@ -418,7 +419,7 @@
 
   /* ---------- timeline ---------- */
   .tl{ margin-top:var(--sp-3); }
-  .tl-frame-inner{ border:1px solid #8A6A34; padding:34px 22px; display:flex; flex-direction:column; gap:28px; text-align:left; }
+  .tl-frame-inner{ border:1px solid #8A6A34; padding:34px 16px; display:flex; flex-direction:column; gap:28px; text-align:left; }
   .tl-head{ display:flex; flex-direction:column; align-items:center; gap:8px; text-align:center; }
   .tl-kicker{ font-family:var(--script); font-style:italic; font-size:25px; color:#D4A94E; }
   .tl-headtitle{ font-family:var(--script); font-size:38px; line-height:1; color:#FBF1DC; }
@@ -490,7 +491,7 @@
   }
 
   /* ---------- RSVP — khung góc bo (corner-frame) ---------- */
-  .rsvp-frame{ position:relative; border:1px solid rgba(169,127,46,.45); padding:var(--sp-7) var(--sp-5) var(--sp-6); }
+  .rsvp-frame{ position:relative; border:1px solid rgba(169,127,46,.45); padding:var(--sp-7) var(--sp-4) var(--sp-6); }
   .rsvp-corner{ position:absolute; width:20px; height:20px; border:2px solid var(--red-deep); }
   .band-red .rsvp-corner{ border-color:var(--gold); }
   .rsvp-corner.corner-tl{ top:-1px; left:-1px; border-right:0; border-bottom:0; }
@@ -747,7 +748,7 @@
 
   <!-- ============ TIMELINE ============ -->
   <section class="band-red">
-    <div class="wrap center">
+    <div class="wrap center wrap-wide">
       <div class="tl">
         <div class="tl-frame">
           <div class="tl-frame-inner">
@@ -855,7 +856,7 @@
 
   <!-- ============ RSVP (chuyển lên đây, dùng chung nền kem với GIFT, khung góc bo) ============ -->
   <section>
-    <div class="wrap">
+    <div class="wrap wrap-wide">
       <div class="rsvp-frame">
         <span class="rsvp-corner corner-tl" aria-hidden="true"></span><span class="rsvp-corner corner-tr" aria-hidden="true"></span><span class="rsvp-corner corner-bl" aria-hidden="true"></span><span class="rsvp-corner corner-br" aria-hidden="true"></span>
         <div class="center">
