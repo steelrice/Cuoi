@@ -573,8 +573,8 @@
 
   /* ---------- footer ---------- */
   .footer{ position:relative; isolation:isolate; overflow:hidden; background:var(--red-deep); color:var(--cream); text-align:center; padding:var(--sp-9) var(--sp-6) var(--sp-7); }
-  /* ảnh cưới mờ phía sau (dùng lại ảnh album đã tải), phủ đỏ đậm để chữ vẫn rõ; mép trên đỏ đặc để nối liền phần trên */
-  .footer::before{ content:''; position:absolute; inset:-8px; z-index:-2; background:url(images/album/04.jpg) center 35%/cover no-repeat; filter:blur(2px) saturate(.75); }
+  /* ảnh cưới mờ phía sau (images/footer.webp), phủ đỏ đậm để chữ vẫn rõ; mép trên đỏ đặc để nối liền phần trên */
+  .footer::before{ content:''; position:absolute; inset:-8px; z-index:-2; background:url(images/footer.webp) center 42%/cover no-repeat; filter:blur(3px) saturate(.75); }
   .footer::after{ content:''; position:absolute; inset:0; z-index:-1; background:linear-gradient(to bottom, var(--red-deep) 0%, rgba(76,12,23,.66) 40%, rgba(76,12,23,.78) 100%); }
   .footer .rule{ width:44px; height:1px; background:rgba(207,159,63,.65); margin:var(--sp-4) auto 0; }
   .footer .mono{ font-family:var(--script); font-style:italic; font-weight:600; font-size:40px; color:var(--gold); }
