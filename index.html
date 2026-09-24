@@ -649,7 +649,9 @@
   /* ---------- footer ---------- */
   .footer{ position:relative; isolation:isolate; overflow:hidden; background:var(--red-deep); color:var(--cream); text-align:center; padding:var(--sp-9) var(--sp-6) var(--sp-7); }
   /* ảnh cưới mờ phía sau (images/footer.webp), phủ đỏ đậm để chữ vẫn rõ; mép trên đỏ đặc để nối liền phần trên */
-  .footer::before{ content:''; position:absolute; inset:-8px; z-index:-2; background:url(images/footer.webp) center 42%/cover no-repeat; filter:blur(3px) saturate(.75); }
+  .footer::before{ content:''; position:absolute; inset:-8px; z-index:-2; background:var(--red-deep) center 42%/cover no-repeat; filter:blur(3px) saturate(.75); }
+  /* ảnh nền footer chỉ tải khi khách cuộn gần tới (class .bg-in, xem script) để không giành băng thông lúc đầu */
+  .footer.bg-in::before{ background-image:url(images/footer.webp); }
   .footer::after{ content:''; position:absolute; inset:0; z-index:-1; background:linear-gradient(to bottom, var(--red-deep) 0%, rgba(76,12,23,.66) 40%, rgba(76,12,23,.78) 100%); }
   .footer .rule{ width:44px; height:1px; background:rgba(207,159,63,.65); margin:var(--sp-4) auto 0; }
   .footer .mono{ font-family:var(--script); font-style:italic; font-weight:600; font-size:40px; color:var(--gold); }
@@ -791,12 +793,12 @@
           <span class="txt"><span class="itxt itxt-vi">Xin giới thiệu</span><span class="itxt itxt-en">Allow us to introduce</span><span class="cursor" id="introCursor"></span></span>
           <div class="rule"></div>
         </div>
-        <div class="solo-card groom" id="cardGroom"><img src="images/groom-intro.webp" alt="Chú rể Hoàng Sơn"></div>
+        <div class="solo-card groom" id="cardGroom"><img src="images/groom-intro.webp" alt="Chú rể Hoàng Sơn" fetchpriority="high" decoding="async"></div>
         <div class="solo-label groom" id="labelGroom">
           <div class="lk"><span data-vi>Chú rể</span><span data-en>Groom</span></div>
           <div class="ln">Hoàng Sơn</div>
         </div>
-        <div class="solo-card bride" id="cardBride"><img src="images/bride-intro.webp" alt="Cô dâu Phương Thảo"></div>
+        <div class="solo-card bride" id="cardBride"><img src="images/bride-intro.webp" alt="Cô dâu Phương Thảo" fetchpriority="high" decoding="async"></div>
         <div class="solo-label bride" id="labelBride">
           <div class="lk"><span data-vi>Cô dâu</span><span data-en>Bride</span></div>
           <div class="ln">Phương Thảo</div>
@@ -810,7 +812,7 @@
       </div>
       <div class="wrap" id="finalStage">
         <div class="story-fig" id="frameWrap">
-          <img class="story-img" src="images/story.webp" alt="Hoàng Sơn và Phương Thảo" loading="eager" fetchpriority="high" decoding="async">
+          <img class="story-img" src="images/story.webp" alt="Hoàng Sơn và Phương Thảo" decoding="async">
         </div>
         <div class="story">
           <blockquote id="storyQuote">
@@ -1820,6 +1822,19 @@
 
   var gallery = document.getElementById('gallery');
 
+  // ảnh nền footer: gắn .bg-in khi còn cách ~800px (hoặc khi trang đã tải xong, tuỳ cái nào tới trước)
+  var footerEl = document.querySelector('.footer');
+  if(footerEl){
+    var footerBg = function(){ footerEl.classList.add('bg-in'); };
+    if('IntersectionObserver' in window){
+      var fio = new IntersectionObserver(function(es){
+        if(es[0].isIntersecting){ footerBg(); fio.disconnect(); }
+      }, { rootMargin:'800px 0px' });
+      fio.observe(footerEl);
+    }
+    window.addEventListener('load', function(){ setTimeout(footerBg, 1500); });
+  }
+
   var pageLoaded = document.readyState === 'complete';
   var deferred = [];
   window.addEventListener('load', function(){
@@ -1839,7 +1854,9 @@
     im.addEventListener('error', function(){ wrap.classList.remove('is-loading'); wrap.classList.add('is-broken'); });
     wrap.appendChild(im);
     gallery.appendChild(wrap);
-    if(i === 1 || pageLoaded) im.src = src;
+    // ảnh đầu: lazy (chỉ tải khi cuộn gần tới album); các ảnh sau: chờ trang tải xong
+    if(i === 1){ im.loading = 'lazy'; im.src = src; }
+    else if(pageLoaded) im.src = src;
     else deferred.push(im);
   }
 
