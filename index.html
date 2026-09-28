@@ -385,6 +385,19 @@
   }
   .s-cta:hover{ background:rgba(207,159,63,.12); border-color:var(--gold); }
 
+  /* hướng dẫn vuốt lên (thay nút "Chạm để mở thiệp") — vuốt thiệp lên để mở; chạm vào đây vẫn mở được */
+  .swipe-hint{ margin-top:var(--sp-6); display:flex; flex-direction:column; align-items:center; gap:4px; padding:6px 18px 2px; border:none; background:none; color:var(--gold); cursor:pointer; }
+  .swipe-hint .sw-arrows{ display:flex; flex-direction:column; align-items:center; line-height:0; }
+  .swipe-hint .sw-arrows svg{ width:22px; height:14px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; animation:swArrow 1.8s ease-in-out infinite; }
+  .swipe-hint .sw-arrows svg:first-child{ animation-delay:.15s; }
+  .swipe-hint .sw-arrows svg:last-child{ margin-top:-5px; opacity:.55; }
+  .swipe-hint .sw-hand svg{ width:28px; height:28px; fill:none; stroke:currentColor; stroke-width:1.4; stroke-linecap:round; stroke-linejoin:round; animation:swHand 1.8s ease-in-out infinite; }
+  .swipe-hint .sw-txt{ font-family:var(--sans); font-size:11.5px; font-weight:500; letter-spacing:.18em; text-transform:uppercase; color:var(--cream-dim); margin-top:6px; }
+  @keyframes swHand{ 0%,15%{ transform:translateY(8px); opacity:0; } 30%{ opacity:1; } 70%{ transform:translateY(-10px); opacity:1; } 100%{ transform:translateY(-14px); opacity:0; } }
+  @keyframes swArrow{ 0%,100%{ transform:translateY(0); opacity:.4; } 50%{ transform:translateY(-4px); opacity:1; } }
+  @media (prefers-reduced-motion: reduce){ .swipe-hint svg{ animation:none!important; } }
+  #cover.parted:not(.open):not(.review){ touch-action:none; }
+  #cover.review .swipe-hint{ display:none; }
   .stage .seal-btn{ margin-top:var(--sp-5); animation:none; }
   #cover.parted .stage .seal-btn.r{
     animation:elegantReveal .8s cubic-bezier(.16,1,.3,1) calc(1.15s + var(--d,0s)) both,
@@ -470,42 +483,26 @@
      chung (dùng lại đúng .story-fig/.story bên dưới), ghim 1 màn hình khi cuộn — dùng
      position:sticky thật (trình duyệt tự lo phần ghim, không cần JS chạy theo mỗi khung
      hình cuộn nữa, mượt hơn hẳn so với kiểu position:fixed tự mô phỏng trước đây). */
-  .scrollstage{ position:relative; height:260vh; }
+  .scrollstage{ position:relative; height:360vh; }
   .sticky-view{
     position:sticky; top:0; height:100vh; height:100svh; height:100dvh; min-height:560px;
     overflow:hidden;
   }
   .intro-inner{ position:relative; width:100%; height:100%; }
 
-  .duo-stage{ position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:94%; max-width:380px; aspect-ratio:240/460; }
-
-  .solo-card{
-    position:absolute; border-radius:2px; overflow:hidden;
-    border:1px solid rgba(207,159,63,.6); box-shadow:0 16px 34px rgba(0,0,0,.4);
-    will-change:transform, opacity;
-  }
-  .solo-card img{ display:block; width:100%; height:100%; object-fit:cover; }
-  .solo-card.groom{ top:19%; left:46%; width:50%; aspect-ratio:4/5; }
-  .solo-card.bride{ top:52%; left:-2%; width:50%; aspect-ratio:4/5; }
-
-  .solo-label{ position:absolute; width:max-content; will-change:transform, opacity; }
-  .solo-label .lk{ font-family:var(--script); font-style:italic; font-weight:600; font-size:20px; color:var(--gold); }
-  .solo-label .ln{ font-family:var(--serif); font-weight:400; font-size:25px; color:var(--cream); margin-top:5px; line-height:1.25; letter-spacing:.01em; }
-  .solo-label.groom{ top:33%; left:0; text-align:left; max-width:44%; }
-  .solo-label.bride{ top:67%; right:0; text-align:right; max-width:52%; }
-
-  /* Trái tim nét vàng — vẽ dần đúng vào khe hở giữa hai khung ảnh, TRƯỚC khi ảnh
-     trượt/mờ đi (không phải sau) — xem mốc pHeartIn/pOut trong update() */
-  .heart-wrap{
-    position:absolute; top:52%; left:47%; transform:translate(-50%,-50%);
-    width:90px; height:90px; opacity:0; pointer-events:none; z-index:3;
-  }
-  .heart-wrap svg{ width:100%; height:100%; overflow:visible; }
-  .heart-wrap path{ fill:none; stroke:var(--gold); stroke-width:5; stroke-linecap:round; stroke-linejoin:round; }
-  .heart-wrap .glow{ filter:drop-shadow(0 2px 3px rgba(0,0,0,.35)); }
+  /* "máy quay" trên ảnh chung (JS đặt transform cho .cam-img theo tiến độ cuộn) */
+  .cam{ position:absolute; inset:0; overflow:hidden; background:#33060b; }
+  .cam-img{ position:absolute; left:0; top:0; width:100%; height:100%; max-width:none; transform-origin:0 0; will-change:transform; }
+  .cam-shade{ position:absolute; inset:0; pointer-events:none;
+    background:linear-gradient(180deg, rgba(33,4,7,.75) 0%, rgba(33,4,7,0) 26%, rgba(33,4,7,0) 58%, rgba(33,4,7,.7) 86%, rgba(33,4,7,.9) 100%); }
+  .cam-label{ position:absolute; bottom:calc(84px + env(safe-area-inset-bottom)); opacity:0; will-change:transform, opacity; text-shadow:0 2px 12px rgba(0,0,0,.45); }
+  .cam-label .lk{ font-family:var(--script); font-style:italic; font-weight:600; font-size:24px; color:var(--gold); }
+  .cam-label .ln{ font-family:var(--serif); font-weight:400; font-size:clamp(30px,9vw,38px); color:var(--cream); margin-top:4px; line-height:1.15; letter-spacing:.01em; }
+  .cam-label.bride{ left:var(--sp-6); text-align:left; }
+  .cam-label.groom{ right:var(--sp-6); text-align:right; }
 
   /* "Xin giới thiệu" — tiêu đề mở màn, cỡ lớn ngang .s-kicker của bìa, gõ chữ dần */
-  .intro-kicker{ position:absolute; top:0; left:50%; transform:translateX(-50%); width:100%; text-align:center; opacity:0; transition:opacity .5s ease, transform .5s ease; will-change:opacity, transform; }
+  .intro-kicker{ position:absolute; top:calc(var(--sp-8) + env(safe-area-inset-top)); left:50%; transform:translateX(-50%); width:100%; text-align:center; opacity:0; transition:opacity .5s ease, transform .5s ease; will-change:opacity, transform; }
   .intro-kicker.intro-in{ opacity:1; }
   .intro-kicker .txt{ font-family:var(--script); font-style:italic; font-weight:500; font-size:clamp(30px,8vw,36px); letter-spacing:.015em; color:var(--gold); white-space:nowrap; }
   .intro-kicker .itxt{ display:inline-block; overflow:hidden; white-space:nowrap; vertical-align:top; width:0; }
@@ -524,10 +521,6 @@
     .intro-kicker .itxt{ width:auto!important; animation:none!important; }
   }
 
-  .solo-card.groom, .solo-label.groom{ opacity:0; transform:translateY(18px); transition:opacity .7s ease, transform .7s cubic-bezier(.16,1,.3,1); }
-  .solo-card.bride, .solo-label.bride{ opacity:0; transform:translateY(18px); transition:opacity .7s ease, transform .7s cubic-bezier(.16,1,.3,1); }
-  .solo-card.groom.intro-in, .solo-label.groom.intro-in,
-  .solo-card.bride.intro-in, .solo-label.bride.intro-in{ opacity:1; transform:translateY(0); }
 
   /* Khối ảnh chung + trích dẫn cuối — TÁI DÙNG .story-fig/.story (không tạo class trùng lặp),
      chỉ thêm định vị tuyệt đối theo tâm màn hình để ghim đúng vị trí trong lúc hội tụ/ghép ảnh */
@@ -670,8 +663,18 @@
      trên màn hình nằm trong .bk-up (xoay ngược lại). Kích thước (--bw/--bh/--uw/--uh) do JS tính theo màn hình. */
   .bk-sec{ padding:var(--sp-7) 0 0; }
   .bk-sec .orn-div{ margin-bottom:0; }
-  .bk-pin{ position:relative; height:100vh; height:100svh; min-height:520px; }
-  .bk-sticky{ position:sticky; top:0; height:100vh; height:100svh; min-height:520px; overflow:hidden; display:flex; flex-direction:column; }
+  .bk-pin{ position:relative; }
+  .bk-sticky{ position:relative; height:620px; overflow:hidden; }   /* chiều cao đúng do JS đặt theo cỡ album */
+  .bk-stage.bk-inline .bk-book{ cursor:zoom-in; }
+  /* chế độ xem lớn toàn màn hình (JS gắn vào <body>) */
+  .bk-full{ position:fixed; inset:0; z-index:1600; background:rgba(20,3,6,.96); display:none; }
+  .bk-full.show{ display:block; }
+  .bk-full .bk-stage{ touch-action:none; }
+  .bk-full .bk-ctl{ color:var(--cream-dim); }
+  .bk-full .bk-ctl button{ color:var(--gold); border-color:rgba(207,159,63,.5); }
+  .bk-full .bk-cnt{ color:var(--cream); }
+  .bk-full .bk-cnt span, .bk-full .bk-hint{ color:var(--cream-dim); }
+  .bk-close{ position:absolute; top:calc(var(--sp-4) + env(safe-area-inset-top)); right:var(--sp-4); z-index:4; width:42px; height:42px; border-radius:50%; border:1px solid rgba(207,159,63,.5); background:rgba(20,3,6,.5); color:var(--gold); font-size:24px; line-height:1; display:flex; align-items:center; justify-content:center; }
   .bk-head{ position:absolute; top:0; left:0; right:0; z-index:2; padding-top:var(--sp-8); text-align:center; pointer-events:none; }
   .bk-tag{ position:absolute; top:0; right:var(--sp-5); width:40px; height:84px; z-index:5; display:flex; align-items:flex-end; justify-content:center; padding-bottom:9px;
     background:linear-gradient(180deg,#5a0f1c,#7a1524); color:#f3dfb4; font-weight:700; font-size:22px; box-shadow:0 6px 14px rgba(60,10,15,.25); }
@@ -680,7 +683,6 @@
   .bk-stage{ position:absolute; inset:0; perspective:1800px; perspective-origin:50% 50%; touch-action:pan-y; user-select:none; -webkit-user-select:none; }
   .bk-stage.bk-drag-v .bk-book{ touch-action:none; }   /* màn dọc sau khi xoay: vuốt dọc TRÊN album = lật trang (cuộn trang bằng vùng ngoài album) */
   .bk-ctl{ position:absolute; left:0; right:0; bottom:calc(var(--sp-4) + env(safe-area-inset-bottom)); z-index:3; display:flex; flex-direction:column; align-items:center; gap:8px; color:var(--ink-soft); }
-  @media (max-height:500px){ .bk-sticky{ min-height:0; } .bk-head{ padding-top:var(--sp-3); } .bk-head .sec-kicker{ display:none; } .bk-head h2.title{ font-size:20px; } .bk-ctl{ bottom:var(--sp-2); } }
   .bk-ctl .bk-row{ display:flex; align-items:center; gap:18px; transition:opacity .4s ease; }
   .bk-ctl.off .bk-row{ opacity:0; pointer-events:none; }
   .bk-ctl button{ width:36px; height:36px; border-radius:50%; border:1px solid rgba(138,94,36,.5); background:transparent; color:#8A5E24; font-size:16px; line-height:1; display:inline-flex; align-items:center; justify-content:center; }
@@ -904,7 +906,11 @@
       <div class="s-addr r" id="sAddr" style="--d:2s"><span data-vi>QL39A, xã Tân Hưng, TP. Hưng Yên</span><span data-en>QL39A, Tan Hung Commune, Hung Yen City</span></div>
       <a class="s-cta r" id="sCta" style="--d:2s" href="https://www.google.com/maps/search/?api=1&amp;query=QL39A%2C%20T%C3%A2n%20H%C6%B0ng%2C%20H%C6%B0ng%20Y%C3%AAn" target="_blank" rel="noopener"><span data-vi>Chỉ đường tới</span><span data-en>Get directions</span></a>
 
-      <button class="seal-btn r" style="--d:2.35s" id="openBtn"><span><span data-vi>Chạm để<br>mở thiệp</span><span data-en>Tap to<br>open</span></span></button>
+      <button type="button" class="swipe-hint r" style="--d:2.35s" id="openBtn" aria-label="Vuốt lên để xem tiếp">
+        <span class="sw-arrows" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 15l6-6 6 6"/></svg><svg viewBox="0 0 24 24"><path d="M6 15l6-6 6 6"/></svg></span>
+        <span class="sw-hand" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 11V5.5a1.5 1.5 0 0 1 3 0V11m0-1.5a1.5 1.5 0 0 1 3 0V11m0-.5a1.5 1.5 0 0 1 3 0v4.5a6 6 0 0 1-6 6h-.6a6 6 0 0 1-4.9-2.6L4.3 15.2a1.5 1.5 0 0 1 2.4-1.8L9 15"/></svg></span>
+        <span class="sw-txt"><span data-vi>Vuốt lên để xem tiếp</span><span data-en>Swipe up to continue</span></span>
+      </button>
     </div>
   </div>
 
@@ -1006,26 +1012,21 @@
   <div class="scrollstage" id="introStage">
     <div class="sticky-view band-red">
      <div class="intro-inner">
-      <div class="duo-stage" id="duoStage">
+      <!-- "máy quay" lướt trên ảnh chung: toàn cảnh → cận cô dâu → lia sang chú rể → lùi ra -->
+      <div class="cam" id="cam">
+        <img class="cam-img" id="camImg" src="images/story-hd.webp" alt="Hoàng Sơn và Phương Thảo" decoding="async">
+        <div class="cam-shade"></div>
         <div class="intro-kicker" id="introKicker" aria-hidden="true">
           <span class="txt"><span class="itxt itxt-vi">Xin giới thiệu</span><span class="itxt itxt-en">Allow us to introduce</span><span class="cursor" id="introCursor"></span></span>
           <div class="rule"></div>
         </div>
-        <div class="solo-card groom" id="cardGroom"><img src="images/groom-intro.webp" alt="Chú rể Hoàng Sơn" fetchpriority="high" decoding="async"></div>
-        <div class="solo-label groom" id="labelGroom">
-          <div class="lk"><span data-vi>Chú rể</span><span data-en>Groom</span></div>
-          <div class="ln">Hoàng Sơn</div>
-        </div>
-        <div class="solo-card bride" id="cardBride"><img src="images/bride-intro.webp" alt="Cô dâu Phương Thảo" fetchpriority="high" decoding="async"></div>
-        <div class="solo-label bride" id="labelBride">
-          <div class="lk"><span data-vi>Cô dâu</span><span data-en>Bride</span></div>
+        <div class="cam-label bride" id="labelBride">
+          <div class="lk"><span data-vi>Cô dâu</span><span data-en>The bride</span></div>
           <div class="ln">Phương Thảo</div>
         </div>
-
-        <div class="heart-wrap" id="heartWrap" aria-hidden="true">
-          <svg viewBox="0 0 100 90">
-            <path class="glow" id="heartPath" d="M50,85 C20,62 0,42 0,22 C0,8 13,0 25,0 C36,0 46,7 50,18 C54,7 64,0 75,0 C87,0 100,8 100,22 C100,42 80,62 50,85 Z"/>
-          </svg>
+        <div class="cam-label groom" id="labelGroom">
+          <div class="lk"><span data-vi>Chú rể</span><span data-en>The groom</span></div>
+          <div class="ln">Hoàng Sơn</div>
         </div>
       </div>
       <div class="wrap" id="finalStage">
@@ -1189,7 +1190,7 @@
     </div>
   </section>
 
-  <!-- ============ ALBUM (cuốn album bìa ảnh — cuộn để xoay, mở bìa, lật vài trang đầu; sau đó chạm/vuốt) ============ -->
+  <!-- ============ ALBUM (cuốn album bìa ảnh — tự mở ngang khi cuộn tới; vuốt để lật; chạm để xem lớn toàn màn hình) ============ -->
   <section class="bk-sec">
     <div class="orn-div" aria-hidden="true"><span>囍</span></div>
     <div class="bk-pin" id="bkPin">
@@ -1199,7 +1200,7 @@
           <div class="sec-kicker center"><span data-vi>Lưu giữ</span><span data-en>Treasured</span></div>
           <h2 class="title center"><span data-vi>Khoảnh khắc</span><span data-en>Moments</span></h2>
         </div>
-        <div class="bk-stage" id="bkStage"><div class="bk-book" id="bkBook"></div></div>
+        <div class="bk-stage bk-inline" id="bkStage"><div class="bk-book" id="bkBook"></div></div>
         <div class="bk-ctl off" id="bkCtl">
           <div class="bk-row">
             <button type="button" id="bkPrev" aria-label="Trang trước">&#8249;</button>
@@ -1460,20 +1461,18 @@
 
     var kicker      = document.getElementById('introKicker');
     var cursorEl    = document.getElementById('introCursor');
-    var cardGroom   = document.getElementById('cardGroom');
-    var cardBride   = document.getElementById('cardBride');
+    var cam         = document.getElementById('cam');
+    var camImg      = document.getElementById('camImg');
     var labelGroom  = document.getElementById('labelGroom');
     var labelBride  = document.getElementById('labelBride');
     var finalStage  = document.getElementById('finalStage');
     var frameWrap   = document.getElementById('frameWrap');
     var storyBlock  = finalStage.querySelector('.story');
     var introHint   = document.getElementById('introHint');
-    var heartWrap   = document.getElementById('heartWrap');
-    var heartPath   = document.getElementById('heartPath');
-    var heartLen    = heartPath.getTotalLength();
-    heartPath.style.strokeDasharray = heartLen;
-    heartPath.style.strokeDashoffset = heartLen;
-    var fadeEls     = [cardGroom, cardBride, labelGroom, labelBride, kicker, introHint];
+    var fadeEls     = [kicker, introHint];
+    /* điểm lấy nét trên ảnh gốc (tỉ lệ 0–1 theo chiều ngang/dọc ảnh) và độ phóng */
+    var CAM_BRIDE = { u:0.42, v:0.40, z:2.2 };
+    var CAM_GROOM = { u:0.88, v:0.30, z:1.9 };
 
     var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     var noIO = !('IntersectionObserver' in window);
@@ -1486,8 +1485,7 @@
     if(reduce || noIO){
       /* hiện thẳng trạng thái cuối (ảnh + trích dẫn đã ghép) như một section tĩnh bình
          thường, không ghim/không animation — cùng cách xử lý reduced-motion của trang */
-      var duoStage = document.getElementById('duoStage');
-      if(duoStage) duoStage.style.display = 'none';
+      if(cam) cam.style.display = 'none';
       introHint.style.display = 'none';
       stage.style.height = 'auto';
       view.style.position = 'relative';
@@ -1523,21 +1521,13 @@
 
       setIntroTimeout(function(){ cursorEl.classList.add('hide'); }, typeMs + 150);
       setIntroTimeout(function(){
-        cardGroom.classList.add('intro-in');
-        labelGroom.classList.add('intro-in');
-      }, typeMs + 400);
-      setIntroTimeout(function(){
-        cardBride.classList.add('intro-in');
-        labelBride.classList.add('intro-in');
-      }, typeMs + 950);
-      setIntroTimeout(function(){
         introHint.classList.add('intro-in');
         introPlayed = true;
         /* từ đây cuộn điều khiển trực tiếp opacity/transform mỗi khung hình —
            tắt transition CSS để không bị trễ theo sau giá trị inline đặt mỗi frame */
         fadeEls.forEach(function(el){ el.style.transition = 'none'; });
         update();
-      }, typeMs + 1500);
+      }, typeMs + 500);
     }
 
     /* Chạy animation đúng lúc khách chạm mở thiệp — không dùng IntersectionObserver ở đây vì
@@ -1548,56 +1538,66 @@
     /* Có ảnh Save the Date đứng trước nên #introStage không còn nằm trong khung nhìn lúc
        mở thiệp: chỉ bắt đầu theo dõi SAU khi khách chạm mở, và chạy khi phần giới thiệu
        đã lên quá nửa màn hình. */
-    var openBtn = document.getElementById('openBtn');
-    if(openBtn){
-      openBtn.addEventListener('click', function(){
-        setTimeout(function(){
-          var iio = new IntersectionObserver(function(es){
-            if(es[0].isIntersecting){ iio.disconnect(); if(!introPlayed) playIntro(); }
-          }, { rootMargin:'0px 0px -45% 0px' });
-          iio.observe(stage);
-        }, 600);
-      }, { once: true });
-    }
+    document.addEventListener('inviteopen', function(){
+      setTimeout(function(){
+        var iio = new IntersectionObserver(function(es){
+          if(es[0].isIntersecting){ iio.disconnect(); if(!introPlayed) playIntro(); }
+        }, { rootMargin:'0px 0px -45% 0px' });
+        iio.observe(stage);
+      }, 600);
+    }, { once: true });
+    camImg.addEventListener('load', function(){ update(); });
 
     /* .sticky-view ghim bằng position:sticky thật (CSS/trình duyệt tự lo, không cần JS ở
        đây nữa) — JS chỉ còn tính tiến độ cuộn p (0 → 1) trong đoạn ghim để lái hiệu ứng
        mờ dần/hội tụ/ghép ảnh theo từng khung hình. */
+    /* đặt "máy quay": phóng z lần, đưa điểm (u,v) của ảnh vào giữa khung — kẹp để không lộ mép trống */
+    function shoot(u, v, z){
+      var W = cam.clientWidth, H = cam.clientHeight;
+      var iw = camImg.naturalWidth || 1334, ih = camImg.naturalHeight || 2000;
+      var c = Math.max(W / iw, H / ih), dw = iw * c, dh = ih * c;
+      var ox = (W - dw) / 2, oy = (H - dh) / 2;                      // ảnh phủ kín khung (có phần tràn ra ngoài)
+      camImg.style.width = dw + 'px'; camImg.style.height = dh + 'px';
+      var px = u * dw, py = v * dh;                                  // điểm cần lấy nét, tính trong ảnh
+      // kẹp để ảnh luôn phủ kín khung (được lia tới tận mép ảnh, kể cả phần tràn ra ngoài khung)
+      var tx = clamp(W / 2 - z * px, W - z * dw, 0), ty = clamp(H * 0.46 - z * py, H - z * dh, 0);
+      if(z <= 1.0001){ tx = ox; ty = oy; }
+      camImg.style.transform = 'translate(' + tx + 'px,' + ty + 'px) scale(' + z + ')';
+    }
     var ticking = false;
     function update(){
       ticking = false;
-      if(!introPlayed) return;
+      if(!introPlayed){ shoot(0.5, 0.5, 1); return; }
 
       var vh = window.innerHeight;
       var total = stage.offsetHeight - vh;
       var rect = stage.getBoundingClientRect();
       var p = total > 0 ? clamp(-rect.top / total, 0, 1) : 0;
 
-      /* --- trái tim: vẽ nét TRƯỚC, ngay khi ảnh còn đứng yên tại chỗ, đúng vào khe hở
-         giữa hai khung ảnh — rồi mới đến lượt ảnh trượt/mờ đi (xem heart-preview đã duyệt) */
-      var pHeartIn = ease(remap(p, 0.06, 0.34));
-      var pHeartOut = ease(remap(p, 0.38, 0.48));
-      heartPath.style.strokeDashoffset = String(heartLen * (1 - pHeartIn));
-      heartWrap.style.opacity = String(pHeartIn * (1 - pHeartOut));
-      heartWrap.style.transform = 'translate(-50%, -50%) scale(' + mix(0.85, 1, pHeartIn) + ')';
+      /* toàn cảnh → cận cô dâu → lia sang chú rể → lùi ra toàn cảnh → ảnh thu vào khung + trích dẫn */
+      var pIn   = ease(remap(p, 0.04, 0.24));      // zoom vào cô dâu
+      var pPan  = ease(remap(p, 0.38, 0.56));      // lia sang chú rể
+      var pOutZ = ease(remap(p, 0.68, 0.82));      // lùi ra
+      var u = mix(mix(0.5, CAM_BRIDE.u, pIn), CAM_GROOM.u, pPan);
+      var v = mix(mix(0.5, CAM_BRIDE.v, pIn), CAM_GROOM.v, pPan);
+      var z = mix(mix(1, CAM_BRIDE.z, pIn), CAM_GROOM.z, pPan);
+      u = mix(u, 0.5, pOutZ); v = mix(v, 0.5, pOutZ); z = mix(z, 1, pOutZ);
+      shoot(u, v, z);
 
-      var pOut = ease(remap(p, 0.38, 0.66));
-      var pImg = ease(remap(p, 0.66, 0.9));
-      var pTxt = ease(remap(p, 0.86, 1));
+      var bIn = ease(remap(p, 0.18, 0.28)), bOut = ease(remap(p, 0.38, 0.46));
+      var gIn = ease(remap(p, 0.50, 0.60)), gOut = ease(remap(p, 0.68, 0.76));
+      labelBride.style.opacity = String(bIn * (1 - bOut));
+      labelBride.style.transform = 'translateX(' + mix(-24, 0, bIn) + 'px) translateX(' + mix(0, -30, bOut) + 'px)';
+      labelGroom.style.opacity = String(gIn * (1 - gOut));
+      labelGroom.style.transform = 'translateX(' + mix(24, 0, gIn) + 'px) translateX(' + mix(0, 30, gOut) + 'px)';
 
-      kicker.style.opacity = String(1 - pOut);
-      kicker.style.transform = 'translate(-50%, ' + mix(0,-16,pOut) + 'px)';
+      var pK = ease(remap(p, 0.04, 0.16));
+      kicker.style.opacity = String(1 - pK);
+      kicker.style.transform = 'translate(-50%, ' + mix(0,-16,pK) + 'px)';
 
-      cardGroom.style.opacity = String(1 - pOut);
-      cardGroom.style.transform = 'translate(' + mix(0,-34,pOut) + '%, ' + mix(0,24,pOut) + '%) scale(' + mix(1,0.78,pOut) + ')';
-      labelGroom.style.opacity = String(1 - pOut);
-      labelGroom.style.transform = 'translateY(' + mix(0,-12,pOut) + 'px)';
-
-      cardBride.style.opacity = String(1 - pOut);
-      cardBride.style.transform = 'translate(' + mix(0,34,pOut) + '%, ' + mix(0,-24,pOut) + '%) scale(' + mix(1,0.78,pOut) + ')';
-      labelBride.style.opacity = String(1 - pOut);
-      labelBride.style.transform = 'translateY(' + mix(0,12,pOut) + 'px)';
-
+      var pImg = ease(remap(p, 0.8, 0.92));
+      var pTxt = ease(remap(p, 0.88, 1));
+      cam.style.opacity = String(1 - pImg);
       finalStage.style.opacity = String(Math.max(pImg, pTxt));
       frameWrap.style.transform = 'translate(' + mix(32,0,pImg) + 'px, ' + mix(26,0,pImg) + 'px)';
       if(storyBlock){
@@ -2012,8 +2012,50 @@
     }, 1300);
     // khách vừa có cử chỉ thật (chạm mở thiệp) — mở tiếng nhạc đã phát sẵn, fade âm lượng lên
     revealMusic();
+    document.dispatchEvent(new Event('inviteopen'));
   }
   openBtn.addEventListener('click', openInvite);
+
+  /* vuốt lên để mở: khối thiệp đi theo ngón tay, thả quá ~1/4 màn hình (hoặc vuốt nhanh) thì mở,
+     chưa đủ thì bật về. Mở trong touchend/pointerup nên vẫn tính là "cử chỉ thật" → nhạc phát được. */
+  (function(){
+    var stageEl = cover.querySelector('.stage');
+    var sy = null, dy = 0, t0 = 0;
+    function canSwipe(){ return cover.classList.contains('parted') && !cover.classList.contains('open') && !cover.classList.contains('review'); }
+    function move(y){
+      dy = Math.min(0, y - sy);
+      var k = -dy / window.innerHeight;
+      stageEl.style.transition = 'none';
+      stageEl.style.transform = 'translateY(' + (dy * 0.85) + 'px)';
+      stageEl.style.opacity = String(1 - Math.min(0.6, k * 1.4));
+    }
+    function end(){
+      if(sy === null) return;
+      var fast = -dy / Math.max(1, performance.now() - t0) > 0.6;          // px/ms
+      var go = -dy > window.innerHeight * 0.22 || (fast && -dy > 40);
+      sy = null;
+      stageEl.style.transition = 'transform .45s cubic-bezier(.16,1,.3,1), opacity .45s ease';
+      if(go){
+        stageEl.style.transform = 'translateY(' + (-window.innerHeight * 0.35) + 'px)';
+        stageEl.style.opacity = '0';
+        openInvite();
+        setTimeout(function(){ stageEl.style.transition = ''; stageEl.style.transform = ''; stageEl.style.opacity = ''; }, 1400);
+      } else {
+        stageEl.style.transform = ''; stageEl.style.opacity = '';
+      }
+      dy = 0;
+    }
+    cover.addEventListener('touchstart', function(e){ if(!canSwipe()) return; sy = e.touches[0].clientY; dy = 0; t0 = performance.now(); }, { passive:true });
+    cover.addEventListener('touchmove', function(e){ if(sy === null) return; e.preventDefault(); move(e.touches[0].clientY); }, { passive:false });
+    cover.addEventListener('touchend', end);
+    cover.addEventListener('touchcancel', function(){ dy = 0; end(); });
+    // chuột (máy tính): kéo lên, lăn chuột xuống hoặc phím ↓ / Space cũng mở
+    cover.addEventListener('pointerdown', function(e){ if(e.pointerType !== 'mouse' || !canSwipe()) return; sy = e.clientY; dy = 0; t0 = performance.now(); });
+    window.addEventListener('pointermove', function(e){ if(e.pointerType === 'mouse' && sy !== null) move(e.clientY); });
+    window.addEventListener('pointerup', function(e){ if(e.pointerType === 'mouse') end(); });
+    cover.addEventListener('wheel', function(e){ if(canSwipe() && e.deltaY > 20) openInvite(); }, { passive:true });
+    document.addEventListener('keydown', function(e){ if(canSwipe() && (e.key === 'ArrowDown' || e.key === ' ' || e.key === 'PageDown')) openInvite(); });
+  })();
 
   // <option> không nhận span data-vi/data-en như chữ thường, nên đổi chữ theo ngôn ngữ
   // qua thuộc tính data-vi/data-en gắn sẵn trên từng option
@@ -2190,27 +2232,46 @@
       lio.observe(pin);
     } else loadAll();
 
-    /* ---- kích thước theo màn hình ----
-       Màn dọc: sau khi mở, cả cuốn xoay 90° (gáy nằm ngang) cho trang đôi to hết bề ngang — khách xoay ngang máy để xem.
-       Màn ngang: không xoay. Mỗi trạng thái có cỡ hiển thị riêng (đóng / mở ngang / đã xoay); sách dựng ở cỡ
-       LỚN NHẤT trong các trạng thái rồi chỉ thu nhỏ (scale ≤ 1) → ảnh luôn nét. */
-    var head = pin.querySelector('.bk-head');
-    var SW, PW, PH, portrait = true, sFlat = 1, sClosed = 1, sRot = 1, offY = 0;
+    /* ---- hai chế độ ----
+       "inline": trong thiệp — album tự mở NGANG (không xoay), vuốt ngang để lật, chạm vào album để xem lớn.
+       "full": lớp toàn màn hình — điện thoại cầm dọc thì cả cuốn xoay 90° (gáy nằm ngang) cho trang đôi to hết
+       cỡ, vuốt lên để lật; màn ngang / máy tính thì nằm ngang to hết màn hình, lật bằng vuốt/chuột/phím ← →.
+       Sách dựng ở cỡ LỚN NHẤT cần dùng trong chế độ hiện tại rồi chỉ thu nhỏ (scale ≤ 1) → ảnh luôn nét. */
+    var head = pin.querySelector('.bk-head'), sticky = pin.querySelector('.bk-sticky');
+    var inlineStage = stage, mode = 'inline', rotFull = false;
+    var full = document.createElement('div');
+    full.className = 'bk-full'; full.setAttribute('role', 'dialog'); full.setAttribute('aria-modal', 'true');
+    full.innerHTML = '<button type="button" class="bk-close" aria-label="Đóng">&times;</button><div class="bk-stage"></div>';
+    document.body.appendChild(full);
+    var fullStage = full.querySelector('.bk-stage');
+    var SW, PW, PH, portrait = false, sFlat = 1, sClosed = 1, sRot = 1, offY = 0;
     function layout(){
-      var w = stage.clientWidth, h = stage.clientHeight;
-      var hh = head.offsetHeight, ch = ctl.offsetHeight + 24;
-      portrait = window.innerHeight > window.innerWidth;
-      var R = h - hh - ch - 8;                                     // vùng giữa tiêu đề và thanh điều khiển
-      offY = (hh - ch) / 2;
-      var rotSW   = portrait ? Math.min((w - 10) * 4 / 3, h - 2 * ch) : 0;          // đã xoay: bám sát 2 mép
-      var flatSW  = Math.min(w - (portrait ? 10 : 24), R * 4 / 3);                  // mở, nằm ngang
-      var closedPW = Math.min(w - 32, R * 2 / 3);                                    // album đóng: to sát viền
-      SW = Math.floor(Math.max(rotSW, flatSW, closedPW * 2) / 2) * 2;
-      PW = SW / 2; PH = Math.round(SW * 3 / 4);
+      var w, h, ch = ctl.offsetHeight + 24;
+      if(mode === 'inline'){
+        portrait = false;
+        w = inlineStage.clientWidth;
+        var flatSW = Math.min(w - 16, 760), flatPH = flatSW * 3 / 4;
+        var closedPH = Math.min(flatPH * 1.18, (w - 60) * 3 / 2), closedPW = closedPH * 2 / 3;
+        var box = Math.max(flatPH, closedPH) + 16, hh = head.offsetHeight;
+        sticky.style.height = Math.round(hh + box + ch + 8) + 'px';
+        h = inlineStage.clientHeight;
+        offY = hh + box / 2 - h / 2;
+        SW = Math.floor(Math.max(flatSW, closedPW * 2) / 2) * 2;
+        PW = SW / 2; PH = Math.round(SW * 3 / 4);
+        sClosed = closedPW / PW; sFlat = flatSW / SW; sRot = sFlat;
+      } else {
+        w = fullStage.clientWidth; h = fullStage.clientHeight;
+        rotFull = h > w && window.matchMedia('(pointer:coarse)').matches;
+        portrait = rotFull;
+        var top = 64;
+        offY = rotFull ? 0 : (top - ch) / 2;
+        var rotSW  = rotFull ? Math.min((w - 10) * 4 / 3, h - 2 * ch) : 0;
+        var fSW    = Math.min(w - 24, (h - top - ch) * 4 / 3);
+        SW = Math.floor(Math.max(rotSW, fSW) / 2) * 2;
+        PW = SW / 2; PH = Math.round(SW * 3 / 4);
+        sFlat = fSW / SW; sRot = rotFull ? rotSW / SW : sFlat; sClosed = sFlat;
+      }
       book.style.setProperty('--sw', SW + 'px'); book.style.setProperty('--pw', PW + 'px'); book.style.setProperty('--ph', PH + 'px');
-      sClosed = closedPW / PW;
-      sFlat   = flatSW / SW;
-      sRot    = portrait ? rotSW / SW : sFlat;
     }
 
     var ang = leaves.map(function(){ return 0; });
@@ -2242,25 +2303,22 @@
     /* ---- mở album: tự chạy liền mạch khi album vào khung nhìn (không phụ thuộc cuộn) ----
        Màn dọc: album đóng → xoay 90° thành dọc (phóng to sát viền) → mở bìa → trang đôi 01.
        Màn ngang: album đóng → mở bìa → trang đôi 01. Sau đó vuốt/chạm để lật. */
-    var played = false, st = 0;                       // st: tiến độ 0 → 1 của đoạn mở
-    function apply(t){
-      var rot = portrait ? ease(remap(t, 0, 0.45)) : 0;
-      var po  = ease(remap(t, portrait ? 0.5 : 0.15, 1));
-      var sEnd = portrait ? sRot : sFlat;
-      var sc = portrait ? mix(sClosed, sRot, rot) : mix(sClosed, sFlat, po);
-      if(portrait && rot > 0 && rot < 1){
+    var played = false, st = 0, rotNow = 0;           // st: tiến độ 0 → 1 của đoạn mở (trong thiệp)
+    /* đặt cuốn sách: po = độ mở bìa (0 đóng → 1 mở), r = độ xoay (0 ngang → 1 dọc, chỉ ở chế độ xem lớn) */
+    function place(po, r){
+      var sc = po < 1 ? mix(sClosed, sFlat, po) : mix(sFlat, sRot, r);
+      if(r > 0 && r < 1){
         // đang xoay: thu nhỏ vừa đủ để góc sách không tràn ra mép màn hình
-        var ca = Math.cos(rot * Math.PI / 2), sa = Math.sin(rot * Math.PI / 2);
-        var bw = PW * ca + PH * sa, bh = PW * sa + PH * ca;
+        var ca = Math.cos(r * Math.PI / 2), sa = Math.sin(r * Math.PI / 2);
+        var bw = SW * ca + PH * sa, bh = SW * sa + PH * ca;
         sc = Math.min(sc, (stage.clientWidth - 12) / bw, (stage.clientHeight - 24) / bh);
       }
-      // bìa (nửa phải của cuốn) nằm giữa màn hình khi đóng: dịch ngược theo hướng đã xoay
-      var off = -(1 - po) * sc * PW / 2, a = rot * Math.PI / 2;
-      var x = off * Math.cos(a), y = off * Math.sin(a) + offY * (1 - (portrait ? rot : po));
-      book.style.transform = 'translate(' + x + 'px,' + y + 'px) rotateZ(' + (90 * rot) + 'deg) scale(' + sc + ')';
-      head.style.opacity = String(portrait ? 1 - rot : 1);
+      // đóng: bìa (nửa phải của cuốn) nằm giữa khung → mở: cả trang đôi ở giữa
+      var x = -(1 - po) * sc * PW / 2, y = offY * (1 - r);
+      book.style.transform = 'translate(' + x + 'px,' + y + 'px) rotateZ(' + (90 * r) + 'deg) scale(' + sc + ')';
       ang[0] = 180 * po; renderLeaf(0);
     }
+    function apply(t){ st = t; place(ease(remap(t, 0.15, 1)), 0); }
     function play(){
       // chờ ảnh bìa + trang đôi 01 tải xong (tối đa 1,5s) rồi mới chạy
       var need = [].slice.call(book.querySelectorAll('.bk-cover img')).concat([book.querySelectorAll('.bk-leaf')[1] ? book.querySelectorAll('.bk-leaf')[1].querySelector('img') : null]).filter(Boolean);
@@ -2274,17 +2332,51 @@
     function run(){
       if(played) return; played = true;
       setHint('', '');
-      var t0 = performance.now(), dur = portrait ? 2600 : 1600;
+      var t0 = performance.now(), dur = 1600;
       (function step(now){
-        st = Math.min(1, (now - t0) / dur); apply(st);
+        apply(Math.min(1, (now - t0) / dur));
         if(st < 1) requestAnimationFrame(step);
-        else {
-          manual = true; cur = 1; label(); ctl.classList.remove('off'); stage.classList.toggle('bk-drag-v', portrait);
-          if(portrait) setHint('xoay ngang điện thoại để xem · vuốt để lật · ⤢ xem lớn', 'turn your phone sideways · swipe to flip · ⤢ enlarge');
-          else setHint('vuốt ngang để lật trang · ⤢ để xem lớn', 'swipe to turn · ⤢ to enlarge');
-        }
+        else { manual = true; cur = 1; label(); ctl.classList.remove('off'); hintMode(); }
       })(t0);
     }
+    function hintMode(){
+      if(mode === 'inline') setHint('vuốt ngang để lật · chạm vào album để xem lớn', 'swipe to turn · tap the album to enlarge');
+      else if(rotFull) setHint('xoay ngang điện thoại để xem · vuốt lên để lật', 'turn your phone sideways · swipe up to flip');
+      else setHint('vuốt, bấm nửa trang hoặc phím ← → để lật', 'swipe, click a page or use ← → to turn');
+    }
+
+    /* ---- xem lớn: chuyển cuốn sách + thanh điều khiển sang lớp toàn màn hình ---- */
+    var rotAnim = 0;
+    function animRot(to, ms){
+      var from = rotNow, t0 = performance.now(), id = ++rotAnim;
+      (function step(now){
+        if(id !== rotAnim) return;
+        var q = Math.min(1, (now - t0) / ms); rotNow = from + (to - from) * ease(q); place(1, rotNow);
+        if(q < 1) requestAnimationFrame(step);
+      })(t0);
+    }
+    function openFull(){
+      if(mode === 'full' || !manual) return;
+      mode = 'full'; stage = fullStage;
+      fullStage.appendChild(book); full.appendChild(ctl);
+      full.classList.add('show'); document.documentElement.classList.add('no-scroll');
+      layout(); rotNow = 0; place(1, 0); hintMode();
+      if(rotFull) setTimeout(function(){ animRot(1, 650); }, 120);
+    }
+    function closeFull(){
+      if(mode !== 'full') return;
+      rotAnim++; mode = 'inline'; stage = inlineStage;
+      inlineStage.appendChild(book); sticky.appendChild(ctl);
+      full.classList.remove('show'); document.documentElement.classList.remove('no-scroll');
+      layout(); rotNow = 0; place(1, 0); hintMode();
+    }
+    full.querySelector('.bk-close').addEventListener('click', closeFull);
+    document.addEventListener('keydown', function(e){
+      if(mode !== 'full') return;
+      if(e.key === 'Escape') closeFull();
+      else if(e.key === 'ArrowRight' || e.key === 'ArrowDown') next();
+      else if(e.key === 'ArrowLeft' || e.key === 'ArrowUp') prev();
+    });
 
     /* ---- giai đoạn chạm/vuốt ---- */
     function tween(i, to, ms, done){
@@ -2299,19 +2391,15 @@
     function prev(){ if(!manual || busy || cur <= 1) return; busy = true; cur--; tween(cur, 0, 750, function(){ busy = false; label(); }); }
     btnNext.addEventListener('click', next);
     btnPrev.addEventListener('click', prev);
-    document.getElementById('bkZoom').addEventListener('click', function(){
-      lbImgs = spreads;
-      lbOpen(clamp(cur - 1, 0, P - 1));
-      if(portrait) lightbox.classList.add('lb-rot');
-    });
+    document.getElementById('bkZoom').addEventListener('click', function(){ if(mode === 'full') closeFull(); else openFull(); });
     /* vuốt để lật: trang đi theo ngón tay, thả ra thì lật hết (qua ~1/3) hoặc bật về.
        Màn dọc (đã xoay): trang sau ở nửa dưới → vuốt LÊN để lật tới. Màn ngang: vuốt SANG TRÁI. */
     var drag = null;
-    stage.addEventListener('pointerdown', function(e){
+    function onDown(e){
       if(!manual || busy) return;
       drag = { x:e.clientX, y:e.clientY, i:-1, dir:0, a:0, id:e.pointerId };
-    });
-    stage.addEventListener('pointermove', function(e){
+    }
+    function onMove(e){
       if(!drag || e.pointerId !== drag.id) return;
       var dx = e.clientX - drag.x, dy = e.clientY - drag.y;
       var d = portrait ? -dy : -dx, across = portrait ? dx : dy;
@@ -2326,12 +2414,13 @@
       var len = PW * (portrait ? sRot : sFlat) * 1.5;
       var a = drag.dir > 0 ? clamp(d / len * 180, 0, 180) : 180 - clamp(-d / len * 180, 0, 180);
       drag.a = a; ang[drag.i] = a; renderLeaf(drag.i);
-    });
+    }
     function endDrag(e){
       if(!drag || e.pointerId !== drag.id) return;
       var g = drag; drag = null;
       if(!g.dir){
         if(e.type === 'pointerup' && Math.abs(e.clientX - g.x) < 8 && Math.abs(e.clientY - g.y) < 8){
+          if(mode === 'inline'){ if(e.target.closest && e.target.closest('.bk-book')) openFull(); return; }
           var r = stage.getBoundingClientRect();
           var fwd = portrait ? (e.clientY - r.top > r.height/2) : (e.clientX - r.left > r.width/2);
           (fwd ? next : prev)();
@@ -2347,23 +2436,27 @@
         else tween(g.i, 180, 320, function(){ busy = false; });
       }
     }
-    stage.addEventListener('pointerup', endDrag);
-    stage.addEventListener('pointercancel', endDrag);
+    [inlineStage, fullStage].forEach(function(s){
+      s.addEventListener('pointerdown', onDown);
+      s.addEventListener('pointermove', onMove);
+      s.addEventListener('pointerup', endDrag);
+      s.addEventListener('pointercancel', endDrag);
+    });
 
     layout();
     for(var z=0; z<N; z++) renderLeaf(z);
     apply(0);
-    if(reduce || !('IntersectionObserver' in window)){ played = false; st = 1; apply(1); played = true;
-      manual = true; cur = 1; label(); ctl.classList.remove('off'); stage.classList.toggle('bk-drag-v', portrait);
-      setHint('vuốt để lật trang · ⤢ để xem lớn', 'swipe to turn · ⤢ to enlarge');
+    if(reduce || !('IntersectionObserver' in window)){ apply(1); played = true;
+      manual = true; cur = 1; label(); ctl.classList.remove('off'); hintMode();
     } else {
       setHint('', '');
       var pio = new IntersectionObserver(function(es){ if(es[0].intersectionRatio >= 0.6){ play(); pio.disconnect(); } }, { threshold:[0.6] });
       pio.observe(pin);
     }
     window.addEventListener('resize', function(){
-      var was = portrait; layout(); apply(played ? st : 0);
-      if(manual){ stage.classList.toggle('bk-drag-v', portrait); if(was !== portrait) label(); }
+      layout();
+      if(mode === 'full'){ rotAnim++; rotNow = rotFull ? 1 : 0; place(1, rotNow); hintMode(); }
+      else apply(played ? st : 0);
     });
   })();
 
