@@ -718,6 +718,14 @@
   .bk-full{ position:fixed; inset:0; z-index:1600; background:rgba(20,3,6,.96); display:none; }
   .bk-full.show{ display:block; }
   .bk-full .bk-stage{ touch-action:none; }
+  /* ảnh nét đang tải: vòng vàng ở góc trang; tải xong thì ảnh nét hoà dần lên trên bản nhẹ (mờ → nét) */
+  .bk-face img.hdi{ opacity:0; transition:opacity .7s ease; }
+  .bk-face img.hdi.in{ opacity:1; }
+  .bk-load{ position:absolute; z-index:3; left:0; top:0; width:34px; height:34px; margin:-17px 0 0 -17px; border-radius:50%; background:rgba(20,3,6,.5);
+    -webkit-backdrop-filter:blur(4px); backdrop-filter:blur(4px); opacity:0; transition:opacity .3s ease; pointer-events:none; }
+  .bk-load::before{ content:''; position:absolute; inset:8px; border-radius:50%; border:2px solid rgba(207,159,63,.28); border-top-color:#e2bd6a; animation:bkSpin .85s linear infinite; }
+  .bk-load.show{ opacity:1; }
+  @keyframes bkSpin{ to{ transform:rotate(360deg); } }
   .bk-full .bk-ctl{ color:var(--cream-dim); }
   .bk-full .bk-ctl button{ color:var(--gold); border-color:rgba(207,159,63,.5); }
   .bk-full .bk-cnt{ color:var(--cream); }
@@ -741,18 +749,19 @@
   .bk-hint{ font-size:11.5px; letter-spacing:.04em; color:var(--ink-soft); opacity:.8; transition:opacity .6s ease; }
   .bk-stage.bk-inline ~ .bk-ctl .bk-hint{ display:none; }     /* trong thiệp: không cần chữ hướng dẫn */
   .bk-hint.fade{ opacity:0; }
-  #bkZoom{ display:none; }                                   /* nút xem lớn nằm ngay trên album (.bk-zoom) */
-  .bk-zoom{ position:absolute; z-index:4; width:38px; height:38px; margin:-19px 0 0 -19px; border-radius:50%; border:1px solid rgba(255,255,255,.55);
-    background:rgba(40,8,12,.45); -webkit-backdrop-filter:blur(4px); backdrop-filter:blur(4px); color:#fff; display:flex; align-items:center; justify-content:center;
-    opacity:0; transform:scale(.7); transition:opacity .4s ease, transform .4s cubic-bezier(.16,1,.3,1); pointer-events:none; box-shadow:0 4px 14px rgba(0,0,0,.25); }
-  .bk-zoom svg{ width:16px; height:16px; }
-  .bk-zoom.show{ opacity:1; transform:none; pointer-events:auto; }
-  .bk-zoom.ping::after{ content:''; position:absolute; inset:-1px; border-radius:50%; border:1px solid rgba(255,255,255,.8); animation:bkPing 1.4s ease-out 2; }
-  @keyframes bkPing{ from{ transform:scale(1); opacity:.9; } to{ transform:scale(1.8); opacity:0; } }
+  /* nút "Phóng to ảnh": cùng tone với < > (viền nâu vàng), nằm dưới hàng lật trang; ẩn khi đang xem lớn */
+  .bk-ctl .bk-big{ display:inline-flex; align-items:center; gap:8px; width:auto; height:36px; padding:0 18px; white-space:nowrap; border-radius:18px; border:1px solid rgba(138,94,36,.5); background:transparent;
+    color:#8A5E24; font-family:var(--sans); font-size:12.5px; letter-spacing:.08em; position:relative; transition:opacity .4s ease, background-color .2s ease; }
+  .bk-ctl .bk-big svg{ width:15px; height:15px; flex:none; }
+  .bk-big:active{ background:rgba(207,159,63,.12); }
+  .bk-ctl.off .bk-big{ opacity:0; pointer-events:none; }
+  .bk-full .bk-big{ display:none; }
+  .bk-big.ping::after{ content:''; position:absolute; inset:-1px; border-radius:inherit; border:1px solid rgba(207,159,63,.9); animation:bkPing 1.4s ease-out 2; }
+  @keyframes bkPing{ from{ transform:scale(1); opacity:.9; } to{ transform:scale(1.25,1.6); opacity:0; } }
   /* sách đóng gáy dọc (gáy giữa). Mỗi file studio = 1 trang đôi: nửa trái nằm ở mặt sau tờ trước, nửa phải ở mặt trước tờ này.
      Kích thước (--sw trang đôi, --pw 1 trang, --ph cao) do JS tính theo màn hình. */
   .bk-book{ position:absolute; left:50%; top:50%; width:var(--sw); height:var(--ph); margin:calc(var(--ph) / -2) 0 0 calc(var(--sw) / -2); transform-style:preserve-3d; transform-origin:50% 50%; }
-  .bk-ctl .bk-row, .bk-ctl .bk-hint{ pointer-events:auto; }
+  .bk-ctl .bk-row, .bk-ctl .bk-hint, .bk-ctl .bk-big{ pointer-events:auto; }
   .bk-base{ position:absolute; top:0; bottom:0; left:50%; width:var(--pw); border-radius:0 8px 8px 0; background:#4a0b17; box-shadow:0 18px 38px rgba(60,20,10,.35); }
   .bk-base-l{ position:absolute; top:0; bottom:0; left:0; width:var(--pw); border-radius:8px 0 0 8px; background:#4a0b17; box-shadow:0 18px 38px rgba(60,20,10,.35); opacity:0; }
   .bk-block{ position:absolute; top:5px; bottom:5px; left:50%; width:calc(var(--pw) - 7px); background:#efe6d4 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Ctext x='20' y='27' font-size='15' text-anchor='middle' fill='%23b0894a' fill-opacity='.2' font-family='serif'%3E%E5%9B%8D%3C/text%3E%3C/svg%3E") 0 0/40px 40px;
@@ -1306,14 +1315,13 @@
           <h2 class="title center"><span data-vi>Khoảnh khắc</span><span data-en>Moments</span></h2>
         </div>
         <div class="bk-stage bk-inline" id="bkStage"><div class="bk-book" id="bkBook"></div></div>
-        <button type="button" class="bk-zoom" id="bkZoomFab" aria-label="Xem album lớn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></button>
         <div class="bk-ctl off" id="bkCtl">
           <div class="bk-row">
             <button type="button" id="bkPrev" aria-label="Trang trước">&#8249;</button>
             <div class="bk-cnt" id="bkCnt"></div>
             <button type="button" id="bkNext" aria-label="Trang sau">&#8250;</button>
-            <button type="button" id="bkZoom" aria-label="Xem lớn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></button>
           </div>
+          <button type="button" class="bk-big" id="bkBig"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" aria-hidden="true"><circle cx="10.5" cy="10.5" r="6.5"/><path d="M15.5 15.5 21 21M10.5 7.5v6M7.5 10.5h6"/></svg><span data-vi>Phóng to ảnh</span><span data-en>View larger</span></button>
           <div class="bk-hint" id="bkHint"></div>
         </div>
       </div>
@@ -2382,7 +2390,7 @@
     var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
     var P = BOOK_PAGES.length;
 
-    function img(i){ return '<img alt="" draggable="false" decoding="async" data-src="'+BOOK_DIR+BOOK_PAGES[i]+'">'; }
+    function img(i){ return '<img alt="" draggable="false" decoding="async" data-i="'+i+'" data-src="'+BOOK_DIR+BOOK_PAGES[i]+'">'; }
     var finHtml = '<div class="bk-fin"><div class="a"><span data-vi>Còn tiếp…</span><span data-en>To be continued…</span></div><div class="b"><span data-vi>Những trang tiếp theo<br>chúng mình viết cùng bạn</span><span data-en>The next pages<br>we\'ll write with you</span></div></div>';
     book.innerHTML = '<div class="bk-base-l"></div><div class="bk-base"></div><div class="bk-block"></div>';
     var baseL = book.firstChild;
@@ -2418,6 +2426,43 @@
     full.innerHTML = '<button type="button" class="bk-close" aria-label="Đóng">&times;</button><div class="bk-stage"></div>';
     document.body.appendChild(full);
     var fullStage = full.querySelector('.bk-stage');
+
+    /* ---- ảnh nét (HD) chỉ tải khi xem lớn: trang đang xem trước, rồi trang kế/trước — tải lần lượt từng file.
+       Trong lúc chờ hiện vòng tải vàng ở góc trang; tải xong thì ảnh nét hoà dần lên trên bản nhẹ. */
+    var HD_DIR = BOOK_DIR + 'hd/', hd = BOOK_PAGES.map(function(){ return 0; }), hdBusy = false;   // 0 chưa · 1 đang tải · 2 xong · 3 lỗi
+    var spin = document.createElement('div'); spin.className = 'bk-load'; spin.setAttribute('aria-hidden', 'true');
+    full.appendChild(spin);
+    function hdPump(){
+      if(hdBusy || mode !== 'full') return;
+      var c = cur - 1, i = [c, c + 1, c - 1, c + 2].filter(function(k){ return k >= 0 && k < P && !hd[k]; })[0];
+      if(i === undefined) return;
+      hdBusy = true; hd[i] = 1;
+      var im = new Image();
+      function done(ok){
+        hd[i] = ok ? 2 : 3; hdBusy = false;
+        if(ok) [].forEach.call(book.querySelectorAll('img[data-i="' + i + '"]'), function(el){
+          var n = el.cloneNode(); n.removeAttribute('data-i'); n.removeAttribute('data-src'); n.className = 'hdi'; n.src = im.src;
+          el.parentNode.insertBefore(n, el.nextSibling);
+          requestAnimationFrame(function(){ requestAnimationFrame(function(){ n.classList.add('in'); }); });
+          setTimeout(function(){ el.src = im.src; setTimeout(function(){ n.remove(); }, 100); }, 800);
+        });
+        hdSpin(); hdPump();
+      }
+      im.onload = function(){ if(im.decode) im.decode().then(function(){ done(true); }, function(){ done(true); }); else done(true); };
+      im.onerror = function(){ done(false); };
+      im.src = HD_DIR + BOOK_PAGES[i];
+      hdSpin();
+    }
+    function hdSpin(){
+      var i = cur - 1, on = mode === 'full' && i >= 0 && i < P && hd[i] < 2;
+      clearTimeout(hdSpin.t);
+      if(!on){ spin.classList.remove('show'); return; }
+      // góc trên phải (trên màn hình) của trang đôi đang mở
+      var r1 = leaves[cur - 1].querySelector('.bk-back').getBoundingClientRect(), r2 = leaves[cur].querySelector('.bk-front').getBoundingClientRect();
+      spin.style.left = (Math.max(r1.right, r2.right) - 30) + 'px';
+      spin.style.top  = (Math.max(0, Math.min(r1.top, r2.top)) + 30) + 'px';
+      if(!spin.classList.contains('show')) hdSpin.t = setTimeout(function(){ spin.classList.add('show'); }, 250);
+    }
     var SW, PW, PH, portrait = false, sFlat = 1, sClosed = 1, sRot = 1, offY = 0;
     function layout(){
       var w, h, ch = ctl.offsetHeight + 24;
@@ -2474,6 +2519,7 @@
         ? '<span data-vi>Hết</span><span data-en>End</span>'
         : String(cur).padStart(2,'0') + ' <span>/ ' + String(P).padStart(2,'0') + '</span>';
       btnPrev.disabled = cur <= 1; btnNext.disabled = cur >= N;
+      hdPump(); hdSpin();
     }
 
     /* ---- mở album: tự chạy liền mạch khi album vào khung nhìn (không phụ thuộc cuộn) ----
@@ -2512,17 +2558,12 @@
       (function step(now){
         apply(Math.min(1, (now - t0) / dur));
         if(st < 1) requestAnimationFrame(step);
-        else { manual = true; cur = 1; label(); ctl.classList.remove('off'); hintMode(); placeFab(); fab.classList.add('show', 'ping'); setTimeout(peek, 700); }
+        else { manual = true; cur = 1; label(); ctl.classList.remove('off'); hintMode(); big.classList.add('ping'); setTimeout(peek, 700); }
       })(t0);
     }
-    /* nút phóng to đặt ở góc trên phải trang đôi (tính theo cỡ album đang hiển thị) */
-    var fab = document.getElementById('bkZoomFab');
-    function placeFab(){
-      var w = SW * sFlat, h = PH * sFlat;
-      fab.style.left = (inlineStage.clientWidth / 2 + w / 2 - 22) + 'px';
-      fab.style.top  = (inlineStage.clientHeight / 2 + offY - h / 2 + 22) + 'px';
-    }
-    fab.addEventListener('click', function(){ openFull(); });
+    /* nút "Phóng to ảnh" dưới hàng lật trang */
+    var big = document.getElementById('bkBig');
+    big.addEventListener('click', function(){ openFull(); });
     /* mời lật: trang phải tự nhấc nhẹ lên rồi hạ xuống 2 lần (dừng ngay nếu khách đã chạm vào album) */
     var touched = false;
     function peek(){
@@ -2549,16 +2590,17 @@
       (function step(now){
         if(id !== rotAnim) return;
         var q = Math.min(1, (now - t0) / ms); rotNow = from + (to - from) * ease(q); place(1, rotNow);
-        if(q < 1) requestAnimationFrame(step);
+        if(q < 1) requestAnimationFrame(step); else hdSpin();
       })(t0);
     }
     function openFull(){
       if(mode === 'full' || !manual) return;
       mode = 'full'; stage = fullStage;
       fullStage.appendChild(book); full.appendChild(ctl);
-      full.classList.add('show'); document.documentElement.classList.add('no-scroll'); fab.classList.remove('show');
+      full.classList.add('show'); document.documentElement.classList.add('no-scroll');
       layout(); rotNow = 0; place(1, 0); hintMode();
       if(rotFull) setTimeout(function(){ animRot(1, 650); }, 120);
+      hdPump(); if(!rotFull) hdSpin();
     }
     function closeFull(){
       if(mode !== 'full') return;
@@ -2566,7 +2608,7 @@
       rotAnim++; mode = 'inline'; stage = inlineStage;
       inlineStage.appendChild(book); sticky.appendChild(ctl);
       full.classList.remove('show'); document.documentElement.classList.remove('no-scroll');
-      layout(); rotNow = 0; place(1, 0); hintMode(); placeFab(); fab.classList.add('show');
+      layout(); rotNow = 0; place(1, 0); hintMode(); hdSpin();
     }
     full.querySelector('.bk-close').addEventListener('click', closeFull);
     document.addEventListener('keydown', function(e){
@@ -2589,7 +2631,6 @@
     function prev(){ if(zoomed()) resetZoom(250); if(!manual || busy || cur <= 1) return; busy = true; cur--; tween(cur, 0, 750, function(){ busy = false; label(); }); }
     btnNext.addEventListener('click', next);
     btnPrev.addEventListener('click', prev);
-    document.getElementById('bkZoom').addEventListener('click', function(){ if(mode === 'full') closeFull(); else openFull(); });
     /* ---- phóng to khi xem lớn: chụm 2 ngón / chạm 2 lần / con lăn chuột ----
        Phóng cả lớp .bk-stage toàn màn hình (transform-origin 0 0: điểm màn hình = t + s × điểm gốc).
        Đang phóng to thì vuốt 1 ngón = kéo ảnh đi xem, không lật trang; thu về cỡ gốc thì vuốt lật như cũ. */
@@ -2600,6 +2641,7 @@
       ztx = clamp(ztx, W - W * zs, 0); zty = clamp(zty, H - H * zs, 0);
       fullStage.style.transformOrigin = '0 0';
       fullStage.style.transform = zs > 1.001 ? 'translate(' + ztx + 'px,' + zty + 'px) scale(' + zs + ')' : '';
+      if(spin.classList.contains('show')) hdSpin();
     }
     function zoomAt(to, cx, cy, ms, done){
       var s0 = zs, x0 = ztx, y0 = zty, px = (cx - x0) / s0, py = (cy - y0) / s0, t0 = performance.now(), id = ++zAnim;
@@ -2738,7 +2780,7 @@
     for(var z=0; z<N; z++) renderLeaf(z);
     apply(0);
     if(reduce || !('IntersectionObserver' in window)){ apply(1); played = true;
-      manual = true; cur = 1; label(); ctl.classList.remove('off'); hintMode(); placeFab(); fab.classList.add('show');
+      manual = true; cur = 1; label(); ctl.classList.remove('off'); hintMode();
     } else {
       setHint('', '');
       var pio = new IntersectionObserver(function(es){ if(es[0].intersectionRatio >= 0.6){ play(); pio.disconnect(); } }, { threshold:[0.6] });
@@ -2746,8 +2788,8 @@
     }
     window.addEventListener('resize', function(){
       layout();
-      if(mode === 'full'){ resetZoom(0); rotAnim++; rotNow = rotFull ? 1 : 0; place(1, rotNow); hintMode(); }
-      else { apply(played ? st : 0); if(manual) placeFab(); }
+      if(mode === 'full'){ resetZoom(0); rotAnim++; rotNow = rotFull ? 1 : 0; place(1, rotNow); hintMode(); hdSpin(); }
+      else apply(played ? st : 0);
     });
   })();
 
