@@ -188,7 +188,7 @@
   /* Nút đổi ngôn ngữ: huy hiệu tròn khắc cờ, chỉ hiện lúc còn ở bìa thiệp
      (ẩn hẳn ngay khi khách chạm "Chạm để mở thiệp", xem #openBtn trong script) */
   #langSwitch{
-    position:fixed; top:var(--sp-4); right:var(--sp-4); z-index:1500;
+    position:fixed; top:var(--sp-4); right:max(var(--sp-4), calc(50% - 260px + var(--sp-4))); z-index:1500; /* máy tính: bám mép thiệp 520px */
     width:46px; height:46px; padding:0; border:none; border-radius:50%;
     background:none; cursor:pointer;
     opacity:0; pointer-events:none; transition:opacity .5s ease .15s;
@@ -210,7 +210,7 @@
   /* Nút nhạc nền: đĩa than tròn (ngoại lệ duy nhất phá quy ước "không bo tròn",
      vì bản chất đĩa than vốn phải tròn), khắc nốt nhạc ở tâm. */
   #musicToggle{
-    position:fixed; top:var(--sp-4); left:var(--sp-4); z-index:1500;
+    position:fixed; top:var(--sp-4); left:max(var(--sp-4), calc(50% - 260px + var(--sp-4))); z-index:1500; /* máy tính: bám mép thiệp 520px */
     width:46px; height:46px; padding:0; border:none; border-radius:50%;
     background:none; cursor:pointer;
     opacity:0; pointer-events:none; transition:opacity .5s ease .15s;
@@ -231,7 +231,7 @@
   /* Nút "Xem lại thiệp": cùng vị trí với nút đổi ngôn ngữ (góc phải trên) — nút đó ẩn sau khi
      mở thiệp nên chỗ này trống. Hình phong bì; đang xem lại thì đổi thành dấu ✕ để đóng. */
   #reviewToggle{
-    position:fixed; top:var(--sp-4); right:var(--sp-4); z-index:1500;
+    position:fixed; top:var(--sp-4); right:max(var(--sp-4), calc(50% - 260px + var(--sp-4))); z-index:1500; /* máy tính: bám mép thiệp 520px */
     width:46px; height:46px; padding:0; border:none; border-radius:50%;
     background:none; cursor:pointer;
     opacity:0; pointer-events:none; transition:opacity .5s ease .15s;
