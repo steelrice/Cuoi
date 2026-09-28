@@ -2486,8 +2486,9 @@
     }
     function hintMode(){
       if(mode === 'inline') setHint('vuốt ngang để lật · chạm vào album để xem lớn', 'swipe to turn · tap the album to enlarge');
-      else if(rotFull) setHint('xoay ngang điện thoại để xem · vuốt lên để lật', 'turn your phone sideways · swipe up to flip');
-      else setHint('vuốt hoặc bấm ← → để lật', 'swipe or use ← → to turn');
+      else if(rotFull) setHint('xoay ngang điện thoại · vuốt lên để lật · chụm để phóng to', 'turn sideways · swipe up to flip · pinch to zoom');
+      else if(window.matchMedia('(pointer:coarse)').matches) setHint('vuốt để lật · chụm 2 ngón để phóng to', 'swipe to turn · pinch to zoom');
+      else setHint('vuốt hoặc bấm ← → để lật · cuộn chuột để phóng to', 'swipe or use ← → to turn · scroll to zoom');
       hint.classList.remove('fade'); clearTimeout(hintMode.t);
       if(mode === 'full') hintMode.t = setTimeout(function(){ hint.classList.add('fade'); }, 3500);
     }
@@ -2512,6 +2513,7 @@
     }
     function closeFull(){
       if(mode !== 'full') return;
+      resetZoom(0); pts = {}; pinch = pan = null; clearTimeout(tapTimer);
       rotAnim++; mode = 'inline'; stage = inlineStage;
       inlineStage.appendChild(book); sticky.appendChild(ctl);
       full.classList.remove('show'); document.documentElement.classList.remove('no-scroll');
@@ -2534,20 +2536,82 @@
         if(q < 1) requestAnimationFrame(step); else if(done) done();
       })(t0);
     }
-    function next(){ if(!manual || busy || cur >= N) return; busy = true; tween(cur, 180, 800, function(){ cur++; busy = false; label(); }); }
-    function prev(){ if(!manual || busy || cur <= 1) return; busy = true; cur--; tween(cur, 0, 750, function(){ busy = false; label(); }); }
+    function next(){ if(zoomed()) resetZoom(250); if(!manual || busy || cur >= N) return; busy = true; tween(cur, 180, 800, function(){ cur++; busy = false; label(); }); }
+    function prev(){ if(zoomed()) resetZoom(250); if(!manual || busy || cur <= 1) return; busy = true; cur--; tween(cur, 0, 750, function(){ busy = false; label(); }); }
     btnNext.addEventListener('click', next);
     btnPrev.addEventListener('click', prev);
     document.getElementById('bkZoom').addEventListener('click', function(){ if(mode === 'full') closeFull(); else openFull(); });
+    /* ---- phóng to khi xem lớn: chụm 2 ngón / chạm 2 lần / con lăn chuột ----
+       Phóng cả lớp .bk-stage toàn màn hình (transform-origin 0 0: điểm màn hình = t + s × điểm gốc).
+       Đang phóng to thì vuốt 1 ngón = kéo ảnh đi xem, không lật trang; thu về cỡ gốc thì vuốt lật như cũ. */
+    var ZMAX = 3, zs = 1, ztx = 0, zty = 0, zAnim = 0, pts = {}, pinch = null, pan = null, lastTap = null, tapTimer = 0;
+    function zoomed(){ return zs > 1.01; }
+    function applyZoom(){
+      var W = fullStage.clientWidth, H = fullStage.clientHeight;
+      ztx = clamp(ztx, W - W * zs, 0); zty = clamp(zty, H - H * zs, 0);
+      fullStage.style.transformOrigin = '0 0';
+      fullStage.style.transform = zs > 1.001 ? 'translate(' + ztx + 'px,' + zty + 'px) scale(' + zs + ')' : '';
+    }
+    function zoomAt(to, cx, cy, ms, done){
+      var s0 = zs, x0 = ztx, y0 = zty, px = (cx - x0) / s0, py = (cy - y0) / s0, t0 = performance.now(), id = ++zAnim;
+      to = clamp(to, 1, ZMAX);
+      (function step(now){
+        if(id !== zAnim) return;
+        var q = ms ? Math.min(1, (now - t0) / ms) : 1, e = ease(q);
+        zs = mix(s0, to, e); ztx = mix(x0, cx - px * to, e); zty = mix(y0, cy - py * to, e); applyZoom();
+        if(q < 1) requestAnimationFrame(step); else { if(to <= 1){ zs = 1; ztx = zty = 0; applyZoom(); } if(done) done(); }
+      })(t0);
+    }
+    function resetZoom(ms){ zAnim++; if(!ms){ zs = 1; ztx = zty = 0; applyZoom(); } else zoomAt(1, 0, 0, ms); }
+    function ptList(){ return Object.keys(pts).map(function(k){ return pts[k]; }); }
+    function startPinch(){
+      var l = ptList(), a = l[0], b = l[1];
+      zAnim++; pan = null; lastTap = null; clearTimeout(tapTimer);
+      if(drag){                                                     // đang kéo lật dở → trả tờ giấy về chỗ cũ
+        var g = drag; drag = null;
+        if(g.dir){ busy = true; tween(g.i, g.dir > 0 ? 0 : 180, 220, function(){ busy = false; }); }
+      }
+      var mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+      pinch = { d:Math.hypot(a.x - b.x, a.y - b.y) || 1, s:zs, px:(mx - ztx) / zs, py:(my - zty) / zs };
+    }
+    function movePinch(){
+      var l = ptList(), a = l[0], b = l[1];
+      var mx = (a.x + b.x) / 2, my = (a.y + b.y) / 2;
+      zs = clamp(pinch.s * Math.hypot(a.x - b.x, a.y - b.y) / pinch.d, 1, ZMAX);
+      ztx = mx - pinch.px * zs; zty = my - pinch.py * zs; applyZoom();
+    }
+    function startPan(p){ pan = { x:p.x, y:p.y, tx:ztx, ty:zty, id:p.id, moved:false }; }
+    fullStage.addEventListener('wheel', function(e){
+      if(mode !== 'full') return;
+      e.preventDefault(); zAnim++;
+      var to = clamp(zs * Math.exp(-e.deltaY * 0.0022), 1, ZMAX), px = (e.clientX - ztx) / zs, py = (e.clientY - zty) / zs;
+      zs = to; ztx = e.clientX - px * zs; zty = e.clientY - py * zs;
+      if(zs <= 1.001){ zs = 1; ztx = zty = 0; }
+      applyZoom();
+    }, { passive:false });
+
     /* vuốt để lật: trang đi theo ngón tay, thả ra thì lật hết (qua ~1/3) hoặc bật về.
        Màn dọc (đã xoay): trang sau ở nửa dưới → vuốt LÊN để lật tới. Màn ngang: vuốt SANG TRÁI. */
     var drag = null;
     function onDown(e){
       touched = true;
+      if(mode === 'full'){
+        pts[e.pointerId] = { x:e.clientX, y:e.clientY, id:e.pointerId };
+        var n = ptList().length;
+        if(n >= 2){ try{ fullStage.setPointerCapture(e.pointerId); }catch(_){} if(n === 2) startPinch(); return; }
+        if(zoomed()){ zAnim++; startPan(pts[e.pointerId]); try{ fullStage.setPointerCapture(e.pointerId); }catch(_){} return; }
+      }
       if(!manual || busy) return;
       drag = { x:e.clientX, y:e.clientY, i:-1, dir:0, a:0, id:e.pointerId };
     }
     function onMove(e){
+      if(pts[e.pointerId]){ pts[e.pointerId].x = e.clientX; pts[e.pointerId].y = e.clientY; }
+      if(pinch){ if(ptList().length >= 2) movePinch(); return; }
+      if(pan){
+        if(e.pointerId !== pan.id) return;
+        if(Math.abs(e.clientX - pan.x) + Math.abs(e.clientY - pan.y) > 6) pan.moved = true;
+        ztx = pan.tx + e.clientX - pan.x; zty = pan.ty + e.clientY - pan.y; applyZoom(); return;
+      }
       if(!drag || e.pointerId !== drag.id) return;
       var dx = e.clientX - drag.x, dy = e.clientY - drag.y;
       var d = portrait ? -dy : -dx, across = portrait ? dx : dy;
@@ -2563,15 +2627,45 @@
       var a = drag.dir > 0 ? clamp(d / len * 180, 0, 180) : 180 - clamp(-d / len * 180, 0, 180);
       drag.a = a; ang[drag.i] = a; renderLeaf(drag.i);
     }
+    /* chạm 2 lần (xem lớn): phóng 2,2× ngay chỗ chạm / thu về. Chạm 1 lần (chưa phóng) = lật nửa trang
+       đó — đợi 280ms xem có phải chạm 2 lần không rồi mới lật */
+    function fullTap(e){
+      var now = Date.now(), x = e.clientX, y = e.clientY;
+      if(lastTap && now - lastTap.t < 300 && Math.hypot(x - lastTap.x, y - lastTap.y) < 30){
+        lastTap = null; clearTimeout(tapTimer);
+        if(zoomed()) zoomAt(1, x, y, 300); else zoomAt(2.2, x, y, 300);
+        return;
+      }
+      lastTap = { t:now, x:x, y:y };
+      if(zoomed()) return;
+      var W = fullStage.clientWidth, H = fullStage.clientHeight;
+      var fwd = portrait ? (y > H / 2) : (x > W / 2);
+      clearTimeout(tapTimer);
+      tapTimer = setTimeout(function(){ if(!zoomed()) (fwd ? next : prev)(); }, 280);
+    }
     function endDrag(e){
+      if(pts[e.pointerId]){
+        delete pts[e.pointerId];
+        if(pinch){
+          if(ptList().length < 2){
+            pinch = null;
+            if(zs < 1.08) zoomAt(1, 0, 0, 200);
+            var rest = ptList()[0]; if(rest && zoomed()) startPan(rest);
+          }
+          return;
+        }
+        if(pan && e.pointerId === pan.id){
+          var p0 = pan; pan = null;
+          if(!p0.moved && e.type === 'pointerup') fullTap(e);
+          return;
+        }
+      }
       if(!drag || e.pointerId !== drag.id) return;
       var g = drag; drag = null;
       if(!g.dir){
         if(e.type === 'pointerup' && Math.abs(e.clientX - g.x) < 8 && Math.abs(e.clientY - g.y) < 8){
           if(mode === 'inline'){ if(e.target.closest && e.target.closest('.bk-book')) openFull(); return; }
-          var r = stage.getBoundingClientRect();
-          var fwd = portrait ? (e.clientY - r.top > r.height/2) : (e.clientX - r.left > r.width/2);
-          (fwd ? next : prev)();
+          fullTap(e);
         }
         return;
       }
@@ -2603,7 +2697,7 @@
     }
     window.addEventListener('resize', function(){
       layout();
-      if(mode === 'full'){ rotAnim++; rotNow = rotFull ? 1 : 0; place(1, rotNow); hintMode(); }
+      if(mode === 'full'){ resetZoom(0); rotAnim++; rotNow = rotFull ? 1 : 0; place(1, rotNow); hintMode(); }
       else { apply(played ? st : 0); if(manual) placeFab(); }
     });
   })();
