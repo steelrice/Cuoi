@@ -527,7 +527,9 @@
   .focus i:nth-child(3){ bottom:0; left:0; border-bottom-width:1.5px; border-left-width:1.5px; }
   .focus i:nth-child(4){ bottom:0; right:0; border-bottom-width:1.5px; border-right-width:1.5px; }
   .focus.lock i{ border-color:var(--gold); }
-  .cam-flash{ position:absolute; inset:0; background:#fffaf0; opacity:0; pointer-events:none; }
+  /* mép giấy xé nối ảnh Save the Date với nền giấy — chỉ hiện sau khi "chụp" xong (lúc quay thì ảnh nối ảnh) */
+  .intro-torn{ opacity:0; transition:opacity .6s ease; }
+  .scrollstage.shot .intro-torn{ opacity:1; }
 
   /* "Xin giới thiệu" — tiêu đề mở màn, cỡ lớn ngang .s-kicker của bìa, gõ chữ dần */
   .intro-kicker{ position:absolute; top:calc(112px + env(safe-area-inset-top)); left:50%; transform:translateX(-50%); width:100%; text-align:center; opacity:0; transition:opacity .5s ease, transform .5s ease; will-change:opacity, transform; }
@@ -555,8 +557,8 @@
   #finalStage{ position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:100%; opacity:0; will-change:transform, opacity; }
   #finalStage .story-fig{ will-change:transform; }
   #finalStage .story{ will-change:opacity, transform; }
-  /* flash tan thành giấy ngà: .cam (nền đỏ) tắt đi là lộ vân giấy của #app, nối liền phần đếm ngược —
-     ảnh như vừa rửa ra, trích dẫn chữ nâu đỏ cho dễ đọc */
+  /* "chụp màn hình": khung quay thu nhỏ vào đúng chỗ ảnh câu chuyện, lộ vân giấy của #app phía sau,
+     nối liền phần đếm ngược — trích dẫn chữ nâu đỏ cho dễ đọc */
   #finalStage .story blockquote{ color:var(--red-deep); }
   #finalStage .story cite{ color:#8A5E24; }
   #finalStage .story cite::before{ background:rgba(138,94,36,.6); }
@@ -1052,9 +1054,10 @@
 
   <!-- ============ XIN GIỚI THIỆU (thay cho HERO) ============ -->
   <div class="scrollstage" id="introStage">
+    <div class="torn-top intro-torn" style="--tx:50%" aria-hidden="true"></div>
     <div class="sticky-view">
      <div class="intro-inner">
-      <!-- khung ngắm máy ảnh tự chạy: toàn cảnh → lấy nét cô dâu → lia sang chú rể → lùi ra → chớp flash → ảnh + trích dẫn -->
+      <!-- khung ngắm máy ảnh tự chạy: toàn cảnh → lấy nét cô dâu → lia sang chú rể → lùi ra → "chụp màn hình" thu nhỏ vào khung ảnh → trích dẫn -->
       <div class="cam" id="cam">
         <img class="cam-img" id="camImg" src="images/story-hd.webp" alt="Hoàng Sơn và Phương Thảo" decoding="async">
         <div class="cam-shade"></div>
@@ -1089,7 +1092,6 @@
           <cite>HOÀNG SƠN &amp; PHƯƠNG THẢO</cite>
         </div>
       </div>
-      <div class="cam-flash" id="camFlash" aria-hidden="true"></div>
      </div>
     </div>
   </div>
@@ -1501,8 +1503,9 @@
   }
 
 
-  /* ===== Xin giới thiệu — khung ngắm máy ảnh TỰ CHẠY (~9s) khi phần này hiện lên, khách không cần cuộn:
-     gõ "Xin giới thiệu" → lấy nét + zoom cô dâu → lia sang chú rể → lùi ra → chớp flash → ảnh + trích dẫn ===== */
+  /* ===== Xin giới thiệu — khung ngắm máy ảnh TỰ CHẠY (~10s) khi phần này hiện lên, khách không cần cuộn:
+     gõ "Xin giới thiệu" → lấy nét + zoom cô dâu → lia sang chú rể → lùi ra → "chụp màn hình": cả khung
+     khựng nhẹ, hiện viền ngà rồi thu nhỏ bay vào đúng chỗ ảnh câu chuyện → trích dẫn ===== */
   (function(){
     var stage = document.getElementById('introStage');
     var view  = stage ? stage.querySelector('.sticky-view') : null;
@@ -1515,7 +1518,7 @@
     var vf          = document.getElementById('vf');
     var vfTc        = document.getElementById('vfTc');
     var focusEl     = document.getElementById('camFocus');
-    var flashEl     = document.getElementById('camFlash');
+    var camShade    = cam.querySelector('.cam-shade');
     var labelGroom  = document.getElementById('labelGroom');
     var labelBride  = document.getElementById('labelBride');
     var finalStage  = document.getElementById('finalStage');
@@ -1536,6 +1539,7 @@
     if(reduce || noIO){
       /* hiện thẳng trạng thái cuối (ảnh + trích dẫn) như một section tĩnh bình thường */
       if(cam) cam.style.display = 'none';
+      stage.classList.add('shot');
       view.style.height = 'auto';
       view.style.minHeight = '0';
       finalStage.style.position = 'relative';
@@ -1556,7 +1560,7 @@
         panA:K + 2.9, panB:K + 4.2,                    // lia sang chú rể
         gIn:K + 4.3,  gOut:K + 5.4,                    // tên chú rể
         outA:K + 5.5, outB:K + 6.5,                    // lùi ra toàn cảnh
-        flash:K + 6.7, end:K + 8.1                     // chớp flash → ảnh + trích dẫn
+        cap:K + 6.7,  end:K + 8.6                      // "chụp màn hình" → thu vào khung ảnh → trích dẫn
       };
     }
 
@@ -1612,15 +1616,36 @@
       var s = Math.floor(t), fr = Math.floor((t - s) * 24);
       vfTc.textContent = '00:' + (s < 10 ? '0' : '') + s + ':' + (fr < 10 ? '0' : '') + fr;
 
-      var shot = t >= T.flash + 0.1;                                  // đã "bấm máy"
-      vf.style.opacity = shot ? '0' : String(ease(remap(t, 0, 0.4)));
-      cam.style.opacity = shot ? '0' : '1';
-      flashEl.style.opacity = String(0.92 * remap(t, T.flash, T.flash + 0.1) * (1 - ease(remap(t, T.flash + 0.15, T.flash + 0.8))));
+      /* "chụp màn hình": khựng nhẹ + viền ngà (0,18s) → thu nhỏ bay vào đúng khung ảnh câu chuyện (0,85s) */
+      var W = view.clientWidth, H = view.clientHeight;
+      var pPress = ease(remap(t, T.cap, T.cap + 0.18));
+      var pFly   = ease(remap(t, T.cap + 0.18, T.cap + 1.03));
+      var bx = mix(0, W * 0.035, pPress), by = mix(0, H * 0.035, pPress);
+      var bw = mix(W, W * 0.93, pPress), bh = mix(H, H * 0.93, pPress);
+      if(pFly > 0){
+        var vr = view.getBoundingClientRect(), fr = frameWrap.getBoundingClientRect();
+        bx = mix(bx, fr.left - vr.left, pFly); by = mix(by, fr.top - vr.top, pFly);
+        bw = mix(bw, fr.width, pFly);          bh = mix(bh, fr.height, pFly);
+      }
+      if(pPress > 0){
+        cam.style.left = bx + 'px'; cam.style.top = by + 'px';
+        cam.style.width = bw + 'px'; cam.style.height = bh + 'px';
+        cam.style.right = 'auto'; cam.style.bottom = 'auto';
+        shoot(0.5, 0.5, 1);                                          // ảnh luôn phủ kín khung đang co lại
+      } else {
+        cam.style.left = cam.style.top = cam.style.width = cam.style.height = cam.style.right = cam.style.bottom = '';
+      }
+      var ring = 5 * pPress * (1 - remap(t, T.cap + 0.85, T.cap + 1.05));
+      cam.style.boxShadow = pPress > 0 ? '0 0 0 ' + ring + 'px #fffaf0, 0 ' + (18 * pPress) + 'px ' + (44 * pPress) + 'px rgba(20,3,6,' + (0.4 * pPress) + ')' : '';
+      camShade.style.opacity = String(1 - pPress);
+      vf.style.opacity = String(ease(remap(t, 0, 0.4)) * (1 - pPress));
+      cam.style.opacity = String(1 - remap(t, T.cap + 0.95, T.cap + 1.1));
+      stage.classList.toggle('shot', t >= T.cap + 0.3);
 
-      var pImg = ease(remap(t, T.flash + 0.1, T.flash + 0.7));
-      var pTxt = ease(remap(t, T.flash + 0.5, T.end));
-      finalStage.style.opacity = String(Math.max(pImg, pTxt));
-      frameWrap.style.transform = 'translate(' + mix(32, 0, pImg) + 'px, ' + mix(26, 0, pImg) + 'px)';
+      var pImg = remap(t, T.cap + 0.9, T.cap + 1.05);                // ảnh thật thế chỗ khung vừa bay tới
+      var pTxt = ease(remap(t, T.cap + 1.05, T.end));
+      finalStage.style.opacity = String(pImg);
+      frameWrap.style.transform = 'none';
       if(storyBlock){
         storyBlock.style.opacity = String(pTxt);
         storyBlock.style.transform = 'translateY(' + mix(18, 0, pTxt) + 'px)';
