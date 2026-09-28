@@ -2380,8 +2380,10 @@
     function mix(a,b,t){ return a + (b-a)*t; }
     function renderLeaf(i){
       var a = ang[i], lift = Math.sin(a / 180 * Math.PI);
-      var stack = a > 90 ? -(i+1) * 0.5 : (N-i) * 0.5;
-      leaves[i].style.transform = 'rotateY(' + (-a) + 'deg) translateZ(' + (lift*16 + stack) + 'px)';
+      // nâng tờ giấy theo trục Z của CUỐN SÁCH (translateZ đặt TRƯỚC rotateY) → mép gáy luôn dính vào gáy;
+      // đặt sau rotateY thì lúc tờ dựng đứng, "nâng" thành đẩy ngang → hở một khe lộ trang phía sau
+      var stack = a > 90 ? (i+1) * 0.5 : (N-i) * 0.5;
+      leaves[i].style.transform = 'translateZ(' + (lift*3 + stack) + 'px) rotateY(' + (-a) + 'deg)';
       leaves[i].lastChild.style.opacity = (lift * 0.8).toFixed(3);
       if(i === 0) baseL.style.opacity = a > 90 ? 1 : 0;
     }
