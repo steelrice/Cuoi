@@ -1920,12 +1920,33 @@
   function revealMusic(){
     if(!bgMusic || (!bgMusic.muted && !bgMusic.paused)) return;
     bgMusic.muted = false;
-    var afterPlay = function(){ fadeAudio(bgMusic, MUSIC_VOLUME, 3000); setMusicUI(true); };
+    var afterPlay = function(){
+      fadeAudio(bgMusic, MUSIC_VOLUME, 3000); setMusicUI(true);
+      // một số trình duyệt (Safari iPhone) không coi cú VUỐT là "chạm thật" → nhạc bị dừng lại; chờ lần chạm kế tiếp
+      setTimeout(function(){ if(bgMusic.paused || bgMusic.muted) armMusicRetry(); }, 500);
+    };
     if(bgMusic.paused){
-      bgMusic.play().then(afterPlay).catch(function(){ setMusicUI(false); });
+      bgMusic.play().then(afterPlay).catch(function(){ setMusicUI(false); armMusicRetry(); });
     } else {
       afterPlay();
     }
+  }
+  /* mồi nhạc ngay lúc ngón tay chạm vào thiệp (phát tắt tiếng) để lúc mở thiệp chỉ việc bật tiếng lên */
+  function primeMusic(){
+    if(!bgMusic || !bgMusic.paused) return;
+    bgMusic.muted = true;
+    var pr = bgMusic.play(); if(pr && pr.catch) pr.catch(function(){});
+  }
+  /* dự phòng: nếu chưa phát được thì lần chạm/bấm kế tiếp ở bất kỳ đâu sẽ bật nhạc (trừ nút nhạc — nút đó tự xử lý) */
+  var musicRetryArmed = false;
+  function armMusicRetry(){
+    if(musicRetryArmed || !bgMusic) return; musicRetryArmed = true;
+    var go = function(e){
+      if(musicToggle && e.target && musicToggle.contains(e.target)) return;
+      document.removeEventListener('touchend', go, true); document.removeEventListener('click', go, true);
+      musicRetryArmed = false; revealMusic();
+    };
+    document.addEventListener('touchend', go, true); document.addEventListener('click', go, true);
   }
   if(bgMusic){
     bgMusic.volume = 0;
@@ -2057,12 +2078,12 @@
       }
       dy = 0;
     }
-    cover.addEventListener('touchstart', function(e){ if(!canSwipe()) return; sy = e.touches[0].clientY; dy = 0; t0 = performance.now(); }, { passive:true });
+    cover.addEventListener('touchstart', function(e){ if(!canSwipe()) return; sy = e.touches[0].clientY; dy = 0; t0 = performance.now(); primeMusic(); }, { passive:true });
     cover.addEventListener('touchmove', function(e){ if(sy === null) return; e.preventDefault(); move(e.touches[0].clientY); }, { passive:false });
     cover.addEventListener('touchend', end);
     cover.addEventListener('touchcancel', function(){ dy = 0; end(); });
     // chuột (máy tính): kéo lên, lăn chuột xuống hoặc phím ↓ / Space cũng mở
-    cover.addEventListener('pointerdown', function(e){ if(e.pointerType !== 'mouse' || !canSwipe()) return; sy = e.clientY; dy = 0; t0 = performance.now(); });
+    cover.addEventListener('pointerdown', function(e){ if(e.pointerType !== 'mouse' || !canSwipe()) return; sy = e.clientY; dy = 0; t0 = performance.now(); primeMusic(); });
     window.addEventListener('pointermove', function(e){ if(e.pointerType === 'mouse' && sy !== null) move(e.clientY); });
     window.addEventListener('pointerup', function(e){ if(e.pointerType === 'mouse') end(); });
     cover.addEventListener('wheel', function(e){ if(canSwipe() && e.deltaY > 20) openInvite(); }, { passive:true });
