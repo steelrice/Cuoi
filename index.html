@@ -174,6 +174,8 @@
   body.lang-en [data-en]{display:inline;}
 
   #app{ max-width:520px; margin:0 auto; background:var(--cream); box-shadow:var(--shadow); position:relative; }
+  /* vân giấy ngà: ô 600px lặp liền mạch, hiển thị 300px (nét trên màn hình retina); chỉ gắn sau khi trang tải xong */
+  #app.paper-in{ background-image:url(images/paper.webp); background-size:300px 300px; }
   .wrap{ max-width:400px; margin:0 auto; padding:0 var(--sp-6); }
   .wrap-wide{ padding:0 var(--sp-4); }
 
@@ -1964,6 +1966,9 @@
   var ALBUM_MAX = 60;
 
   var gallery = document.getElementById('gallery');
+
+  // vân giấy nền ngà: tải sau cùng, không tranh băng thông với font/ảnh đầu trang
+  window.addEventListener('load', function(){ document.getElementById('app').classList.add('paper-in'); });
 
   // ảnh nền footer: gắn .bg-in khi còn cách ~800px (hoặc khi trang đã tải xong, tuỳ cái nào tới trước)
   var footerEl = document.querySelector('.footer');
