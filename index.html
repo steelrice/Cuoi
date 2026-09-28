@@ -652,7 +652,9 @@
 
   /* ---------- timeline ---------- */
   .tl{ margin-top:var(--sp-3); }
-  .tl-frame-inner{ border:1px solid rgba(138,94,36,.45); padding:34px 16px; display:flex; flex-direction:column; gap:28px; text-align:left; }
+  .tl-frame-inner{ position:relative; isolation:isolate; overflow:hidden; border:1px solid rgba(138,94,36,.45); padding:34px 16px; display:flex; flex-direction:column; gap:28px; text-align:left; }
+  /* chữ 囍 lớn mờ làm nền giữa khung chương trình */
+  .tl-frame-inner::before{ content:'囍'; position:absolute; left:50%; top:54%; transform:translate(-50%,-50%); z-index:-1; font-size:min(78vw, 300px); line-height:1; font-weight:700; color:var(--red-mid); opacity:.06; pointer-events:none; }
   .tl-head{ display:flex; flex-direction:column; align-items:center; gap:8px; text-align:center; }
   .tl-kicker{ font-family:var(--script); font-style:italic; font-size:25px; color:#8A5E24; }
   .tl-headtitle{ font-family:var(--script); font-size:38px; line-height:1; color:var(--red-deep); }
@@ -668,7 +670,7 @@
      trên màn hình nằm trong .bk-up (xoay ngược lại). Kích thước (--bw/--bh/--uw/--uh) do JS tính theo màn hình. */
   .bk-sec{ padding:var(--sp-7) 0 0; }
   .bk-sec .orn-div{ margin-bottom:0; }
-  .bk-pin{ position:relative; height:360vh; }
+  .bk-pin{ position:relative; height:100vh; height:100svh; min-height:520px; }
   .bk-sticky{ position:sticky; top:0; height:100vh; height:100svh; min-height:520px; overflow:hidden; display:flex; flex-direction:column; }
   .bk-head{ position:absolute; top:0; left:0; right:0; z-index:2; padding-top:var(--sp-8); text-align:center; pointer-events:none; }
   .bk-tag{ position:absolute; top:0; right:var(--sp-5); width:40px; height:84px; z-index:5; display:flex; align-items:flex-end; justify-content:center; padding-bottom:9px;
@@ -2162,7 +2164,6 @@
     var ctl = document.getElementById('bkCtl'), cnt = document.getElementById('bkCnt'), hint = document.getElementById('bkHint');
     var btnPrev = document.getElementById('bkPrev'), btnNext = document.getElementById('bkNext');
     var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    var SCROLL_LEAVES = 3;               // bìa + 2 tờ đầu lật theo cuộn (tới trang đôi 03); sau đó chạm/vuốt
     var P = BOOK_PAGES.length;
 
     function img(i){ return '<img alt="" draggable="false" decoding="async" data-src="'+BOOK_DIR+BOOK_PAGES[i]+'">'; }
@@ -2182,8 +2183,10 @@
 
     var loaded = false;
     function loadAll(){ if(loaded) return; loaded = true; [].forEach.call(book.querySelectorAll('img[data-src]'), function(im){ im.src = im.dataset.src; }); }
+    // ảnh bìa tải sớm (sau khi trang tải xong) để album đóng luôn có bìa khi khách cuộn tới
+    window.addEventListener('load', function(){ setTimeout(function(){ var c = book.querySelector('.bk-cover img[data-src]'); if(c && !c.src) c.src = c.dataset.src; }, 1200); });
     if('IntersectionObserver' in window){
-      var lio = new IntersectionObserver(function(es){ if(es[0].isIntersecting){ loadAll(); lio.disconnect(); } }, { rootMargin:'1500px 0px' });
+      var lio = new IntersectionObserver(function(es){ if(es[0].isIntersecting){ loadAll(); lio.disconnect(); } }, { rootMargin:'2500px 0px' });
       lio.observe(pin);
     } else loadAll();
 
@@ -2236,46 +2239,51 @@
       btnPrev.disabled = cur <= 1; btnNext.disabled = cur >= N;
     }
 
-    /* ---- giai đoạn cuộn: cuộn đặt đích, vòng rAF đuổi theo mềm ---- */
-    var target = 0, shown = 0, looping = false;
-    function readScroll(){
-      var r = pin.getBoundingClientRect(), total = pin.offsetHeight - window.innerHeight;
-      target = total > 0 ? clamp(-r.top / total, 0, 1) : 1;
-      if(!looping){ looping = true; requestAnimationFrame(loop); }
-    }
-    function loop(){
-      shown += (target - shown) * 0.14;
-      if(Math.abs(target - shown) < 0.0005) shown = target;
-      apply(shown);
-      if(shown !== target) requestAnimationFrame(loop); else looping = false;
-    }
-    function apply(p){
-      var pin_  = ease(remap(p, 0, 0.14));              // album đóng hiện lên
-      var po    = ease(remap(p, 0.16, 0.34));           // mở bìa sang trái → trang đôi 01 nằm ngang
-      var pr    = ease(remap(p, 0.40, 0.58));           // xoay 90° thành dọc (chỉ khi màn dọc)
-      var sc = po < 1 ? mix(sClosed * mix(0.86, 1, pin_), sFlat, po) : mix(sFlat, sRot, pr);
-      var rp = portrait ? pr : 0;
-      renderBook(90 * rp, sc, po, offY * (1 - rp));
-      head.style.opacity = String(1 - rp);
-      stage.classList.toggle('bk-drag-v', portrait && manual);
-      if(p < 0.92){
-        if(manual){ manual = false; ctl.classList.add('off'); }
-        ang[0] = 180 * po; renderLeaf(0);
-        for(var i=1; i<N; i++){
-          var a = 0;
-          if(i < SCROLL_LEAVES){ var s0 = 0.62 + (i-1)*0.15; a = 180 * ease(remap(p, s0, s0 + 0.13)); }
-          ang[i] = a; renderLeaf(i);
-        }
-        if(p < 0.16) setHint('cuộn xuống để mở album', 'scroll down to open the album');
-        else if(portrait && p >= 0.4) setHint('xoay ngang điện thoại để xem · tiếp tục cuộn để lật', 'turn your phone sideways · keep scrolling to flip');
-        else setHint('tiếp tục cuộn', 'keep scrolling');
-      } else if(!manual){
-        manual = true; cur = SCROLL_LEAVES;
-        for(var j=0; j<SCROLL_LEAVES; j++){ ang[j] = 180; renderLeaf(j); }
-        label(); ctl.classList.remove('off'); stage.classList.toggle('bk-drag-v', portrait);
-        if(portrait) setHint('xoay ngang điện thoại để xem · vuốt để lật · ⤢ xem lớn', 'turn your phone sideways · swipe to flip · ⤢ enlarge');
-        else setHint('vuốt ngang để lật trang · ⤢ để xem lớn', 'swipe to turn · ⤢ to enlarge');
+    /* ---- mở album: tự chạy liền mạch khi album vào khung nhìn (không phụ thuộc cuộn) ----
+       Màn dọc: album đóng → xoay 90° thành dọc (phóng to sát viền) → mở bìa → trang đôi 01.
+       Màn ngang: album đóng → mở bìa → trang đôi 01. Sau đó vuốt/chạm để lật. */
+    var played = false, st = 0;                       // st: tiến độ 0 → 1 của đoạn mở
+    function apply(t){
+      var rot = portrait ? ease(remap(t, 0, 0.45)) : 0;
+      var po  = ease(remap(t, portrait ? 0.5 : 0.15, 1));
+      var sEnd = portrait ? sRot : sFlat;
+      var sc = portrait ? mix(sClosed, sRot, rot) : mix(sClosed, sFlat, po);
+      if(portrait && rot > 0 && rot < 1){
+        // đang xoay: thu nhỏ vừa đủ để góc sách không tràn ra mép màn hình
+        var ca = Math.cos(rot * Math.PI / 2), sa = Math.sin(rot * Math.PI / 2);
+        var bw = PW * ca + PH * sa, bh = PW * sa + PH * ca;
+        sc = Math.min(sc, (stage.clientWidth - 12) / bw, (stage.clientHeight - 24) / bh);
       }
+      // bìa (nửa phải của cuốn) nằm giữa màn hình khi đóng: dịch ngược theo hướng đã xoay
+      var off = -(1 - po) * sc * PW / 2, a = rot * Math.PI / 2;
+      var x = off * Math.cos(a), y = off * Math.sin(a) + offY * (1 - (portrait ? rot : po));
+      book.style.transform = 'translate(' + x + 'px,' + y + 'px) rotateZ(' + (90 * rot) + 'deg) scale(' + sc + ')';
+      head.style.opacity = String(portrait ? 1 - rot : 1);
+      ang[0] = 180 * po; renderLeaf(0);
+    }
+    function play(){
+      // chờ ảnh bìa + trang đôi 01 tải xong (tối đa 1,5s) rồi mới chạy
+      var need = [].slice.call(book.querySelectorAll('.bk-cover img')).concat([book.querySelectorAll('.bk-leaf')[1] ? book.querySelectorAll('.bk-leaf')[1].querySelector('img') : null]).filter(Boolean);
+      loadAll();
+      var t = Date.now();
+      (function wait(){
+        if(need.every(function(im){ return im.complete && im.naturalWidth; }) || Date.now() - t > 1500) run();
+        else setTimeout(wait, 80);
+      })();
+    }
+    function run(){
+      if(played) return; played = true;
+      setHint('', '');
+      var t0 = performance.now(), dur = portrait ? 2600 : 1600;
+      (function step(now){
+        st = Math.min(1, (now - t0) / dur); apply(st);
+        if(st < 1) requestAnimationFrame(step);
+        else {
+          manual = true; cur = 1; label(); ctl.classList.remove('off'); stage.classList.toggle('bk-drag-v', portrait);
+          if(portrait) setHint('xoay ngang điện thoại để xem · vuốt để lật · ⤢ xem lớn', 'turn your phone sideways · swipe to flip · ⤢ enlarge');
+          else setHint('vuốt ngang để lật trang · ⤢ để xem lớn', 'swipe to turn · ⤢ to enlarge');
+        }
+      })(t0);
     }
 
     /* ---- giai đoạn chạm/vuốt ---- */
@@ -2343,21 +2351,20 @@
     stage.addEventListener('pointercancel', endDrag);
 
     layout();
-    if(reduce){
-      // không ghim/không xoay: album mở sẵn ở trang đôi 01, lật bằng chạm/nút
-      pin.style.height = 'auto';
-      var sticky = pin.firstElementChild; sticky.style.position = 'relative'; sticky.style.height = 'auto';
-      sticky.style.height = window.innerHeight + 'px';
-      layout();
-      renderBook(portrait ? 90 : 0, sRot, 1, 0); head.style.opacity = portrait ? '0' : '1';
-      ang[0] = 180; for(var z=0; z<N; z++) renderLeaf(z);
-      manual = true; cur = 1; label(); ctl.classList.remove('off');
-      setHint('vuốt ngang để lật trang · ⤢ để xem lớn', 'swipe to turn · ⤢ to enlarge');
-      return;
+    for(var z=0; z<N; z++) renderLeaf(z);
+    apply(0);
+    if(reduce || !('IntersectionObserver' in window)){ played = false; st = 1; apply(1); played = true;
+      manual = true; cur = 1; label(); ctl.classList.remove('off'); stage.classList.toggle('bk-drag-v', portrait);
+      setHint('vuốt để lật trang · ⤢ để xem lớn', 'swipe to turn · ⤢ to enlarge');
+    } else {
+      setHint('', '');
+      var pio = new IntersectionObserver(function(es){ if(es[0].intersectionRatio >= 0.6){ play(); pio.disconnect(); } }, { threshold:[0.6] });
+      pio.observe(pin);
     }
-    window.addEventListener('scroll', readScroll, { passive:true });
-    window.addEventListener('resize', function(){ layout(); apply(shown); });
-    readScroll();
+    window.addEventListener('resize', function(){
+      var was = portrait; layout(); apply(played ? st : 0);
+      if(manual){ stage.classList.toggle('bk-drag-v', portrait); if(was !== portrait) label(); }
+    });
   })();
 
   // ===== Đấu nối hồi âm thẳng vào sheet "Danh sách khách mời" qua Google Apps Script =====
