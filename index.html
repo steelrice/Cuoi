@@ -706,9 +706,10 @@
   .bk-face img{ position:absolute; top:0; height:100%; width:200%; max-width:none; object-fit:cover; display:block; }
   .bk-face.bk-front img{ right:0; }             /* mặt trước = nửa PHẢI của trang đôi */
   .bk-face.bk-back img{ left:0; }               /* mặt sau  = nửa TRÁI của trang đôi kế */
-  .bk-face.bk-front::after, .bk-face.bk-back::after{ content:''; position:absolute; top:0; bottom:0; width:24px; pointer-events:none; }
-  .bk-face.bk-front::after{ left:0; background:linear-gradient(90deg, rgba(60,40,20,.28), transparent); }
-  .bk-face.bk-back::after{ right:0; background:linear-gradient(270deg, rgba(60,40,20,.28), transparent); }
+  /* gáy giữa: chỉ một đường gân mảnh (không phủ vệt tối lên ảnh) */
+  .bk-face.bk-front::after, .bk-face.bk-back::after{ content:''; position:absolute; top:0; bottom:0; width:1px; pointer-events:none; background:rgba(90,60,30,.32); box-shadow:0 0 3px rgba(90,60,30,.18); }
+  .bk-face.bk-front::after{ left:0; }
+  .bk-face.bk-back::after{ right:0; }
   .bk-shade{ position:absolute; inset:0; pointer-events:none; opacity:0; background:linear-gradient(90deg, rgba(0,0,0,.3), rgba(0,0,0,.04) 35%, rgba(255,255,255,.1) 70%, rgba(0,0,0,.06)); }
   .bk-cover .bk-front{ border-radius:0 8px 8px 0; background:#4a0b17; }
   .bk-cover .bk-front img{ left:0; right:auto; width:100%; }
