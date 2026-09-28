@@ -690,7 +690,17 @@
   .bk-ctl button svg{ width:15px; height:15px; }
   .bk-cnt{ font-family:var(--serif); font-size:15px; min-width:64px; text-align:center; color:var(--red-deep); }
   .bk-cnt span{ font-family:var(--sans); font-size:11.5px; letter-spacing:.12em; color:var(--ink-soft); }
-  .bk-hint{ font-size:11.5px; letter-spacing:.04em; color:var(--ink-soft); opacity:.8; }
+  .bk-hint{ font-size:11.5px; letter-spacing:.04em; color:var(--ink-soft); opacity:.8; transition:opacity .6s ease; }
+  .bk-stage.bk-inline ~ .bk-ctl .bk-hint{ display:none; }     /* trong thiệp: không cần chữ hướng dẫn */
+  .bk-hint.fade{ opacity:0; }
+  #bkZoom{ display:none; }                                   /* nút xem lớn nằm ngay trên album (.bk-zoom) */
+  .bk-zoom{ position:absolute; z-index:4; width:38px; height:38px; margin:-19px 0 0 -19px; border-radius:50%; border:1px solid rgba(255,255,255,.55);
+    background:rgba(40,8,12,.45); -webkit-backdrop-filter:blur(4px); backdrop-filter:blur(4px); color:#fff; display:flex; align-items:center; justify-content:center;
+    opacity:0; transform:scale(.7); transition:opacity .4s ease, transform .4s cubic-bezier(.16,1,.3,1); pointer-events:none; box-shadow:0 4px 14px rgba(0,0,0,.25); }
+  .bk-zoom svg{ width:16px; height:16px; }
+  .bk-zoom.show{ opacity:1; transform:none; pointer-events:auto; }
+  .bk-zoom.ping::after{ content:''; position:absolute; inset:-1px; border-radius:50%; border:1px solid rgba(255,255,255,.8); animation:bkPing 1.4s ease-out 2; }
+  @keyframes bkPing{ from{ transform:scale(1); opacity:.9; } to{ transform:scale(1.8); opacity:0; } }
   /* sách đóng gáy dọc (gáy giữa). Mỗi file studio = 1 trang đôi: nửa trái nằm ở mặt sau tờ trước, nửa phải ở mặt trước tờ này.
      Kích thước (--sw trang đôi, --pw 1 trang, --ph cao) do JS tính theo màn hình. */
   .bk-book{ position:absolute; left:50%; top:50%; width:var(--sw); height:var(--ph); margin:calc(var(--ph) / -2) 0 0 calc(var(--sw) / -2); transform-style:preserve-3d; transform-origin:50% 50%; }
@@ -1202,6 +1212,7 @@
           <h2 class="title center"><span data-vi>Khoảnh khắc</span><span data-en>Moments</span></h2>
         </div>
         <div class="bk-stage bk-inline" id="bkStage"><div class="bk-book" id="bkBook"></div></div>
+        <button type="button" class="bk-zoom" id="bkZoomFab" aria-label="Xem album lớn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg></button>
         <div class="bk-ctl off" id="bkCtl">
           <div class="bk-row">
             <button type="button" id="bkPrev" aria-label="Trang trước">&#8249;</button>
@@ -2337,13 +2348,33 @@
       (function step(now){
         apply(Math.min(1, (now - t0) / dur));
         if(st < 1) requestAnimationFrame(step);
-        else { manual = true; cur = 1; label(); ctl.classList.remove('off'); hintMode(); }
+        else { manual = true; cur = 1; label(); ctl.classList.remove('off'); hintMode(); placeFab(); fab.classList.add('show', 'ping'); setTimeout(peek, 700); }
       })(t0);
+    }
+    /* nút phóng to đặt ở góc trên phải trang đôi (tính theo cỡ album đang hiển thị) */
+    var fab = document.getElementById('bkZoomFab');
+    function placeFab(){
+      var w = SW * sFlat, h = PH * sFlat;
+      fab.style.left = (inlineStage.clientWidth / 2 + w / 2 - 22) + 'px';
+      fab.style.top  = (inlineStage.clientHeight / 2 + offY - h / 2 + 22) + 'px';
+    }
+    fab.addEventListener('click', function(){ openFull(); });
+    /* mời lật: trang phải tự nhấc nhẹ lên rồi hạ xuống 2 lần (dừng ngay nếu khách đã chạm vào album) */
+    var touched = false;
+    function peek(){
+      var n = 0;
+      (function once(){
+        if(touched || busy || mode !== 'inline' || cur !== 1 || n++ >= 2) return;
+        busy = true;
+        tween(cur, 32, 480, function(){ tween(cur, 0, 420, function(){ busy = false; setTimeout(once, 450); }); });
+      })();
     }
     function hintMode(){
       if(mode === 'inline') setHint('vuốt ngang để lật · chạm vào album để xem lớn', 'swipe to turn · tap the album to enlarge');
       else if(rotFull) setHint('xoay ngang điện thoại để xem · vuốt lên để lật', 'turn your phone sideways · swipe up to flip');
-      else setHint('vuốt, bấm nửa trang hoặc phím ← → để lật', 'swipe, click a page or use ← → to turn');
+      else setHint('vuốt hoặc bấm ← → để lật', 'swipe or use ← → to turn');
+      hint.classList.remove('fade'); clearTimeout(hintMode.t);
+      if(mode === 'full') hintMode.t = setTimeout(function(){ hint.classList.add('fade'); }, 3500);
     }
 
     /* ---- xem lớn: chuyển cuốn sách + thanh điều khiển sang lớp toàn màn hình ---- */
@@ -2360,7 +2391,7 @@
       if(mode === 'full' || !manual) return;
       mode = 'full'; stage = fullStage;
       fullStage.appendChild(book); full.appendChild(ctl);
-      full.classList.add('show'); document.documentElement.classList.add('no-scroll');
+      full.classList.add('show'); document.documentElement.classList.add('no-scroll'); fab.classList.remove('show');
       layout(); rotNow = 0; place(1, 0); hintMode();
       if(rotFull) setTimeout(function(){ animRot(1, 650); }, 120);
     }
@@ -2369,7 +2400,7 @@
       rotAnim++; mode = 'inline'; stage = inlineStage;
       inlineStage.appendChild(book); sticky.appendChild(ctl);
       full.classList.remove('show'); document.documentElement.classList.remove('no-scroll');
-      layout(); rotNow = 0; place(1, 0); hintMode();
+      layout(); rotNow = 0; place(1, 0); hintMode(); placeFab(); fab.classList.add('show');
     }
     full.querySelector('.bk-close').addEventListener('click', closeFull);
     document.addEventListener('keydown', function(e){
@@ -2397,6 +2428,7 @@
        Màn dọc (đã xoay): trang sau ở nửa dưới → vuốt LÊN để lật tới. Màn ngang: vuốt SANG TRÁI. */
     var drag = null;
     function onDown(e){
+      touched = true;
       if(!manual || busy) return;
       drag = { x:e.clientX, y:e.clientY, i:-1, dir:0, a:0, id:e.pointerId };
     }
@@ -2448,7 +2480,7 @@
     for(var z=0; z<N; z++) renderLeaf(z);
     apply(0);
     if(reduce || !('IntersectionObserver' in window)){ apply(1); played = true;
-      manual = true; cur = 1; label(); ctl.classList.remove('off'); hintMode();
+      manual = true; cur = 1; label(); ctl.classList.remove('off'); hintMode(); placeFab(); fab.classList.add('show');
     } else {
       setHint('', '');
       var pio = new IntersectionObserver(function(es){ if(es[0].intersectionRatio >= 0.6){ play(); pio.disconnect(); } }, { threshold:[0.6] });
@@ -2457,7 +2489,7 @@
     window.addEventListener('resize', function(){
       layout();
       if(mode === 'full'){ rotAnim++; rotNow = rotFull ? 1 : 0; place(1, rotNow); hintMode(); }
-      else apply(played ? st : 0);
+      else { apply(played ? st : 0); if(manual) placeFab(); }
     });
   })();
 
