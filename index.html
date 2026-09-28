@@ -800,11 +800,15 @@
   #lb-count{ position:absolute; bottom:var(--sp-6); left:0; right:0; text-align:center; font-family:var(--serif); font-size:15px; letter-spacing:.1em; color:var(--cream-dim); }
 
   /* ---------- location ---------- */
-  .loc-card{ margin-top:0; }
-  .loc-body{ padding:0; text-align:center; }
-  .note-box{ margin-top:var(--sp-6); text-align:left; display:flex; gap:var(--sp-3); align-items:flex-start; background:rgba(207,159,63,.12); border:1px solid rgba(207,159,63,.4); border-radius:8px; padding:var(--sp-4) var(--sp-5); }
-  .note-box svg{ width:20px; height:20px; flex:none; margin-top:2px; color:var(--gold); }
-  .note-box p{ font-size:14.5px; line-height:1.6; color:var(--ink-soft); }
+  /* một thẻ địa điểm liền khối: tiêu đề + địa chỉ → bản đồ tràn sát mép thẻ → nút → chân thẻ xe đưa đón */
+  .loc-card{ margin:0 calc(var(--sp-4) - var(--sp-6)); background:#fffcf6; border:1px solid rgba(169,127,46,.42); border-radius:4px; overflow:hidden; box-shadow:0 14px 32px rgba(60,20,10,.08); }
+  .loc-body{ padding:var(--sp-6) var(--sp-5) var(--sp-5); text-align:center; }
+  .loc-card .loc-map{ position:relative; margin:var(--sp-5) calc(-1 * var(--sp-5)) 0; border:0; border-top:1px solid rgba(169,127,46,.3); border-bottom:1px solid rgba(169,127,46,.3); border-radius:0; }
+  .loc-card .loc-credit{ position:absolute; right:6px; bottom:6px; margin:0; padding:2px 6px; border-radius:2px; background:rgba(255,255,255,.8); font-size:9.5px; opacity:1; }
+  .note-box{ display:flex; gap:var(--sp-3); align-items:flex-start; text-align:left; padding:var(--sp-4) var(--sp-5); border-top:1px dashed rgba(169,127,46,.5); background:rgba(207,159,63,.07); }
+  .note-box svg{ width:20px; height:20px; flex:none; margin-top:1px; color:var(--gold-line); }
+  .note-box p{ font-size:13.5px; line-height:1.6; color:var(--ink-soft); }
+  .note-link{ display:inline-block; font-weight:500; color:var(--red-mid); text-decoration:underline; text-underline-offset:3px; text-decoration-color:rgba(122,21,36,.35); }
   .loc-head{ display:flex; flex-direction:column; align-items:center; gap:var(--sp-3); }
   .loc-kicker{ font-family:var(--script); font-style:italic; font-weight:500; font-size:25px; color:var(--gold-line); }
   .loc-big{ font-family:var(--serif); font-weight:400; font-size:clamp(24px,7vw,32px); line-height:1.1; color:var(--red-deep); text-wrap:balance; }
@@ -822,7 +826,8 @@
   .loc-parents .parents-divider i{ width:6px; height:6px; background:var(--gold); transform:rotate(45deg); flex:none; }
   .loc-addr{ font-weight:400; font-size:14.5px; color:var(--ink-soft); margin-top:var(--sp-5); line-height:1.65; text-wrap:balance; }
   .nowrap{ white-space:nowrap; }
-  .loc-addr b{ font-weight:500; color:var(--ink); }
+  /* nhãn "Địa chỉ" nhỏ in hoa nằm riêng một dòng phía trên → địa chỉ không bị ngắt dòng lệch */
+  .loc-addr b{ display:block; margin-bottom:4px; font-weight:500; font-size:10.5px; letter-spacing:.18em; text-transform:uppercase; color:var(--gold-line); }
   .loc-map{ display:block; margin-top:var(--sp-5); border:1px solid rgba(207,159,63,.35); border-radius:2px; overflow:hidden; }
   .loc-map img{ width:100%; height:auto; display:block; }
   .loc-credit{ font-size:10.5px; letter-spacing:.04em; color:var(--ink-soft); opacity:.7; margin-top:var(--sp-2); }
@@ -1218,23 +1223,24 @@
             <div class="parents-divider" aria-hidden="true"><span></span><i></i><span></span></div>
           </div>
           <div class="loc-addr" id="locAddr">
-            <span data-vi><b>Địa chỉ:</b> Sảnh 2 · 356 - 358 Trương Công Định<br>TP. Vũng Tàu</span>
-            <span data-en><b>Address:</b> Hall 2 · 356 - 358 Truong Cong Dinh St.<br>Vung Tau City</span>
+            <span data-vi><b>Địa chỉ</b>Sảnh 2 · 356 - 358 Trương Công Định<br>TP. Vũng Tàu</span>
+            <span data-en><b>Address</b>Hall 2 · 356 - 358 Truong Cong Dinh St.<br>Vung Tau City</span>
           </div>
           <a class="loc-map" id="locMapLink" href="#" target="_blank" rel="noopener">
             <img id="mapVT" src="images/map-vungtau.webp" alt="Bản đồ vị trí Nhà hàng Merastis, Vũng Tàu" loading="lazy">
             <img id="mapHY" src="images/map-hungyen.webp" alt="Bản đồ vị trí tư gia nhà trai trên QL39A, Hưng Yên" loading="lazy">
+            <span class="loc-credit" id="locCredit">Google</span>
           </a>
-          <div class="loc-credit" id="locCredit"><span data-vi>Bản đồ: Google</span><span data-en>Map: Google</span></div>
           <a class="btn-gold" id="locMaps" href="#" target="_blank" rel="noopener">
             <img class="btn-icon" src="images/icon-gmaps.png" alt="" aria-hidden="true" loading="lazy" decoding="async">
             <span data-vi>Xem đường đi</span><span data-en>Get directions</span>
           </a>
         </div>
-      </div>
-      <div class="note-box" id="noteBox">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M3 13h13l4 4v-9a1 1 0 0 0-1-1H3z"/><circle cx="7.5" cy="18" r="1.6"/><circle cx="16.5" cy="18" r="1.6"/></svg>
-        <p id="noteBoxText"><span data-vi>Khách ở TP.HCM đừng lo đường xa nhé — cô dâu chú rể sẽ sắp xe đưa đón về Vũng Tàu. Chỉ cần báo cho cô dâu chú rể trong lời nhắn RSVP bên dưới!</span><span data-en>Coming from HCMC? No need to worry about the drive — we'll arrange a shuttle to Vung Tau for you. Just let us know in the RSVP below!</span></p>
+        <div class="note-box" id="noteBox">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M3 13h13l4 4v-9a1 1 0 0 0-1-1H3z"/><circle cx="7.5" cy="18" r="1.6"/><circle cx="16.5" cy="18" r="1.6"/></svg>
+          <p><span id="noteBoxText"><span data-vi>Khách từ TP.HCM đã có xe đưa đón về Vũng Tàu.</span><span data-en>Coming from HCMC? We've arranged a shuttle to Vung Tau.</span></span>
+            <a class="note-link" id="noteLink" href="#rsvpForm"><span data-vi>Đăng ký trong hồi âm ↓</span><span data-en>Sign up in the RSVP ↓</span></a></p>
+        </div>
       </div>
       <div class="dress-inline">
         <div class="sec-kicker"><span data-vi>Gợi ý</span><span data-en>A gentle note</span></div>
@@ -1473,6 +1479,12 @@
     }, { rootMargin: '0px 0px -12% 0px', threshold: 0.08 });
 
     targets.forEach(function(el){ io.observe(el); });
+  })();
+
+  /* "Đăng ký trong hồi âm ↓": cuộn mượt tới form hồi âm (không đổi #hash trên link mời) */
+  (function(){
+    var a = document.getElementById('noteLink'), f = document.querySelector('.rsvp-frame');
+    if(a && f) a.addEventListener('click', function(e){ e.preventDefault(); f.scrollIntoView({ behavior:'smooth', block:'start' }); });
   })();
 
   /* thẻ màu trang phục: trượt lên lần lượt khi dãy thẻ vào khung nhìn (độ trễ từng thẻ đặt bằng --i trong CSS) */
@@ -1897,7 +1909,7 @@
     bi('sAddr',     v.addr, e.addr);
     bi('locKicker', v.locKicker, e.locKicker);
     bi('locBig',    v.locBig, e.locBig);
-    bi('locAddr',   '<b>Địa chỉ:</b> ' + v.locAddr, '<b>Address:</b> ' + e.locAddr);
+    bi('locAddr',   '<b>Địa chỉ</b>' + v.locAddr, '<b>Address</b>' + e.locAddr);
     bi('thanks',    v.thanks, e.thanks);
     bi('credit',    v.credit, e.credit);
 
@@ -1958,8 +1970,7 @@
 
   // Thay "chúng mình"/"mình" bằng pronounHost, "bạn" bằng guestName ở các chỗ đang viết cứng
   bi('countdownLead', 'đến giây phút ' + rsvpHost + ' chính thức về chung một nhà', 'until we officially become family');
-  bi('noteBoxText', 'Khách ở TP.HCM đừng lo đường xa nhé — cô dâu chú rể sẽ sắp xe đưa đón về Vũng Tàu. Chỉ cần báo cho cô dâu chú rể trong lời nhắn RSVP bên dưới!',
-     "Coming from HCMC? No need to worry about the drive — we'll arrange a shuttle to Vung Tau for you. Just let us know in the RSVP below!");
+  bi('noteBoxText', 'Khách từ TP.HCM đã có xe đưa đón về Vũng Tàu.', "Coming from HCMC? We've arranged a shuttle to Vung Tau.");
   if(EV.day === '28'){
     bi('tlDesc1', 'Cùng lưu lại vài khoảnh khắc kỷ niệm và gửi lời chúc đến cô dâu chú rể nhé', 'Capture a few memories with us and share your wishes for the couple');
   } else {
