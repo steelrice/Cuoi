@@ -285,6 +285,9 @@
   #cover.parted .curtain.right{ transform:translateX(80%); }
   #cover.open .curtain.left{ transform:translateX(calc(-100% + 20px)); }
   #cover.open .curtain.right{ transform:translateX(calc(100% - 20px)); }
+  /* vào nội dung thì rèm kéo hẳn ra ngoài cho nội dung rộng trọn màn hình; xem lại thiệp thì rèm về lại hai mép */
+  #cover.open:not(.review) .curtain.left{ transform:translateX(calc(-100% - 8px)); }
+  #cover.open:not(.review) .curtain.right{ transform:translateX(calc(100% + 8px)); }
 
   .cover-back{ position:absolute; inset:0; z-index:1; background:radial-gradient(120% 90% at 50% 40%, #45080f, #210407 75%); }
 
