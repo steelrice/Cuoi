@@ -426,7 +426,7 @@
     to{ transform:translateY(-112vh) translateX(10px) scale(.6); opacity:0; }
   }
 
-  #petalLayer{ position:fixed; inset:0; pointer-events:none; z-index:2; overflow:hidden; }
+  #petalLayer{ position:fixed; inset:0; pointer-events:none; z-index:2; overflow:hidden; opacity:.5; }
   #petalLayer .ember{
     position:absolute; bottom:-6vh; border-radius:50%;
     background:radial-gradient(circle at 50% 50%, #f6e0a8 0%, #cf9f3f 42%, rgba(207,159,63,0) 72%);
@@ -549,6 +549,15 @@
   .lead{ font-weight:400; font-size:14.5px; line-height:1.7; color:var(--ink-soft); margin-top:var(--sp-3); }
   .center{ text-align:center; }
 
+  /* ===== nền ngà nối tiếp nhau: bỏ khoảng trống kép, ngăn bằng vạch vàng mảnh có 囍 ở giữa ===== */
+  section.join{ padding-top:0; }
+  section.join-tight{ padding-top:var(--sp-6); }
+  .orn-div{ display:flex; align-items:center; justify-content:center; gap:14px; max-width:260px; margin:0 auto var(--sp-8); color:var(--gold-line); }
+  .orn-div::before, .orn-div::after{ content:''; flex:1; height:1px; }
+  .orn-div::before{ background:linear-gradient(to right, transparent, rgba(169,127,46,.6)); }
+  .orn-div::after{ background:linear-gradient(to left, transparent, rgba(169,127,46,.6)); }
+  .orn-div span{ font-size:17px; line-height:1; }
+
   /* ===== band đỏ — nền tràn, dùng sắc đỏ của bìa ===== */
   .band-red{
     background:radial-gradient(120% 90% at 50% 30%, #45080f, #210407 78%);
@@ -614,16 +623,16 @@
 
   /* ---------- timeline ---------- */
   .tl{ margin-top:var(--sp-3); }
-  .tl-frame-inner{ border:1px solid #8A6A34; padding:34px 16px; display:flex; flex-direction:column; gap:28px; text-align:left; }
+  .tl-frame-inner{ border:1px solid rgba(138,94,36,.45); padding:34px 16px; display:flex; flex-direction:column; gap:28px; text-align:left; }
   .tl-head{ display:flex; flex-direction:column; align-items:center; gap:8px; text-align:center; }
-  .tl-kicker{ font-family:var(--script); font-style:italic; font-size:25px; color:#D4A94E; }
-  .tl-headtitle{ font-family:var(--script); font-size:38px; line-height:1; color:#FBF1DC; }
+  .tl-kicker{ font-family:var(--script); font-style:italic; font-size:25px; color:#8A5E24; }
+  .tl-headtitle{ font-family:var(--script); font-size:38px; line-height:1; color:var(--red-deep); }
   .tl-item{ display:flex; flex-direction:column; gap:8px; }
   .tl-row{ display:flex; align-items:baseline; flex-wrap:wrap; gap:8px 10px; }
-  .tl-name{ font-family:var(--script); font-weight:500; font-size:21px; line-height:1.2; color:#FBF1DC; }
-  .tl-dots{ flex:1; min-width:16px; border-bottom:1px dotted #8A6A34; transform:translateY(-5px); }
-  .tl-time{ font-family:var(--script); font-weight:500; font-size:26px; color:#D4A94E; white-space:nowrap; flex:none; }
-  .tl-desc{ font-family:var(--sans); font-weight:400; font-size:13.5px; line-height:1.6; color:#E3D2B8; }
+  .tl-name{ font-family:var(--script); font-weight:500; font-size:21px; line-height:1.2; color:var(--ink); }
+  .tl-dots{ flex:1; min-width:16px; border-bottom:1px dotted rgba(138,94,36,.6); transform:translateY(-5px); }
+  .tl-time{ font-family:var(--script); font-weight:500; font-size:26px; color:#8A5E24; white-space:nowrap; flex:none; }
+  .tl-desc{ font-family:var(--sans); font-weight:400; font-size:13.5px; line-height:1.6; color:var(--ink-soft); }
 
   /* ---------- gallery: tap chi (magazine) horizontal swipe ---------- */
   .mag-rail{ margin-top:var(--sp-6); margin-left:calc(-1 * var(--sp-6)); margin-right:calc(-1 * var(--sp-6)); display:flex; gap:12px; overflow-x:auto; scroll-snap-type:x mandatory; -webkit-overflow-scrolling:touch; scrollbar-width:none; padding:0 var(--sp-6); }
@@ -1002,7 +1011,8 @@
   </section>
 
   <!-- ============ TIMELINE ============ -->
-  <section class="band-red">
+  <section class="join">
+    <div class="orn-div" aria-hidden="true"><span>囍</span></div>
     <div class="wrap center wrap-wide">
       <div class="tl">
         <div class="tl-frame">
@@ -1042,7 +1052,7 @@
   </section>
 
   <!-- ============ LOCATION (gộp chung Gợi ý trang phục ở cuối, không tách section riêng) ============ -->
-  <section>
+  <section class="join-tight">
     <div class="wrap center">
       <div class="loc-card">
         <div class="loc-body">
@@ -1172,10 +1182,11 @@
     </div>
   </section>
 
-  <!-- ============ GIFT (khung viền mảnh giống RSVP, nền kem nổi trên band-red) ============ -->
-  <section class="band-red">
+  <!-- ============ GIFT (nằm thẳng trên nền ngà, ngăn với RSVP bằng vạch 囍) ============ -->
+  <section class="join">
+    <div class="orn-div" aria-hidden="true"><span>囍</span></div>
     <div class="wrap wrap-wide">
-      <div class="rsvp-frame">
+      <div class="gift-wrap">
         <div class="center">
           <div class="sec-kicker"><span data-vi>Gửi gắm</span><span data-en>With love</span></div>
           <h2 class="title"><span data-vi>Hộp mừng cưới</span><span data-en>Wedding gift</span></h2>
