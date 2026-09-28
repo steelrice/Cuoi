@@ -668,7 +668,8 @@
      trên màn hình nằm trong .bk-up (xoay ngược lại). Kích thước (--bw/--bh/--uw/--uh) do JS tính theo màn hình. */
   .bk-sec{ padding:var(--sp-7) 0 0; }
   .bk-sec .orn-div{ margin-bottom:0; }
-  .bk-pin{ position:relative; height:320vh; }
+  .bk-pin{ position:relative; height:360vh; }
+  @media (max-height:500px){ .bk-sticky{ min-height:0; } .bk-head{ padding-top:var(--sp-3); } .bk-head .sec-kicker{ display:none; } .bk-head h2.title{ font-size:20px; } .bk-ctl{ height:72px; } }
   .bk-sticky{ position:sticky; top:0; height:100vh; height:100svh; min-height:520px; overflow:hidden; display:flex; flex-direction:column; }
   .bk-head{ padding-top:var(--sp-8); text-align:center; }
   .bk-tag{ position:absolute; top:0; right:var(--sp-5); width:40px; height:84px; z-index:5; display:flex; align-items:flex-end; justify-content:center; padding-bottom:9px;
@@ -687,7 +688,7 @@
   .bk-hint{ font-size:11.5px; letter-spacing:.04em; color:var(--ink-soft); opacity:.8; }
   /* sách đóng gáy dọc (gáy giữa). Mỗi file studio = 1 trang đôi: nửa trái nằm ở mặt sau tờ trước, nửa phải ở mặt trước tờ này.
      Kích thước (--sw trang đôi, --pw 1 trang, --ph cao) do JS tính theo màn hình. */
-  .bk-book{ position:absolute; left:50%; top:50%; width:var(--sw); height:var(--ph); margin:calc(var(--ph) / -2) 0 0 calc(var(--sw) / -2); transform-style:preserve-3d; transform-origin:75% 50%; will-change:transform; }
+  .bk-book{ position:absolute; left:50%; top:50%; width:var(--sw); height:var(--ph); margin:calc(var(--ph) / -2) 0 0 calc(var(--sw) / -2); transform-style:preserve-3d; transform-origin:50% 50%; }
   .bk-base{ position:absolute; top:0; bottom:0; left:50%; width:var(--pw); border-radius:0 8px 8px 0; background:#4a0b17; box-shadow:0 18px 38px rgba(60,20,10,.35); }
   .bk-base-l{ position:absolute; top:0; bottom:0; left:0; width:var(--pw); border-radius:8px 0 0 8px; background:#4a0b17; box-shadow:0 18px 38px rgba(60,20,10,.35); opacity:0; }
   .bk-block{ position:absolute; top:5px; bottom:5px; left:50%; width:calc(var(--pw) - 7px); background:#efe6d4 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Ctext x='20' y='27' font-size='15' text-anchor='middle' fill='%23b0894a' fill-opacity='.2' font-family='serif'%3E%E5%9B%8D%3C/text%3E%3C/svg%3E") 0 0/40px 40px;
@@ -724,6 +725,8 @@
   #lightbox img.slide-l{ opacity:0; transform:translateX(-26px); }
   #lightbox img.slide-r{ opacity:0; transform:translateX(26px); }
   body.lb-open{ overflow:hidden; }
+  /* xem lớn trang đôi album khi điện thoại đang dọc: xoay 90° cho khách xoay ngang máy xem */
+  #lightbox.lb-rot img{ max-width:calc(100vh - 140px); max-height:calc(100vw - 40px); transform:rotate(90deg); }
   #lightbox-close{ position:absolute; top:var(--sp-5); right:var(--sp-5); color:var(--gold); font-size:32px; line-height:1; background:none; border:none; }
   .lb-nav{ position:absolute; top:50%; transform:translateY(-50%); width:40px; height:40px; border-radius:2px; border:1px solid rgba(207,159,63,.45); background:rgba(12,2,4,.5); color:var(--gold); font-size:20px; line-height:1; display:flex; align-items:center; justify-content:center; }
   .lb-nav[disabled]{ opacity:.25; }
@@ -2113,7 +2116,7 @@
     document.body.classList.add('lb-open');
   }
   function lbClose(){
-    lightbox.classList.remove('show');
+    lightbox.classList.remove('show', 'lb-rot');
     document.body.classList.remove('lb-open');
   }
 
@@ -2182,15 +2185,20 @@
       lio.observe(pin);
     } else loadAll();
 
-    /* ---- kích thước theo màn hình: SW = bề ngang trang đôi (4:3), PW = 1 trang, PH = cao ---- */
-    var SW, PW, PH, closedScale = 1, lyingScale = 1;
+    /* ---- kích thước theo màn hình ----
+       Màn dọc: sau khi mở, cả cuốn xoay 90° (gáy nằm ngang) cho trang đôi to hết cỡ — khách xoay ngang máy để xem.
+       Màn ngang: không xoay. Sách dựng sẵn ở cỡ LỚN NHẤT cần dùng (lúc đã xoay) rồi thu nhỏ ở các bước khác → luôn nét. */
+    var SW, PW, PH, portrait = true, sFlat = 1, sClosed = 1, sRot = 1;
     function layout(){
       var w = stage.clientWidth, h = stage.clientHeight;
-      SW = Math.floor(Math.min(w - 20, (h - 20) * 4 / 3, 760) / 2) * 2;
+      portrait = window.innerHeight > window.innerWidth;
+      SW = portrait ? Math.min(h - 16, (w - 16) * 4 / 3) : Math.min(w - 20, (h - 16) * 4 / 3);
+      SW = Math.floor(Math.min(SW, 900) / 2) * 2;
       PW = SW / 2; PH = Math.round(SW * 3 / 4);
       book.style.setProperty('--sw', SW + 'px'); book.style.setProperty('--pw', PW + 'px'); book.style.setProperty('--ph', PH + 'px');
-      closedScale = Math.max(1, Math.min((w - 56) / PW, (h - 30) / PH, 1.7));   // album đóng: to gần kín màn hình
-      lyingScale  = Math.min(closedScale, (w - 30) / PH);                      // lúc nằm ngang: vừa bề ngang
+      sFlat   = Math.min(1, (w - 20) / SW, (h - 16) / PH);                // trang đôi nằm ngang
+      sClosed = Math.min(1, (w - 56) / PW, (h - 30) / PH);                // album đóng: to gần kín màn hình
+      sRot    = portrait ? Math.min(1, (w - 16) / PH, (h - 16) / SW) : sFlat;
     }
 
     var ang = leaves.map(function(){ return 0; });
@@ -2205,9 +2213,9 @@
       leaves[i].lastChild.style.opacity = (lift * 0.8).toFixed(3);
       if(i === 0) baseL.style.opacity = a > 90 ? 1 : 0;
     }
-    function renderBook(rz, tilt, sc, open){
-      // đóng: bìa (nửa phải) ở giữa màn hình → mở: cả trang đôi ở giữa
-      book.style.transform = 'translateX(' + (-(1-open) * PW/2) + 'px) scale(' + sc + ') rotateX(' + tilt + 'deg) rotateZ(' + rz + 'deg)';
+    function renderBook(rz, sc, open){
+      // đóng: bìa (nửa phải) ở giữa màn hình → mở: cả trang đôi ở giữa → (màn dọc) xoay 90°
+      book.style.transform = 'translateX(' + (-(1-open) * sc * PW/2) + 'px) rotateZ(' + rz + 'deg) scale(' + sc + ')';
     }
 
     function setHint(vi, en){ hint.innerHTML = '<span data-vi>'+vi+'</span><span data-en>'+en+'</span>'; }
@@ -2233,25 +2241,28 @@
       if(shown !== target) requestAnimationFrame(loop); else looping = false;
     }
     function apply(p){
-      var pr = ease(remap(p, 0, 0.24));                 // xoay: nằm ngang → dựng đứng
-      var po = ease(remap(p, 0.26, 0.46));              // mở bìa
-      var sc = pr < 1 ? mix(lyingScale, closedScale, pr) : mix(closedScale, 1, po);
-      renderBook(-90 * (1 - pr), 22 * (1 - pr), sc, po);
-      if(p < 0.9){
+      var pin_  = ease(remap(p, 0, 0.14));              // album đóng hiện lên
+      var po    = ease(remap(p, 0.16, 0.34));           // mở bìa sang trái → trang đôi 01 nằm ngang
+      var pr    = ease(remap(p, 0.40, 0.58));           // xoay 90° thành dọc (chỉ khi màn dọc)
+      var sc = po < 1 ? mix(sClosed * mix(0.8, 1, pin_), sFlat, po) : mix(sFlat, sRot, pr);
+      renderBook(portrait ? 90 * pr : 0, sc, po);
+      if(p < 0.92){
         if(manual){ manual = false; ctl.classList.add('off'); }
         ang[0] = 180 * po; renderLeaf(0);
         for(var i=1; i<N; i++){
           var a = 0;
-          if(i < SCROLL_LEAVES){ var s0 = 0.52 + (i-1)*0.18; a = 180 * ease(remap(p, s0, s0 + 0.15)); }
+          if(i < SCROLL_LEAVES){ var s0 = 0.62 + (i-1)*0.15; a = 180 * ease(remap(p, s0, s0 + 0.13)); }
           ang[i] = a; renderLeaf(i);
         }
-        if(p < 0.3) setHint('cuộn xuống để mở album', 'scroll down to open the album');
-        else setHint('tiếp tục cuộn để lật trang', 'keep scrolling to turn the pages');
+        if(p < 0.16) setHint('cuộn xuống để mở album', 'scroll down to open the album');
+        else if(portrait && p >= 0.4) setHint('xoay ngang điện thoại để xem · tiếp tục cuộn để lật', 'turn your phone sideways · keep scrolling to flip');
+        else setHint('tiếp tục cuộn', 'keep scrolling');
       } else if(!manual){
         manual = true; cur = SCROLL_LEAVES;
         for(var j=0; j<SCROLL_LEAVES; j++){ ang[j] = 180; renderLeaf(j); }
         label(); ctl.classList.remove('off');
-        setHint('vuốt ngang để lật trang · ⤢ để xem lớn', 'swipe to turn · ⤢ to enlarge');
+        if(portrait) setHint('xoay ngang điện thoại để xem · chạm để lật · ⤢ xem lớn', 'turn your phone sideways · tap to flip · ⤢ enlarge');
+        else setHint('vuốt ngang để lật trang · ⤢ để xem lớn', 'swipe to turn · ⤢ to enlarge');
       }
     }
 
@@ -2271,6 +2282,7 @@
     document.getElementById('bkZoom').addEventListener('click', function(){
       lbImgs = spreads;
       lbOpen(clamp(cur - 1, 0, P - 1));
+      if(portrait) lightbox.classList.add('lb-rot');
     });
     var sx = null, sy = null;
     stage.addEventListener('pointerdown', function(e){ sx = e.clientX; sy = e.clientY; });
@@ -2278,7 +2290,12 @@
       if(sx === null) return;
       var dx = e.clientX - sx, dy = e.clientY - sy; sx = null;
       if(Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)){ (dx < 0 ? next : prev)(); return; }
-      if(Math.abs(dx) < 8 && Math.abs(dy) < 8){ var r = stage.getBoundingClientRect(); (e.clientX - r.left > r.width/2 ? next : prev)(); }
+      if(Math.abs(dx) < 8 && Math.abs(dy) < 8){
+        // màn dọc (đã xoay): trang sau nằm nửa DƯỚI; màn ngang: nửa PHẢI
+        var r = stage.getBoundingClientRect();
+        var fwd = portrait ? (e.clientY - r.top > r.height/2) : (e.clientX - r.left > r.width/2);
+        (fwd ? next : prev)();
+      }
     });
 
     layout();
@@ -2288,7 +2305,7 @@
       var sticky = pin.firstElementChild; sticky.style.position = 'relative'; sticky.style.height = 'auto';
       stage.style.flex = 'none'; stage.style.height = Math.round(PH + 40) + 'px';
       layout();
-      renderBook(0, 0, 1, 1);
+      renderBook(portrait ? 90 : 0, sRot, 1);
       ang[0] = 180; for(var z=0; z<N; z++) renderLeaf(z);
       manual = true; cur = 1; label(); ctl.classList.remove('off');
       setHint('vuốt ngang để lật trang · ⤢ để xem lớn', 'swipe to turn · ⤢ to enlarge');
