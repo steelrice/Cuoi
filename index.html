@@ -300,6 +300,8 @@
     position:absolute; left:50%; bottom:calc(env(safe-area-inset-bottom, 0px) + 10px);
     transform:translateX(-50%); z-index:8; pointer-events:none;
   }
+  /* chỉ hiện ở bìa — mở thiệp rồi (kể cả lúc xem lại thiệp) thì ẩn */
+  #cover.open .cover-version{ display:none; }
   .cover-kicker{ font-family:var(--script); font-style:italic; font-weight:500; font-size:16px; letter-spacing:.1em; color:var(--gold); }
   .cover-names{ font-family:var(--serif); font-weight:400; font-size:clamp(30px,9vw,42px); color:var(--cream); margin-top:var(--sp-3); line-height:1.25; letter-spacing:.01em; }
   .cover-date{ margin-top:var(--sp-3); font-size:15px; letter-spacing:.08em; color:var(--cream-dim); }
@@ -483,14 +485,15 @@
      chung (dùng lại đúng .story-fig/.story bên dưới), ghim 1 màn hình khi cuộn — dùng
      position:sticky thật (trình duyệt tự lo phần ghim, không cần JS chạy theo mỗi khung
      hình cuộn nữa, mượt hơn hẳn so với kiểu position:fixed tự mô phỏng trước đây). */
-  .scrollstage{ position:relative; height:360vh; }
+  /* tự chạy theo thời gian khi hiện lên (không còn lái theo cuộn) → chỉ cao đúng 1 màn hình */
+  .scrollstage{ position:relative; }
   .sticky-view{
-    position:sticky; top:0; height:100vh; height:100svh; height:100dvh; min-height:560px;
+    position:relative; height:100vh; height:100svh; height:100dvh; min-height:560px;
     overflow:hidden;
   }
   .intro-inner{ position:relative; width:100%; height:100%; }
 
-  /* "máy quay" trên ảnh chung (JS đặt transform cho .cam-img theo tiến độ cuộn) */
+  /* "máy quay" trên ảnh chung (JS đặt transform cho .cam-img theo thời gian) */
   .cam{ position:absolute; inset:0; overflow:hidden; background:#33060b; }
   .cam-img{ position:absolute; left:0; top:0; width:100%; height:100%; max-width:none; transform-origin:0 0; will-change:transform; }
   .cam-shade{ position:absolute; inset:0; pointer-events:none;
@@ -500,9 +503,31 @@
   .cam-label .ln{ font-family:var(--serif); font-weight:400; font-size:clamp(30px,9vw,38px); color:var(--cream); margin-top:4px; line-height:1.15; letter-spacing:.01em; }
   .cam-label.bride{ left:var(--sp-6); text-align:left; }
   .cam-label.groom{ right:var(--sp-6); text-align:right; }
+  /* khung ngắm máy ảnh: 4 góc, chấm REC, mã thời gian; ô lấy nét bám theo khuôn mặt */
+  /* mép trên chừa chỗ cho 2 nút tròn cố định ở góc (nhạc, thiệp) */
+  .vf{ position:absolute; top:calc(72px + env(safe-area-inset-top)); bottom:calc(14px + env(safe-area-inset-bottom)); left:14px; right:14px; pointer-events:none; opacity:0; }
+  .vf i{ position:absolute; width:24px; height:24px; border:0 solid rgba(253,248,239,.75); }
+  .vf .c1{ top:0; left:0; border-top-width:1.5px; border-left-width:1.5px; }
+  .vf .c2{ top:0; right:0; border-top-width:1.5px; border-right-width:1.5px; }
+  .vf .c3{ bottom:0; left:0; border-bottom-width:1.5px; border-left-width:1.5px; }
+  .vf .c4{ bottom:0; right:0; border-bottom-width:1.5px; border-right-width:1.5px; }
+  .vf-rec, .vf-tc{ position:absolute; top:5px; font-family:var(--sans); font-weight:500; font-size:11px; line-height:14px; letter-spacing:.14em; color:rgba(253,248,239,.85); text-shadow:0 1px 4px rgba(0,0,0,.4); }
+  .vf-rec{ left:34px; display:flex; align-items:center; gap:6px; }
+  .vf-rec b{ width:8px; height:8px; border-radius:50%; background:#e3372f; box-shadow:0 0 6px rgba(227,55,47,.8); animation:blink 1s step-end infinite; }
+  .vf-tc{ right:34px; font-variant-numeric:tabular-nums; }
+  .focus{ position:absolute; left:0; top:0; width:118px; height:118px; margin:-59px 0 0 -59px; opacity:0; pointer-events:none; will-change:transform, opacity; }
+  .focus .fb{ position:absolute; inset:0; transform:scale(1.3); transition:transform .28s cubic-bezier(.3,1.6,.5,1); }
+  .focus.lock .fb{ transform:scale(1); }
+  .focus i{ position:absolute; width:18px; height:18px; border:0 solid rgba(253,248,239,.9); transition:border-color .2s ease; }
+  .focus i:nth-child(1){ top:0; left:0; border-top-width:1.5px; border-left-width:1.5px; }
+  .focus i:nth-child(2){ top:0; right:0; border-top-width:1.5px; border-right-width:1.5px; }
+  .focus i:nth-child(3){ bottom:0; left:0; border-bottom-width:1.5px; border-left-width:1.5px; }
+  .focus i:nth-child(4){ bottom:0; right:0; border-bottom-width:1.5px; border-right-width:1.5px; }
+  .focus.lock i{ border-color:var(--gold); }
+  .cam-flash{ position:absolute; inset:0; background:#fffaf0; opacity:0; pointer-events:none; }
 
   /* "Xin giới thiệu" — tiêu đề mở màn, cỡ lớn ngang .s-kicker của bìa, gõ chữ dần */
-  .intro-kicker{ position:absolute; top:calc(var(--sp-8) + env(safe-area-inset-top)); left:50%; transform:translateX(-50%); width:100%; text-align:center; opacity:0; transition:opacity .5s ease, transform .5s ease; will-change:opacity, transform; }
+  .intro-kicker{ position:absolute; top:calc(112px + env(safe-area-inset-top)); left:50%; transform:translateX(-50%); width:100%; text-align:center; opacity:0; transition:opacity .5s ease, transform .5s ease; will-change:opacity, transform; }
   .intro-kicker.intro-in{ opacity:1; }
   .intro-kicker .txt{ font-family:var(--script); font-style:italic; font-weight:500; font-size:clamp(30px,8vw,36px); letter-spacing:.015em; color:var(--gold); white-space:nowrap; }
   .intro-kicker .itxt{ display:inline-block; overflow:hidden; white-space:nowrap; vertical-align:top; width:0; }
@@ -528,14 +553,6 @@
   #finalStage .story-fig{ will-change:transform; }
   #finalStage .story{ will-change:opacity, transform; }
 
-  .intro-hint{
-    position:absolute; left:50%; bottom:28px; transform:translateX(-50%);
-    display:flex; flex-direction:column; align-items:center; gap:6px;
-    font-size:10.5px; letter-spacing:.14em; color:rgba(253,248,239,.5);
-    opacity:0; transition:opacity .6s ease .3s;
-  }
-  .intro-hint.intro-in{ opacity:1; }
-  .intro-hint svg{ width:13px; height:13px; animation:heroScrollBob 1.7s ease-in-out infinite; }
   /* ================= SAVE THE DATE — ảnh lớn ngay sau khi mở thiệp, đáy ảnh chìm dần vào đỏ của "Xin giới thiệu" ================= */
   .std-hero{ position:relative; height:100vh; height:100svh; min-height:560px; overflow:hidden; background:#33060b; }
   .std-img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; object-position:50% 40%; transform:scale(1.08); transition:transform 7s cubic-bezier(.2,.6,.2,1); }
@@ -553,12 +570,7 @@
   #card.show .std-txt > :nth-child(2){ transition-delay:.65s; }
   #card.show .std-txt > :nth-child(3){ transition-delay:1s; }
   #card.show .std-txt > :nth-child(4){ transition-delay:1.2s; }
-  .std-hint{ position:absolute; left:0; right:0; bottom:calc(22px + env(safe-area-inset-bottom)); display:flex; flex-direction:column; align-items:center; gap:6px; font-size:10.5px; letter-spacing:.2em; text-transform:uppercase; color:rgba(239,226,201,.6); opacity:0; transition:opacity .8s ease 1.8s; }
-  #card.show .std-hint{ opacity:1; }
-  .std-hint svg{ width:13px; height:13px; animation:heroScrollBob 1.7s ease-in-out infinite; }
-  @media (prefers-reduced-motion: reduce){ .std-img, .std-txt > *, .std-hint{ transition:none; transform:none; } .std-hint svg{ animation:none; } }
-  @keyframes heroScrollBob{ 0%,100%{ transform:translateY(0); } 50%{ transform:translateY(4px); } }
-  @media (prefers-reduced-motion: reduce){ .intro-hint svg{ animation:none; } }
+  @media (prefers-reduced-motion: reduce){ .std-img, .std-txt > *{ transition:none; transform:none; } }
 
   /* ================= SECTION frame ================= */
   section{ padding:var(--sp-9) 0; position:relative; }
@@ -1025,17 +1037,22 @@
       <div class="std-names">Hoàng Sơn <i>&amp;</i> Phương Thảo</div>
       <div class="std-when" id="stdWhen"><span data-vi>21 · 11 · 2026 · Vũng Tàu</span><span data-en>11 · 21 · 2026 · Vung Tau</span></div>
     </div>
-    <div class="std-hint" aria-hidden="true"><span data-vi>Cuộn xuống</span><span data-en>Scroll down</span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 9l6 6 6-6"/></svg></div>
   </div>
 
   <!-- ============ XIN GIỚI THIỆU (thay cho HERO) ============ -->
   <div class="scrollstage" id="introStage">
     <div class="sticky-view band-red">
      <div class="intro-inner">
-      <!-- "máy quay" lướt trên ảnh chung: toàn cảnh → cận cô dâu → lia sang chú rể → lùi ra -->
+      <!-- khung ngắm máy ảnh tự chạy: toàn cảnh → lấy nét cô dâu → lia sang chú rể → lùi ra → chớp flash → ảnh + trích dẫn -->
       <div class="cam" id="cam">
         <img class="cam-img" id="camImg" src="images/story-hd.webp" alt="Hoàng Sơn và Phương Thảo" decoding="async">
         <div class="cam-shade"></div>
+        <div class="vf" id="vf" aria-hidden="true">
+          <i class="c1"></i><i class="c2"></i><i class="c3"></i><i class="c4"></i>
+          <div class="vf-rec"><b></b>REC</div>
+          <div class="vf-tc" id="vfTc">00:00:00</div>
+        </div>
+        <div class="focus" id="camFocus" aria-hidden="true"><div class="fb"><i></i><i></i><i></i><i></i></div></div>
         <div class="intro-kicker" id="introKicker" aria-hidden="true">
           <span class="txt"><span class="itxt itxt-vi">Xin giới thiệu</span><span class="itxt itxt-en">Allow us to introduce</span><span class="cursor" id="introCursor"></span></span>
           <div class="rule"></div>
@@ -1061,10 +1078,7 @@
           <cite>HOÀNG SƠN &amp; PHƯƠNG THẢO</cite>
         </div>
       </div>
-      <div class="intro-hint" id="introHint">
-        <span><span data-vi>CUỘN XUỐNG ĐỂ TIẾP TỤC</span><span data-en>SCROLL TO CONTINUE</span></span>
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 9l6 6 6-6"/></svg>
-      </div>
+      <div class="cam-flash" id="camFlash" aria-hidden="true"></div>
      </div>
     </div>
   </div>
@@ -1477,7 +1491,8 @@
   }
 
 
-  /* ===== Xin giới thiệu — gõ chữ mở màn, rồi cuộn để 2 ảnh hội tụ, ghép thành ảnh + trích dẫn ===== */
+  /* ===== Xin giới thiệu — khung ngắm máy ảnh TỰ CHẠY (~9s) khi phần này hiện lên, khách không cần cuộn:
+     gõ "Xin giới thiệu" → lấy nét + zoom cô dâu → lia sang chú rể → lùi ra → chớp flash → ảnh + trích dẫn ===== */
   (function(){
     var stage = document.getElementById('introStage');
     var view  = stage ? stage.querySelector('.sticky-view') : null;
@@ -1487,13 +1502,15 @@
     var cursorEl    = document.getElementById('introCursor');
     var cam         = document.getElementById('cam');
     var camImg      = document.getElementById('camImg');
+    var vf          = document.getElementById('vf');
+    var vfTc        = document.getElementById('vfTc');
+    var focusEl     = document.getElementById('camFocus');
+    var flashEl     = document.getElementById('camFlash');
     var labelGroom  = document.getElementById('labelGroom');
     var labelBride  = document.getElementById('labelBride');
     var finalStage  = document.getElementById('finalStage');
     var frameWrap   = document.getElementById('frameWrap');
     var storyBlock  = finalStage.querySelector('.story');
-    var introHint   = document.getElementById('introHint');
-    var fadeEls     = [kicker, introHint];
     /* điểm lấy nét trên ảnh gốc (tỉ lệ 0–1 theo chiều ngang/dọc ảnh) và độ phóng */
     var CAM_BRIDE = { u:0.42, v:0.40, z:2.2 };
     var CAM_GROOM = { u:0.88, v:0.30, z:1.9 };
@@ -1507,12 +1524,8 @@
     function mix(a,b,t){ return a+(b-a)*t; }
 
     if(reduce || noIO){
-      /* hiện thẳng trạng thái cuối (ảnh + trích dẫn đã ghép) như một section tĩnh bình
-         thường, không ghim/không animation — cùng cách xử lý reduced-motion của trang */
+      /* hiện thẳng trạng thái cuối (ảnh + trích dẫn) như một section tĩnh bình thường */
       if(cam) cam.style.display = 'none';
-      introHint.style.display = 'none';
-      stage.style.height = 'auto';
-      view.style.position = 'relative';
       view.style.height = 'auto';
       view.style.minHeight = '0';
       finalStage.style.position = 'relative';
@@ -1523,59 +1536,24 @@
       return;
     }
 
-    var introTimeouts = [];
-    var introPlayed = false;
-
-    function setIntroTimeout(fn, ms){
-      introTimeouts.push(setTimeout(fn, ms));
+    /* mốc thời gian (giây, tính từ lúc bắt đầu gõ chữ); K = lúc gõ xong, dời theo ngôn ngữ */
+    var K = 1.3, T = null;
+    function times(){
+      return {
+        kOut:K + 0.1,
+        inA:K + 0.2,  inB:K + 1.6,                     // lấy nét + zoom vào cô dâu
+        bIn:K + 1.7,  bOut:K + 2.8,                    // tên cô dâu
+        panA:K + 2.9, panB:K + 4.2,                    // lia sang chú rể
+        gIn:K + 4.3,  gOut:K + 5.4,                    // tên chú rể
+        outA:K + 5.5, outB:K + 6.5,                    // lùi ra toàn cảnh
+        flash:K + 6.7, end:K + 8.1                     // chớp flash → ảnh + trích dẫn
+      };
     }
 
-    function playIntro(){
-      introTimeouts.forEach(function(id){ clearTimeout(id); });
-      introTimeouts = [];
-      fadeEls.forEach(function(el){ el.style.transition = ''; });
+    var played = false, running = false, t0 = 0, lastT = -1;
 
-      kicker.classList.add('intro-in');
-      kicker.classList.remove('play');
-      cursorEl.classList.remove('hide');
-      void kicker.offsetWidth; /* ép reflow để chạy lại animation gõ chữ nếu phát lại */
-      kicker.classList.add('play');
-
-      var typeMs = document.body.classList.contains('lang-en') ? 1700 : 1150;
-
-      setIntroTimeout(function(){ cursorEl.classList.add('hide'); }, typeMs + 150);
-      setIntroTimeout(function(){
-        introHint.classList.add('intro-in');
-        introPlayed = true;
-        /* từ đây cuộn điều khiển trực tiếp opacity/transform mỗi khung hình —
-           tắt transition CSS để không bị trễ theo sau giá trị inline đặt mỗi frame */
-        fadeEls.forEach(function(el){ el.style.transition = 'none'; });
-        update();
-      }, typeMs + 500);
-    }
-
-    /* Chạy animation đúng lúc khách chạm mở thiệp — không dùng IntersectionObserver ở đây vì
-       #introStage đã nằm sẵn trong khung nhìn ngay từ lúc trang vừa tải (còn bị bìa che), nên
-       IO sẽ báo "đang hiện" và chạy hết animation ngay từ đầu, trước khi khách kịp chạm mở —
-       lúc khách chạm vào thì mọi thứ đã chạy xong từ trước, không thấy animation nào cả.
-       520ms khớp với lúc openInvite() thêm class 'show' cho #card (bắt đầu hiện nội dung). */
-    /* Có ảnh Save the Date đứng trước nên #introStage không còn nằm trong khung nhìn lúc
-       mở thiệp: chỉ bắt đầu theo dõi SAU khi khách chạm mở, và chạy khi phần giới thiệu
-       đã lên quá nửa màn hình. */
-    document.addEventListener('inviteopen', function(){
-      setTimeout(function(){
-        var iio = new IntersectionObserver(function(es){
-          if(es[0].isIntersecting){ iio.disconnect(); if(!introPlayed) playIntro(); }
-        }, { rootMargin:'0px 0px -45% 0px' });
-        iio.observe(stage);
-      }, 600);
-    }, { once: true });
-    camImg.addEventListener('load', function(){ update(); });
-
-    /* .sticky-view ghim bằng position:sticky thật (CSS/trình duyệt tự lo, không cần JS ở
-       đây nữa) — JS chỉ còn tính tiến độ cuộn p (0 → 1) trong đoạn ghim để lái hiệu ứng
-       mờ dần/hội tụ/ghép ảnh theo từng khung hình. */
-    /* đặt "máy quay": phóng z lần, đưa điểm (u,v) của ảnh vào giữa khung — kẹp để không lộ mép trống */
+    /* đặt "máy quay": phóng z lần, đưa điểm (u,v) của ảnh vào giữa khung — kẹp để không lộ mép trống;
+       trả về toạ độ trên màn hình của điểm (u,v) để ô lấy nét bám theo */
     function shoot(u, v, z){
       var W = cam.clientWidth, H = cam.clientHeight;
       var iw = camImg.naturalWidth || 1334, ih = camImg.naturalHeight || 2000;
@@ -1587,59 +1565,100 @@
       var tx = clamp(W / 2 - z * px, W - z * dw, 0), ty = clamp(H * 0.46 - z * py, H - z * dh, 0);
       if(z <= 1.0001){ tx = ox; ty = oy; }
       camImg.style.transform = 'translate(' + tx + 'px,' + ty + 'px) scale(' + z + ')';
+      return { x: tx + z * px, y: ty + z * py };
     }
-    var ticking = false;
-    function update(){
-      ticking = false;
-      if(!introPlayed){ shoot(0.5, 0.5, 1); return; }
 
-      var vh = window.innerHeight;
-      var total = stage.offsetHeight - vh;
-      var rect = stage.getBoundingClientRect();
-      var p = total > 0 ? clamp(-rect.top / total, 0, 1) : 0;
+    function render(t){
+      if(!T){ shoot(0.5, 0.5, 1); return; }
+      lastT = t;
 
-      /* toàn cảnh → cận cô dâu → lia sang chú rể → lùi ra toàn cảnh → ảnh thu vào khung + trích dẫn */
-      var pIn   = ease(remap(p, 0.04, 0.24));      // zoom vào cô dâu
-      var pPan  = ease(remap(p, 0.38, 0.56));      // lia sang chú rể
-      var pOutZ = ease(remap(p, 0.68, 0.82));      // lùi ra
+      var pIn   = ease(remap(t, T.inA, T.inB));
+      var pPan  = ease(remap(t, T.panA, T.panB));
+      var pOutZ = ease(remap(t, T.outA, T.outB));
       var u = mix(mix(0.5, CAM_BRIDE.u, pIn), CAM_GROOM.u, pPan);
       var v = mix(mix(0.5, CAM_BRIDE.v, pIn), CAM_GROOM.v, pPan);
       var z = mix(mix(1, CAM_BRIDE.z, pIn), CAM_GROOM.z, pPan);
       u = mix(u, 0.5, pOutZ); v = mix(v, 0.5, pOutZ); z = mix(z, 1, pOutZ);
-      shoot(u, v, z);
+      var f = shoot(u, v, z);
 
-      var bIn = ease(remap(p, 0.18, 0.28)), bOut = ease(remap(p, 0.38, 0.46));
-      var gIn = ease(remap(p, 0.50, 0.60)), gOut = ease(remap(p, 0.68, 0.76));
-      labelBride.style.opacity = String(bIn * (1 - bOut));
-      labelBride.style.transform = 'translateX(' + mix(-24, 0, bIn) + 'px) translateX(' + mix(0, -30, bOut) + 'px)';
-      labelGroom.style.opacity = String(gIn * (1 - gOut));
-      labelGroom.style.transform = 'translateX(' + mix(24, 0, gIn) + 'px) translateX(' + mix(0, 30, gOut) + 'px)';
+      /* ô lấy nét: hiện lúc bắt đầu zoom, "bắt nét" (thu nhỏ + vàng) khi dừng trên mặt, tắt khi lùi ra */
+      var fo = ease(remap(t, T.inA - 0.3, T.inA)) * (1 - ease(remap(t, T.outA - 0.1, T.outA + 0.2)));
+      focusEl.style.opacity = String(fo);
+      focusEl.style.transform = 'translate(' + f.x + 'px,' + f.y + 'px)';
+      focusEl.classList.toggle('lock', (t >= T.inB && t < T.panA) || (t >= T.panB && t < T.outA));
 
-      var pK = ease(remap(p, 0.04, 0.16));
+      var bI = ease(remap(t, T.bIn, T.bIn + 0.4)), bO = ease(remap(t, T.bOut, T.bOut + 0.3));
+      var gI = ease(remap(t, T.gIn, T.gIn + 0.4)), gO = ease(remap(t, T.gOut, T.gOut + 0.3));
+      labelBride.style.opacity = String(bI * (1 - bO));
+      labelBride.style.transform = 'translateX(' + (mix(-24, 0, bI) + mix(0, -30, bO)) + 'px)';
+      labelGroom.style.opacity = String(gI * (1 - gO));
+      labelGroom.style.transform = 'translateX(' + (mix(24, 0, gI) + mix(0, 30, gO)) + 'px)';
+
+      var pK = ease(remap(t, T.kOut, T.kOut + 0.5));
       kicker.style.opacity = String(1 - pK);
-      kicker.style.transform = 'translate(-50%, ' + mix(0,-16,pK) + 'px)';
+      kicker.style.transform = 'translate(-50%, ' + mix(0, -16, pK) + 'px)';
 
-      var pImg = ease(remap(p, 0.8, 0.92));
-      var pTxt = ease(remap(p, 0.88, 1));
-      cam.style.opacity = String(1 - pImg);
+      /* mã thời gian kiểu máy quay: phút:giây:khung hình (24 hình/giây) */
+      var s = Math.floor(t), fr = Math.floor((t - s) * 24);
+      vfTc.textContent = '00:' + (s < 10 ? '0' : '') + s + ':' + (fr < 10 ? '0' : '') + fr;
+
+      var shot = t >= T.flash + 0.1;                                  // đã "bấm máy"
+      vf.style.opacity = shot ? '0' : String(ease(remap(t, 0, 0.4)));
+      cam.style.opacity = shot ? '0' : '1';
+      flashEl.style.opacity = String(0.92 * remap(t, T.flash, T.flash + 0.1) * (1 - ease(remap(t, T.flash + 0.15, T.flash + 0.8))));
+
+      var pImg = ease(remap(t, T.flash + 0.1, T.flash + 0.7));
+      var pTxt = ease(remap(t, T.flash + 0.5, T.end));
       finalStage.style.opacity = String(Math.max(pImg, pTxt));
-      frameWrap.style.transform = 'translate(' + mix(32,0,pImg) + 'px, ' + mix(26,0,pImg) + 'px)';
+      frameWrap.style.transform = 'translate(' + mix(32, 0, pImg) + 'px, ' + mix(26, 0, pImg) + 'px)';
       if(storyBlock){
         storyBlock.style.opacity = String(pTxt);
-        storyBlock.style.transform = 'translateY(' + mix(18,0,pTxt) + 'px)';
+        storyBlock.style.transform = 'translateY(' + mix(18, 0, pTxt) + 'px)';
       }
-
-      introHint.style.opacity = String(1 - clamp(p/0.05, 0, 1));
     }
 
-    function requestUpdate(){
-      if(ticking) return;
-      ticking = true;
-      requestAnimationFrame(update);
+    function frame(now){
+      var t = (now - t0) / 1000;
+      render(t);
+      if(t < T.end + 0.1) requestAnimationFrame(frame); else running = false;
     }
 
-    window.addEventListener('scroll', requestUpdate, { passive: true });
-    window.addEventListener('resize', requestUpdate);
+    function playIntro(){
+      played = true;
+      K = (document.body.classList.contains('lang-en') ? 1.7 : 1.15) + 0.2;
+      T = times();
+      kicker.style.transition = 'none';
+      kicker.classList.add('intro-in');
+      kicker.classList.remove('play');
+      cursorEl.classList.remove('hide');
+      void kicker.offsetWidth; /* ép reflow để chạy lại animation gõ chữ */
+      kicker.classList.add('play');
+      setTimeout(function(){ cursorEl.classList.add('hide'); }, K * 1000);
+      running = true;
+      requestAnimationFrame(function(now){ t0 = now; frame(now); });
+    }
+
+    /* đợi ảnh tải xong (tối đa 1,5s) để khỏi zoom vào khung trống */
+    function whenReady(fn){
+      if(camImg.complete && camImg.naturalWidth) return fn();
+      var done = false;
+      function go(){ if(!done){ done = true; fn(); } }
+      camImg.addEventListener('load', go, { once:true });
+      setTimeout(go, 1500);
+    }
+
+    /* chỉ bắt đầu theo dõi SAU khi khách mở thiệp; chạy khi phần giới thiệu chiếm quá nửa màn hình */
+    document.addEventListener('inviteopen', function(){
+      setTimeout(function(){
+        var iio = new IntersectionObserver(function(es){
+          if(es[0].intersectionRatio >= 0.55 && !played){ iio.disconnect(); whenReady(playIntro); }
+        }, { threshold:[0, 0.55, 1] });
+        iio.observe(view);
+      }, 600);
+    }, { once: true });
+    camImg.addEventListener('load', function(){ if(!running) render(lastT < 0 ? 0 : lastT); });
+    window.addEventListener('resize', function(){ if(!running) render(lastT < 0 ? 0 : lastT); });
+    render(0);
   })();
 
   // ===== Hiển thị theo ?date : 21 = buổi tiệc chung vui, 28/trống = lễ thành hôn =====
