@@ -642,6 +642,15 @@
   .dress-inline .lead{ text-wrap:balance; }
   .dress-swatches{ display:flex; justify-content:center; gap:var(--sp-3); margin-top:var(--sp-6); flex-wrap:wrap; }
   .swatch{ width:44px; height:44px; border-radius:50%; padding:3px; background-clip:content-box; border:1px solid rgba(169,127,46,.45); }
+  /* ảnh phụ kiện làm moodboard: bảng màu đè lên mép dưới ảnh */
+  .dress-mood{ position:relative; max-width:520px; margin:var(--sp-6) auto 30px; }
+  .dress-photo{ padding:5px; background:#fffaf1; border:1px solid rgba(169,127,46,.5); border-radius:6px; box-shadow:0 14px 30px rgba(60,20,10,.16); }
+  .dress-clip{ overflow:hidden; border-radius:3px; }
+  .dress-photo img{ display:block; width:100%; aspect-ratio:3/2; height:auto; object-fit:cover; }
+  .dress-mood .dress-swatches{ position:absolute; left:0; right:0; bottom:0; margin:0; transform:translateY(50%); flex-wrap:nowrap; }
+  .dress-mood .swatch{ padding:0; background-clip:border-box; border:3px solid var(--cream); box-shadow:0 0 0 1px rgba(169,127,46,.55), 0 6px 14px rgba(30,4,8,.3); }
+  .reveal .dress-photo img{ transform:scale(1.07); transition:transform 2.4s cubic-bezier(.2,.7,.2,1) .2s; }
+  .reveal.in .dress-photo img{ transform:none; }
 
   /* ---------- timeline ---------- */
   .tl{ margin-top:var(--sp-3); }
@@ -1190,6 +1199,8 @@
         <div class="sec-kicker"><span data-vi>Gợi ý</span><span data-en>A gentle note</span></div>
         <h2 class="title"><span data-vi>Trang phục</span><span data-en>Dress code</span></h2>
         <p class="lead" id="dressLead"><span data-vi>Chúng mình sẽ rất vui nếu bạn diện trang phục hoà cùng tông màu của bữa tiệc</span><span data-en>We'd love it if your outfit echoed the palette of the evening</span></p>
+        <figure class="dress-mood">
+          <div class="dress-photo"><div class="dress-clip"><img src="images/dress.webp" alt="Hoa cưới và giày cô dâu trên nắp xe đỏ" width="1200" height="800" loading="lazy" decoding="async"></div></div>
         <div class="dress-swatches">
           <div class="swatch" style="background-color:#7a1524;"></div>
           <div class="swatch" style="background-color:#cf9f3f;"></div>
@@ -1197,6 +1208,7 @@
           <div class="swatch" style="background-color:#2a1414;"></div>
           <div class="swatch" style="background-color:#a5566b;"></div>
         </div>
+        </figure>
       </div>
     </div>
   </section>
