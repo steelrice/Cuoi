@@ -176,6 +176,9 @@
   #app{ max-width:520px; margin:0 auto; background:var(--cream); box-shadow:var(--shadow); position:relative; }
   /* vân giấy ngà: ô 600px lặp liền mạch, hiển thị 300px (nét trên màn hình retina); chỉ gắn sau khi trang tải xong */
   #app.paper-in{ background-image:url(images/paper.webp); background-size:300px 300px; }
+  /* mép giấy xé: tờ giấy ngà đè lên khối đỏ ở chỗ chuyển tiếp (dải ảnh có sẵn vân giấy + bóng đổ) */
+  .torn-top{ position:absolute; left:0; right:0; bottom:100%; aspect-ratio:1142 / 64; transform:translateY(1px); pointer-events:none; z-index:3; }
+  #app.paper-in .torn-top{ background:url(images/torn-edge.webp) 0 100% / 100% 100% no-repeat; }
   .wrap{ max-width:400px; margin:0 auto; padding:0 var(--sp-6); }
   .wrap-wide{ padding:0 var(--sp-4); }
 
@@ -975,6 +978,7 @@
   <!-- ============ COUNTDOWN ============ -->
   <!-- ============ COUNTDOWN + CALENDAR (gộp chung 1 card) ============ -->
   <section>
+    <div class="torn-top" aria-hidden="true"></div>
     <div class="wrap center">
       <div class="cd-kicker"><span data-vi>Chỉ còn</span><span data-en>Counting down</span></div>
       <div class="cal-card">
