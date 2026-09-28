@@ -685,27 +685,35 @@
   .bk-cnt{ font-family:var(--serif); font-size:15px; min-width:64px; text-align:center; color:var(--red-deep); }
   .bk-cnt span{ font-family:var(--sans); font-size:11.5px; letter-spacing:.12em; color:var(--ink-soft); }
   .bk-hint{ font-size:11.5px; letter-spacing:.04em; color:var(--ink-soft); opacity:.8; }
-  .bk-book{ position:absolute; left:50%; top:50%; width:var(--bw); height:var(--bh); margin:calc(var(--bh) / -2) 0 0 calc(var(--bw) / -2); transform-style:preserve-3d; will-change:transform; }
-  .bk-base{ position:absolute; inset:0; border-radius:4px 10px 10px 4px; background:#4a0b17; box-shadow:0 18px 38px rgba(60,20,10,.35); }
-  .bk-block{ position:absolute; left:5px; top:5px; right:7px; bottom:5px; background:#efe6d4; border-radius:2px 5px 5px 2px;
-    box-shadow:1px 0 0 #e2d7c1, 2px 0 0 #f3ebdc, 3px 0 0 #ddd0b8, 4px 0 0 #f1e8d8, 5px 1px 0 #d6c8ad; }
-  .bk-leaf{ position:absolute; left:5px; top:5px; right:7px; bottom:5px; transform-origin:0 50%; transform-style:preserve-3d; will-change:transform; }
-  .bk-leaf.bk-cover{ left:0; top:0; right:0; bottom:0; }
-  .bk-face{ position:absolute; inset:0; overflow:hidden; backface-visibility:hidden; -webkit-backface-visibility:hidden; }
+  /* sách đóng gáy dọc (gáy giữa). Mỗi file studio = 1 trang đôi: nửa trái nằm ở mặt sau tờ trước, nửa phải ở mặt trước tờ này.
+     Kích thước (--sw trang đôi, --pw 1 trang, --ph cao) do JS tính theo màn hình. */
+  .bk-book{ position:absolute; left:50%; top:50%; width:var(--sw); height:var(--ph); margin:calc(var(--ph) / -2) 0 0 calc(var(--sw) / -2); transform-style:preserve-3d; transform-origin:75% 50%; will-change:transform; }
+  .bk-base{ position:absolute; top:0; bottom:0; left:50%; width:var(--pw); border-radius:0 8px 8px 0; background:#4a0b17; box-shadow:0 18px 38px rgba(60,20,10,.35); }
+  .bk-base-l{ position:absolute; top:0; bottom:0; left:0; width:var(--pw); border-radius:8px 0 0 8px; background:#4a0b17; box-shadow:0 18px 38px rgba(60,20,10,.35); opacity:0; }
+  .bk-block{ position:absolute; top:5px; bottom:5px; left:50%; width:calc(var(--pw) - 7px); background:#efe6d4 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Ctext x='20' y='27' font-size='15' text-anchor='middle' fill='%23b0894a' fill-opacity='.2' font-family='serif'%3E%E5%9B%8D%3C/text%3E%3C/svg%3E") 0 0/40px 40px;
+    box-shadow:1px 0 0 #e2d7c1, 2px 0 0 #f3ebdc, 3px 0 0 #ddd0b8, 4px 0 0 #f1e8d8; }
+  .bk-leaf{ position:absolute; top:5px; bottom:5px; left:50%; width:calc(var(--pw) - 7px); transform-origin:0 50%; transform-style:preserve-3d; will-change:transform; }
+  .bk-leaf.bk-cover{ top:0; bottom:0; width:var(--pw); }
+  .bk-face{ position:absolute; inset:0; overflow:hidden; backface-visibility:hidden; -webkit-backface-visibility:hidden; background:#fff; }
   .bk-face.bk-back{ transform:rotateY(180deg); }
-  .bk-shade{ position:absolute; inset:0; pointer-events:none; opacity:0; background:linear-gradient(90deg, rgba(0,0,0,.35), rgba(0,0,0,.05) 35%, rgba(255,255,255,.1) 70%, rgba(0,0,0,.08)); }
-  .bk-up{ position:absolute; left:50%; top:50%; width:var(--uw); height:var(--uh); margin:calc(var(--uh) / -2) 0 0 calc(var(--uw) / -2); transform:rotate(calc(var(--rot, 0deg) * -1)); }
-  .bk-cover .bk-front{ border-radius:4px 8px 8px 4px; background:#4a0b17; }
-  .bk-cover .bk-front img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; }
+  .bk-face img{ position:absolute; top:0; height:100%; width:200%; max-width:none; object-fit:cover; display:block; }
+  .bk-face.bk-front img{ right:0; }             /* mặt trước = nửa PHẢI của trang đôi */
+  .bk-face.bk-back img{ left:0; }               /* mặt sau  = nửa TRÁI của trang đôi kế */
+  .bk-face.bk-front::after, .bk-face.bk-back::after{ content:''; position:absolute; top:0; bottom:0; width:24px; pointer-events:none; }
+  .bk-face.bk-front::after{ left:0; background:linear-gradient(90deg, rgba(60,40,20,.28), transparent); }
+  .bk-face.bk-back::after{ right:0; background:linear-gradient(270deg, rgba(60,40,20,.28), transparent); }
+  .bk-shade{ position:absolute; inset:0; pointer-events:none; opacity:0; background:linear-gradient(90deg, rgba(0,0,0,.3), rgba(0,0,0,.04) 35%, rgba(255,255,255,.1) 70%, rgba(0,0,0,.06)); }
+  .bk-cover .bk-front{ border-radius:0 8px 8px 0; background:#4a0b17; }
+  .bk-cover .bk-front img{ left:0; right:auto; width:100%; }
+  .bk-cover .bk-front::after{ display:none; }
   .bk-gloss{ position:absolute; inset:0; pointer-events:none; background:linear-gradient(115deg, rgba(255,255,255,.14), rgba(255,255,255,0) 38%, rgba(0,0,0,0) 70%, rgba(0,0,0,.12)); }
-  .bk-spine{ position:absolute; left:0; top:0; bottom:0; width:20px; background:linear-gradient(90deg,#3a0812,#6a1322 45%,#4a0b17 80%,rgba(0,0,0,.35)); box-shadow:1px 0 0 rgba(217,181,106,.7); }
-  .bk-cover .bk-back{ background:#6a1322; border-radius:8px 4px 4px 8px; }
-  .bk-endpaper{ position:absolute; inset:5px; border-radius:6px 2px 2px 6px; background:#f3ead8 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Ctext x='20' y='27' font-size='15' text-anchor='middle' fill='%23b0894a' fill-opacity='.2' font-family='serif'%3E%E5%9B%8D%3C/text%3E%3C/svg%3E") 0 0/40px 40px; }
-  .bk-page{ background:#f7f1e6; }
-  .bk-page img{ width:100%; height:100%; object-fit:cover; display:block; background:#f1e9da; }
-  .bk-fin{ display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:0 var(--sp-5); }
-  .bk-fin .a{ font-family:var(--script); font-style:italic; font-size:22px; color:#8A5E24; }
-  .bk-fin .b{ font-family:var(--serif); font-size:17px; color:var(--red-deep); margin-top:6px; line-height:1.4; }
+  .bk-spine{ position:absolute; left:0; top:0; bottom:0; width:16px; background:linear-gradient(90deg,#3a0812,#6a1322 45%,#4a0b17 80%,rgba(0,0,0,.35)); box-shadow:1px 0 0 rgba(217,181,106,.7); }
+  .bk-cover .bk-back{ background:#4a0b17; border-radius:8px 0 0 8px; }
+  .bk-cover .bk-back .bk-in{ position:absolute; top:5px; bottom:5px; left:7px; right:0; overflow:hidden; background:#fff; }
+  .bk-cover .bk-back .bk-in img{ left:0; }
+  .bk-fin{ position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:0 var(--sp-4); background:#f7f1e6; }
+  .bk-fin .a{ font-family:var(--script); font-style:italic; font-size:20px; color:#8A5E24; }
+  .bk-fin .b{ font-family:var(--serif); font-size:15px; color:var(--red-deep); margin-top:6px; line-height:1.4; }
 
   #lightbox{ position:fixed; inset:0; background:rgba(12,2,4,.95); z-index:900; display:none; align-items:center; justify-content:center; padding:var(--sp-6); touch-action:none; overscroll-behavior:contain; }
   #lightbox.show{ display:flex; }
@@ -2139,8 +2147,8 @@
   });
 
   /* ---------- album bìa ảnh (xem CSS .bk-*) ----------
-     BOOK_PAGES: các trang đôi của studio (4:3), theo đúng thứ tự. Mỗi tờ in 2 mặt:
-     mặt trước = trang ở nửa dưới, mặt sau = trang ở nửa trên sau khi lật. */
+     BOOK_PAGES: các file trang đôi của studio (4:3), đúng thứ tự. Mỗi lần mở thấy trọn 1 file:
+     nửa trái nằm ở mặt sau tờ trước (tờ đầu = bìa), nửa phải ở mặt trước tờ hiện tại. */
   var BOOK_DIR = 'images/book/';
   var BOOK_PAGES = ['p01.webp','p02.webp','p03.webp','p04.webp','p05.webp','p06.webp','p07.webp','p08.webp','p09.webp','p10.webp'];
   (function(){
@@ -2149,28 +2157,24 @@
     var ctl = document.getElementById('bkCtl'), cnt = document.getElementById('bkCnt'), hint = document.getElementById('bkHint');
     var btnPrev = document.getElementById('bkPrev'), btnNext = document.getElementById('bkNext');
     var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    var SCROLL_LEAVES = 3;               // bìa + 2 tờ đầu lật theo cuộn; các tờ sau chạm/vuốt
-    var pageImgs = [];                   // thứ tự trang 1..10, dùng cho lightbox
+    var SCROLL_LEAVES = 3;               // bìa + 2 tờ đầu lật theo cuộn (tới trang đôi 03); sau đó chạm/vuốt
+    var P = BOOK_PAGES.length;
 
-    function up(html){ return '<div class="bk-up">'+html+'</div>'; }
-    function img(i){ var im = '<img alt="" draggable="false" decoding="async" data-src="'+BOOK_DIR+BOOK_PAGES[i]+'">'; return im; }
-    book.innerHTML = '<div class="bk-base"></div><div class="bk-block"></div>';
-    var fin = document.createElement('div'); fin.className = 'bk-leaf'; fin.style.zIndex = 1;
-    fin.innerHTML = '<div class="bk-face bk-page bk-front">'+up('<div class="bk-fin" style="height:100%"><div class="a"><span data-vi>Còn tiếp…</span><span data-en>To be continued…</span></div><div class="b"><span data-vi>Những trang tiếp theo<br>chúng mình viết cùng bạn</span><span data-en>The next pages<br>we\'ll write with you</span></div></div>')+'</div>';
-    book.appendChild(fin);
+    function img(i){ return '<img alt="" draggable="false" decoding="async" data-src="'+BOOK_DIR+BOOK_PAGES[i]+'">'; }
+    var finHtml = '<div class="bk-fin"><div class="a"><span data-vi>Còn tiếp…</span><span data-en>To be continued…</span></div><div class="b"><span data-vi>Những trang tiếp theo<br>chúng mình viết cùng bạn</span><span data-en>The next pages<br>we\'ll write with you</span></div></div>';
+    book.innerHTML = '<div class="bk-base-l"></div><div class="bk-base"></div><div class="bk-block"></div>';
+    var baseL = book.firstChild;
     var leaves = [];
     function leaf(front, back, cover){
       var d = document.createElement('div'); d.className = 'bk-leaf' + (cover ? ' bk-cover' : '');
-      d.innerHTML = '<div class="bk-face bk-front'+(cover?'':' bk-page')+'">'+front+'</div><div class="bk-face bk-back'+(cover?'':' bk-page')+'">'+back+'</div><div class="bk-shade"></div>';
-      book.appendChild(d); leaves.push(d); return d;
+      d.innerHTML = '<div class="bk-face bk-front">'+front+'</div><div class="bk-face bk-back">'+back+'</div><div class="bk-shade"></div>';
+      book.appendChild(d); leaves.push(d);
     }
-    leaf('<img alt="" draggable="false" decoding="async" data-src="'+BOOK_DIR+'cover.webp"><div class="bk-gloss"></div><div class="bk-spine"></div>', '<div class="bk-endpaper"></div>', true);
-    for(var k=0; k<BOOK_PAGES.length; k+=2){
-      leaf(up(img(k)), BOOK_PAGES[k+1] ? up(img(k+1)) : '');
-    }
-    pageImgs = [].slice.call(book.querySelectorAll('.bk-page img'));
-    var N = leaves.length;
-    // chỉ tải ảnh album khi khách cuộn còn cách ~1500px
+    leaf('<img alt="" draggable="false" decoding="async" data-src="'+BOOK_DIR+'cover.webp"><div class="bk-gloss"></div><div class="bk-spine"></div>', '<div class="bk-in">'+img(0)+'</div>', true);
+    for(var k=0; k<P; k++) leaf(img(k), k+1 < P ? img(k+1) : finHtml);
+    var N = leaves.length;               // = P + 1
+    var spreads = BOOK_PAGES.map(function(f){ return { src: BOOK_DIR + f, alt:'' }; });
+
     var loaded = false;
     function loadAll(){ if(loaded) return; loaded = true; [].forEach.call(book.querySelectorAll('img[data-src]'), function(im){ im.src = im.dataset.src; }); }
     if('IntersectionObserver' in window){
@@ -2178,48 +2182,44 @@
       lio.observe(pin);
     } else loadAll();
 
-    /* ---- kích thước theo màn hình: SW = bề ngang trang đôi khi mở (4:3), mở ra cao 2×SH ---- */
-    var SW, SH, closedScale = 1;
+    /* ---- kích thước theo màn hình: SW = bề ngang trang đôi (4:3), PW = 1 trang, PH = cao ---- */
+    var SW, PW, PH, closedScale = 1, lyingScale = 1;
     function layout(){
       var w = stage.clientWidth, h = stage.clientHeight;
-      SW = Math.floor(Math.min(w - 28, (h - 16) / 1.5, 520));
-      SH = Math.round(SW * 3 / 4);
-      book.style.setProperty('--bw', SH + 'px');
-      book.style.setProperty('--bh', SW + 'px');
-      book.style.setProperty('--uw', (SW - 10) + 'px');
-      book.style.setProperty('--uh', (SH - 12) + 'px');
-      // album đóng (dựng dọc SH × SW) phóng to cho gần kín màn hình, thu dần về 1 khi xoay
-      closedScale = Math.max(1, Math.min((w - 40) / SH, (h - 40) / SW, 1.45));
+      SW = Math.floor(Math.min(w - 20, (h - 20) * 4 / 3, 760) / 2) * 2;
+      PW = SW / 2; PH = Math.round(SW * 3 / 4);
+      book.style.setProperty('--sw', SW + 'px'); book.style.setProperty('--pw', PW + 'px'); book.style.setProperty('--ph', PH + 'px');
+      closedScale = Math.max(1, Math.min((w - 56) / PW, (h - 30) / PH, 1.7));   // album đóng: to gần kín màn hình
+      lyingScale  = Math.min(closedScale, (w - 30) / PH);                      // lúc nằm ngang: vừa bề ngang
     }
 
-    var ang = leaves.map(function(){ return 0; }), rot = 0, ty = 0, sc = 1;
+    var ang = leaves.map(function(){ return 0; });
     function clamp(v,a,b){ return Math.max(a, Math.min(b, v)); }
     function remap(v,a,b){ return clamp((v-a)/(b-a), 0, 1); }
     function ease(t){ return t*t*(3-2*t); }
+    function mix(a,b,t){ return a + (b-a)*t; }
     function renderLeaf(i){
       var a = ang[i], lift = Math.sin(a / 180 * Math.PI);
-      var stack = a > 90 ? -(i+1) * 0.6 : (N-i) * 0.6;
-      leaves[i].style.transform = 'rotateY(' + (-a) + 'deg) translateZ(' + (lift*14 + stack) + 'px)';
-      leaves[i].lastChild.style.opacity = (lift * 0.85).toFixed(3);
+      var stack = a > 90 ? -(i+1) * 0.5 : (N-i) * 0.5;
+      leaves[i].style.transform = 'rotateY(' + (-a) + 'deg) translateZ(' + (lift*16 + stack) + 'px)';
+      leaves[i].lastChild.style.opacity = (lift * 0.8).toFixed(3);
+      if(i === 0) baseL.style.opacity = a > 90 ? 1 : 0;
     }
-    function renderBook(){
-      book.style.transform = 'translateY(' + ty + 'px) scale(' + sc + ') rotateX(' + (8 * (1 - rot/90)) + 'deg) rotateZ(' + rot + 'deg)';
-      book.style.setProperty('--rot', rot + 'deg');
+    function renderBook(rz, tilt, sc, open){
+      // đóng: bìa (nửa phải) ở giữa màn hình → mở: cả trang đôi ở giữa
+      book.style.transform = 'translateX(' + (-(1-open) * PW/2) + 'px) scale(' + sc + ') rotateX(' + tilt + 'deg) rotateZ(' + rz + 'deg)';
     }
-    var st = document.createElement('style');
-    st.textContent = '.bk-face.bk-back .bk-up{ transform:rotate(calc(var(--rot, 0deg) * -1)); }';
-    document.head.appendChild(st);
 
     function setHint(vi, en){ hint.innerHTML = '<span data-vi>'+vi+'</span><span data-en>'+en+'</span>'; }
     var manual = false, cur = 0, busy = false;
     function label(){
-      // trang đang ở nửa dưới (hoặc hết album)
-      var pg = Math.min(BOOK_PAGES.length, 2*cur - 1);
-      cnt.innerHTML = String(Math.max(1, pg)).padStart(2,'0') + ' <span>/ ' + String(BOOK_PAGES.length).padStart(2,'0') + '</span>';
+      cnt.innerHTML = cur > P
+        ? '<span data-vi>Hết</span><span data-en>End</span>'
+        : String(cur).padStart(2,'0') + ' <span>/ ' + String(P).padStart(2,'0') + '</span>';
       btnPrev.disabled = cur <= 1; btnNext.disabled = cur >= N;
     }
 
-    /* ---- giai đoạn cuộn: cuộn chỉ đặt đích, vòng rAF đuổi theo mềm (không giật theo từng pixel cuộn) ---- */
+    /* ---- giai đoạn cuộn: cuộn đặt đích, vòng rAF đuổi theo mềm ---- */
     var target = 0, shown = 0, looping = false;
     function readScroll(){
       var r = pin.getBoundingClientRect(), total = pin.offsetHeight - window.innerHeight;
@@ -2233,16 +2233,16 @@
       if(shown !== target) requestAnimationFrame(loop); else looping = false;
     }
     function apply(p){
-      var pr = ease(remap(p, 0, 0.28));
-      rot = 90 * pr;
-      sc = closedScale + (1 - closedScale) * ease(remap(p, 0, 0.3));
-      ty = (SH / 2) * ease(remap(p, 0.18, 0.36));
-      renderBook();
-      if(p < 0.88){
+      var pr = ease(remap(p, 0, 0.24));                 // xoay: nằm ngang → dựng đứng
+      var po = ease(remap(p, 0.26, 0.46));              // mở bìa
+      var sc = pr < 1 ? mix(lyingScale, closedScale, pr) : mix(closedScale, 1, po);
+      renderBook(-90 * (1 - pr), 22 * (1 - pr), sc, po);
+      if(p < 0.9){
         if(manual){ manual = false; ctl.classList.add('off'); }
-        for(var i=0; i<N; i++){
+        ang[0] = 180 * po; renderLeaf(0);
+        for(var i=1; i<N; i++){
           var a = 0;
-          if(i < SCROLL_LEAVES){ var s0 = 0.3 + i*0.19; a = 180 * ease(remap(p, s0, s0 + 0.16)); }
+          if(i < SCROLL_LEAVES){ var s0 = 0.52 + (i-1)*0.18; a = 180 * ease(remap(p, s0, s0 + 0.15)); }
           ang[i] = a; renderLeaf(i);
         }
         if(p < 0.3) setHint('cuộn xuống để mở album', 'scroll down to open the album');
@@ -2251,7 +2251,7 @@
         manual = true; cur = SCROLL_LEAVES;
         for(var j=0; j<SCROLL_LEAVES; j++){ ang[j] = 180; renderLeaf(j); }
         label(); ctl.classList.remove('off');
-        setHint('chạm nửa dưới hoặc vuốt ngang để lật trang', 'tap the lower page or swipe to turn');
+        setHint('vuốt ngang để lật trang · ⤢ để xem lớn', 'swipe to turn · ⤢ to enlarge');
       }
     }
 
@@ -2269,8 +2269,8 @@
     btnNext.addEventListener('click', next);
     btnPrev.addEventListener('click', prev);
     document.getElementById('bkZoom').addEventListener('click', function(){
-      lbImgs = pageImgs;
-      lbOpen(clamp(2*cur - 2, 0, pageImgs.length - 1));
+      lbImgs = spreads;
+      lbOpen(clamp(cur - 1, 0, P - 1));
     });
     var sx = null, sy = null;
     stage.addEventListener('pointerdown', function(e){ sx = e.clientX; sy = e.clientY; });
@@ -2278,21 +2278,20 @@
       if(sx === null) return;
       var dx = e.clientX - sx, dy = e.clientY - sy; sx = null;
       if(Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy)){ (dx < 0 ? next : prev)(); return; }
-      if(Math.abs(dx) < 8 && Math.abs(dy) < 8){ var r = stage.getBoundingClientRect(); (e.clientY - r.top > r.height/2 ? next : prev)(); }
+      if(Math.abs(dx) < 8 && Math.abs(dy) < 8){ var r = stage.getBoundingClientRect(); (e.clientX - r.left > r.width/2 ? next : prev)(); }
     });
 
     layout();
     if(reduce){
-      // không ghim/không xoay: album mở sẵn ở trang 1, lật bằng chạm/nút
+      // không ghim/không xoay: album mở sẵn ở trang đôi 01, lật bằng chạm/nút
       pin.style.height = 'auto';
       var sticky = pin.firstElementChild; sticky.style.position = 'relative'; sticky.style.height = 'auto';
-      stage.style.flex = 'none'; stage.style.height = Math.round(SW * 1.5 + 24) + 'px';
+      stage.style.flex = 'none'; stage.style.height = Math.round(PH + 40) + 'px';
       layout();
-      rot = 90; sc = 1; ty = SH / 2; renderBook();
-      ang[0] = 180; renderLeaf(0); for(var z=1; z<N; z++) renderLeaf(z);
+      renderBook(0, 0, 1, 1);
+      ang[0] = 180; for(var z=0; z<N; z++) renderLeaf(z);
       manual = true; cur = 1; label(); ctl.classList.remove('off');
-      setHint('chạm nửa dưới hoặc vuốt ngang để lật trang', 'tap the lower page or swipe to turn');
-      if('IntersectionObserver' in window){} // tải ảnh theo lio ở trên
+      setHint('vuốt ngang để lật trang · ⤢ để xem lớn', 'swipe to turn · ⤢ to enlarge');
       return;
     }
     window.addEventListener('scroll', readScroll, { passive:true });
