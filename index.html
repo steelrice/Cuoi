@@ -552,6 +552,14 @@
   #finalStage{ position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:100%; opacity:0; will-change:transform, opacity; }
   #finalStage .story-fig{ will-change:transform; }
   #finalStage .story{ will-change:opacity, transform; }
+  /* flash tan thành giấy ngà: .cam (nền đỏ) tắt đi là lộ vân giấy của #app, nối liền phần đếm ngược —
+     ảnh như vừa rửa ra, trích dẫn chữ nâu đỏ cho dễ đọc */
+  #finalStage .story blockquote{ color:var(--red-deep); }
+  #finalStage .story cite{ color:#8A5E24; }
+  #finalStage .story cite::before{ background:rgba(138,94,36,.6); }
+  #finalStage .story::before{ color:rgba(122,21,36,.16); }
+  #finalStage .story-img{ box-shadow:0 18px 36px rgba(60,20,10,.22); }
+  #finalStage .story-fig::after{ border-color:rgba(169,127,46,.6); }
 
   /* ================= SAVE THE DATE — ảnh lớn ngay sau khi mở thiệp, đáy ảnh chìm dần vào đỏ của "Xin giới thiệu" ================= */
   .std-hero{ position:relative; height:100vh; height:100svh; min-height:560px; overflow:hidden; background:#33060b; }
@@ -1041,7 +1049,7 @@
 
   <!-- ============ XIN GIỚI THIỆU (thay cho HERO) ============ -->
   <div class="scrollstage" id="introStage">
-    <div class="sticky-view band-red">
+    <div class="sticky-view">
      <div class="intro-inner">
       <!-- khung ngắm máy ảnh tự chạy: toàn cảnh → lấy nét cô dâu → lia sang chú rể → lùi ra → chớp flash → ảnh + trích dẫn -->
       <div class="cam" id="cam">
@@ -1086,7 +1094,6 @@
   <!-- ============ COUNTDOWN ============ -->
   <!-- ============ COUNTDOWN + CALENDAR (gộp chung 1 card) ============ -->
   <section>
-    <div class="torn-top" style="--tx:0%" aria-hidden="true"></div>
     <div class="wrap center">
       <div class="cd-kicker"><span data-vi>Chỉ còn</span><span data-en>Counting down</span></div>
       <div class="cal-card">
