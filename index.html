@@ -2397,7 +2397,8 @@
     var P = BOOK_PAGES.length;
 
     function img(i){ return '<img alt="" draggable="false" decoding="async" data-i="'+i+'" data-src="'+BOOK_DIR+BOOK_PAGES[i]+'">'; }
-    var finHtml = '<div class="bk-fin"><div class="a"><span data-vi>Còn tiếp…</span><span data-en>To be continued…</span></div><div class="b"><span data-vi>Những trang tiếp theo<br>chúng mình viết cùng bạn</span><span data-en>The next pages<br>we\'ll write with you</span></div></div>';
+    var finDay = getUrlParam('date') === '28' ? '28' : '21';   // khách Hưng Yên (?date=28) hay Vũng Tàu
+    var finHtml = '<div class="bk-fin"><div class="a"><span data-vi>Còn tiếp…</span><span data-en>To be continued…</span></div><div class="b"><span data-vi>Và chương mới bắt đầu<br>từ ngày '+finDay+'.11</span><span data-en>And a new chapter begins<br>on 11.'+finDay+'</span></div></div>';
     book.innerHTML = '<div class="bk-base-l"></div><div class="bk-base"></div><div class="bk-block"></div>';
     var baseL = book.firstChild;
     var leaves = [];
