@@ -909,14 +909,25 @@
   .rsvp-form .rsvp-submit{ margin-top:var(--sp-3); }
   .rsvp-form .rsvp-note{ margin-top:var(--sp-3); line-height:1.55; }
   .rsvp-form .rsvp-cal{ margin-top:var(--sp-2); }
-  /* con dấu 囍 đóng lên góc dưới thẻ (ngay chỗ nút gửi + lời cảm ơn) khi gửi xong, dập lại mỗi lần gửi */
-  .rsvp-seal{ position:absolute; bottom:-20px; right:18px; z-index:3; width:52px; height:52px; display:flex; align-items:center; justify-content:center;
-    background:var(--red-mid); border-radius:5px; color:#e9c77e; font-size:28px; line-height:1; pointer-events:none;
-    box-shadow:inset 0 0 0 2px var(--red-mid), inset 0 0 0 3px rgba(233,199,126,.75), 0 6px 14px rgba(76,12,23,.28);
-    opacity:0; transform:rotate(-8deg) scale(2); }
-  .rsvp-seal.stamped{ animation:sealStamp .55s cubic-bezier(.3,1.45,.5,1) forwards; }
-  @keyframes sealStamp{ 0%{ opacity:0; transform:rotate(-18deg) scale(2.2); } 55%{ opacity:1; } 100%{ opacity:1; transform:rotate(-8deg) scale(1); } }
-  @media (prefers-reduced-motion: reduce){ .rsvp-seal.stamped{ animation:none; opacity:1; transform:rotate(-8deg); } .rsvp-form .attend-toggle::before{ transition:none; } }
+  /* gửi xong: form thu lại, con dấu 囍 lớn dập vào giữa thẻ + lời cảm ơn; "Sửa hồi âm" mở lại form */
+  .rsvp-done{ display:none; flex-direction:column; align-items:center; text-align:center; padding:var(--sp-6) var(--sp-2) var(--sp-3); }
+  .rsvp-frame.done .rsvp-form{ display:none; }
+  .rsvp-frame.done .rsvp-done{ display:flex; }
+  .rd-seal{ position:relative; width:104px; height:104px; display:flex; align-items:center; justify-content:center; background:var(--red-mid); border-radius:10px; color:#e9c77e; font-size:58px; line-height:1;
+    box-shadow:inset 0 0 0 4px var(--red-mid), inset 0 0 0 5.5px rgba(233,199,126,.8), 0 10px 22px rgba(76,12,23,.3); transform:rotate(-8deg); }
+  .rd-seal::after{ content:''; position:absolute; inset:-14px; border-radius:18px; border:1.5px solid rgba(122,21,36,.18); transform:rotate(3deg); }
+  .rd-kicker{ margin-top:var(--sp-6); font-family:var(--sans); font-size:10.5px; letter-spacing:.2em; text-transform:uppercase; color:var(--gold-line); }
+  .rd-title{ font-family:var(--script); font-style:italic; font-weight:500; font-size:40px; line-height:1.1; color:var(--red-deep); margin-top:var(--sp-2); text-wrap:balance; }
+  .rd-text{ font-size:14px; line-height:1.7; color:var(--ink-soft); max-width:300px; margin-top:var(--sp-3); text-wrap:balance; }
+  .rd-cal{ margin-top:var(--sp-5); }
+  .rd-edit{ margin-top:var(--sp-5); background:none; border:0; padding:6px 10px; font-family:var(--sans); font-size:12px; letter-spacing:.06em; color:var(--ink-soft); opacity:.75; text-decoration:underline; text-underline-offset:3px; }
+  .rsvp-frame.done .rd-seal{ animation:sealStamp .6s cubic-bezier(.3,1.45,.5,1) both; }
+  .rsvp-frame.done .rd-seal::after{ animation:sealRing .9s ease-out .35s both; }
+  .rsvp-frame.done .rsvp-done > :not(.rd-seal){ animation:rdIn .7s ease .45s both; }
+  @keyframes sealStamp{ 0%{ opacity:0; transform:rotate(-20deg) scale(2.4); } 55%{ opacity:1; } 100%{ opacity:1; transform:rotate(-8deg) scale(1); } }
+  @keyframes sealRing{ from{ opacity:0; transform:rotate(3deg) scale(.8); } to{ opacity:1; transform:rotate(3deg) scale(1); } }
+  @keyframes rdIn{ from{ opacity:0; transform:translateY(10px); } to{ opacity:1; transform:none; } }
+  @media (prefers-reduced-motion: reduce){ .rsvp-frame.done .rd-seal, .rsvp-frame.done .rd-seal::after, .rsvp-frame.done .rsvp-done > *{ animation:none; } .rsvp-form .attend-toggle::before{ transition:none; } }
   .collapse{ overflow:hidden; max-height:0; opacity:0; transition:max-height .5s cubic-bezier(.16,1,.3,1), opacity .4s ease, margin .4s ease; }
   .collapse.open{ max-height:700px; opacity:1; }
 
@@ -1338,7 +1349,6 @@
   <section>
     <div class="wrap wrap-wide">
       <div class="rsvp-frame">
-        <div class="rsvp-seal" id="rsvpSeal" aria-hidden="true">囍</div>
         <div class="center">
           <div class="rsvp-kicker" id="rsvpKicker"><span data-vi>Rất mong được đón tiếp</span><span data-en>We hope to see you</span></div>
           <h2 class="rsvp-title" id="rsvpHeading"><span data-vi>bạn</span><span data-en>there</span></h2>
@@ -1392,6 +1402,14 @@
         <div class="rsvp-note" id="rsvpNote"></div>
         <div class="rsvp-cal" id="rsvpCal" hidden><a class="cal-add js-cal-add" href="#" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="1.5"/><path d="M3.5 10h17"/><path d="M8 3v4"/><path d="M16 3v4"/><path d="M12 13v5"/><path d="M9.5 15.5h5"/></svg><span data-vi>Lưu ngày cưới vào lịch</span><span data-en>Add the date to your calendar</span></a></div>
         </form>
+        <div class="rsvp-done" id="rsvpDone" role="status">
+          <div class="rd-seal" aria-hidden="true">囍</div>
+          <div class="rd-kicker"><span data-vi>Đã nhận hồi âm</span><span data-en>Reply received</span></div>
+          <div class="rd-title" id="rdTitle"></div>
+          <p class="rd-text" id="rdText"></p>
+          <div class="rd-cal" id="rdCal"></div>
+          <button type="button" class="rd-edit" id="rdEdit"><span data-vi>Sửa hồi âm</span><span data-en>Edit your reply</span></button>
+        </div>
       </div>
     </div>
   </section>
@@ -2941,6 +2959,23 @@
       if(moveVal === 'shuttle' && pickupEl) entry.pickup = pickupEl.value || '';
     }
     var rsvpCal = document.getElementById('rsvpCal');
+    function showDone(yes){
+      var P = rsvpGuestPronounOnly, frame = document.querySelector('.rsvp-frame');
+      var whenVi = isVungTau ? '21.11.2026 tại Vũng Tàu' : '28.11.2026 tại Hưng Yên';
+      var whenEn = isVungTau ? '11.21.2026 in Vung Tau' : '11.28.2026 in Hung Yen';
+      function bil(vi, en){ return '<span data-vi>' + vi + '</span><span data-en>' + en + '</span>'; }
+      document.getElementById('rdTitle').innerHTML = bil('Cảm ơn ' + P + (yes ? '!' : ''), yes ? 'Thank you!' : 'Thank you');
+      document.getElementById('rdText').innerHTML = yes
+        ? bil(rsvpHostCap + ' đã nhận được hồi âm của ' + P + '. Hẹn gặp ' + P + ' ngày ' + whenVi + ' nhé!',
+              "We've received your reply. See you on " + whenEn + '!')
+        : bil('Tiếc vì không được gặp ' + P + ' hôm ấy, nhưng ' + rsvpHost + ' biết ' + P + ' vẫn luôn hướng về ngày vui này. Hẹn ' + P + ' một dịp gần nhất nhé!',
+              "We're sorry to miss you that day, but we know you'll be with us in spirit. Hope to see you again soon!");
+      var rdCal = document.getElementById('rdCal'); rdCal.hidden = !yes;
+      if(rsvpCal){ rdCal.appendChild(rsvpCal); rsvpCal.hidden = !yes; }
+      frame.classList.remove('done'); void frame.offsetWidth; frame.classList.add('done');
+      var top = frame.getBoundingClientRect().top;
+      if(top < 0 || top > innerHeight * .4) window.scrollTo({ top:scrollY + top - 80, behavior:'smooth' });
+    }
     var wasAttending = attendVal === 'yes';
     if(rsvpCal) rsvpCal.hidden = true;
     note.textContent = isEn() ? 'Sending…' : 'Đang gửi…';
@@ -2950,20 +2985,22 @@
       } else {
         await sendRsvpToSheet(entry);
       }
-      note.textContent = isEn() ? "Thank you! If anything changes, feel free to resend this form."
-        : 'Cảm ơn ' + rsvpGuestFull + ' đã gửi thông tin. Nếu có cập nhật gì hãy gửi lại form cho ' + rsvpHost + ' nhé.';
-      if(rsvpCal && wasAttending) rsvpCal.hidden = false;
+      note.textContent = '';
+      showDone(wasAttending);
       document.getElementById('rsvpForm').reset();
       guestCount=1; guestCountEl.textContent='1';
       moveVal='self';
       moveBtns.forEach(function(b){ b.classList.toggle('active', b.getAttribute('data-val')==='self'); });
       if(moveBtns[0]) moveBtns[0].parentNode.classList.remove('sec');
       syncMove();
-      var seal = document.getElementById('rsvpSeal');
-      if(seal){ seal.classList.remove('stamped'); void seal.offsetWidth; seal.classList.add('stamped'); }
     }catch(err){
       note.textContent = isEn() ? 'Could not send right now.' : 'Chưa gửi được lúc này.';
     }
+  });
+  document.getElementById('rdEdit').addEventListener('click', function(){
+    var frame = document.querySelector('.rsvp-frame');
+    frame.classList.remove('done');
+    window.scrollTo({ top:scrollY + frame.getBoundingClientRect().top - 80, behavior:'smooth' });
   });
 })();
 </script>
