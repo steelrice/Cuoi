@@ -66,7 +66,7 @@ Toàn bộ nằm trong `index.html`. Vài mốc để tìm nhanh:
 - [x] ~~Khung giờ chưa đổi theo ngày, và giờ lễ (11:00) đang vênh với giờ ghi ở đầu thiệp (10 giờ 30)~~ — nay tự tính từ `EVENTS[...].target` theo từng ngày.
 - [x] ~~Phần hồi âm chưa thật sự gửi đi đâu~~ — đã triển khai Apps Script và điền `APPS_SCRIPT_URL`; hồi âm ghi thẳng vào sheet "Danh sách khách mời".
 - [x] ~~Điểm đón còn là Điểm A, B, C~~ — nay là ô ghi chú tự do, cô dâu chú rể liên hệ lại để hẹn điểm đón.
-- [x] ~~Chưa có file nhạc nền thật~~ — đã có `audio/bg-music.mp3` (nén còn ~2.7MB, 128kbps để tải nhanh). `preload="none"` để không giành băng thông với ảnh/font lúc vào trang; chạm mở thiệp mới bắt đầu tải + phát. Trình duyệt chỉ cho phát nhạc có tiếng sau cử chỉ thật (chạm/bấm/gõ phím — lăn chuột không tính), nên nếu bị chặn thì cạnh đĩa nhạc hiện "♪ Bấm để bật nhạc".
+- [x] ~~Chưa có file nhạc nền thật~~ — đã có 2 bài `audio/dam-cuoi-nhu-mo.mp3` (~1.9MB) và `audio/trai-tai-gai-sac.mp3` (~1.5MB): mỗi lần mở thiệp bốc ngẫu nhiên bài đầu, hết bài nối sang bài kia; còn ~20s hết bài mới tải trước bài kế. `preload="none"` để không giành băng thông với ảnh/font lúc vào trang; chạm mở thiệp mới bắt đầu tải + phát. Trình duyệt chỉ cho phát nhạc có tiếng sau cử chỉ thật (chạm/bấm/gõ phím — lăn chuột không tính), nên nếu bị chặn thì cạnh đĩa nhạc hiện "♪ Bấm để bật nhạc".
 
 ## Câu hỏi mở — cần bàn thêm
 
@@ -101,7 +101,8 @@ index.html            toàn bộ giao diện và mã xử lý
 apps-script/
   rsvp-sync.gs        code Google Apps Script — ghi hồi âm thẳng vào sheet khách mời
 audio/
-  bg-music.mp3        nhạc nền
+  dam-cuoi-nhu-mo.mp3 nhạc nền (2 bài, bốc ngẫu nhiên bài đầu rồi phát luân phiên)
+  trai-tai-gai-sac.mp3
 cal/                  file .ics cho nút "Lưu vào lịch" trên iPhone (21/28 × vi/en)
 fonts/                font tự host (woff2)
 images/

@@ -1160,7 +1160,7 @@
 </button>
 
 <!-- ============ NHẠC NỀN ============ -->
-<audio id="bgMusic" src="audio/bg-music.mp3" loop preload="none"></audio>
+<audio id="bgMusic" preload="none"></audio>
 <button type="button" id="musicToggle" class="show" aria-label="bật/tắt nhạc nền" aria-pressed="false">
   <svg viewBox="0 0 46 46" aria-hidden="true">
     <circle cx="23" cy="23" r="21.5" fill="var(--red-deep)" stroke="var(--gold-line)" stroke-width="1.2"/>
@@ -2363,8 +2363,23 @@
   }
   if(bgMusic){
     bgMusic.volume = 0;
-    // không autoplay tắt tiếng lúc vào trang: file nhạc ~2.7MB sẽ giành băng thông với font/ảnh.
+    // không autoplay tắt tiếng lúc vào trang: file nhạc ~1.5–1.9MB sẽ giành băng thông với font/ảnh.
     // preload="none" → chỉ bắt đầu tải (vừa tải vừa phát) khi khách chạm lần đầu, xem revealMusic()
+    /* 2 bài: mỗi lần mở thiệp bốc ngẫu nhiên bài đầu, hết bài thì nối sang bài kia, cứ thế luân phiên.
+       Còn ~20s là hết bài thì tải trước bài kế (1 lần) để lúc chuyển bài không bị khựng */
+    var TRACKS = ['audio/dam-cuoi-nhu-mo.mp3', 'audio/trai-tai-gai-sac.mp3'];
+    var trackIdx = Math.floor(Math.random() * TRACKS.length), warmed = {};
+    bgMusic.src = TRACKS[trackIdx];
+    bgMusic.addEventListener('timeupdate', function(){
+      var nx = (trackIdx + 1) % TRACKS.length;
+      if(warmed[nx] || !(bgMusic.duration - bgMusic.currentTime < 20)) return;
+      var pre = warmed[nx] = new Audio(); pre.preload = 'auto'; pre.src = TRACKS[nx];
+    });
+    bgMusic.addEventListener('ended', function(){
+      trackIdx = (trackIdx + 1) % TRACKS.length;
+      bgMusic.src = TRACKS[trackIdx];
+      var pr = bgMusic.play(); if(pr && pr.catch) pr.catch(function(){ setMusicUI(false); showMusicHint(true); armMusicRetry(); });
+    });
   }
   if(musicToggle && bgMusic){
     musicToggle.addEventListener('click', function(){
