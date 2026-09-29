@@ -2533,7 +2533,7 @@
     if(!ta || !h) return;
     ta.placeholder = en ? 'E.g. where you are staying, what time suits you…' : 'VD: nơi ở, giờ muốn được đón…';
     h.textContent = en ? "We'll get in touch to arrange the pickup point."
-      : rsvpHostCap + ' sẽ liên hệ lại để hẹn điểm đón với ' + rsvpGuestPronounOnly + ' nhé.';
+      : rsvpHostCap + ' sẽ liên hệ lại để hẹn điểm đón với ' + rsvpGuestPronounOnlyLower + ' nhé.';
   }
   syncPickupHint(document.body.classList.contains('lang-en'));
 
@@ -3273,7 +3273,7 @@
     }
     var rsvpCal = document.getElementById('rsvpCal');
     function showDone(yes){
-      var P = rsvpGuestPronounOnly, frame = document.querySelector('.rsvp-frame');
+      var P = rsvpGuestPronounOnlyLower, frame = document.querySelector('.rsvp-frame');
       var whenVi = isVungTau ? '21.11.2026 tại Vũng Tàu' : '28.11.2026 tại Hưng Yên';
       var whenEn = isVungTau ? '11.21.2026 in Vung Tau' : '11.28.2026 in Hung Yen';
       function bil(vi, en){ return '<span data-vi>' + vi + '</span><span data-en>' + en + '</span>'; }
