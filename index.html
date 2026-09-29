@@ -587,6 +587,7 @@
 
   /* ================= SECTION frame ================= */
   section{ padding:var(--sp-9) 0; position:relative; }
+  .cd-sec{ padding-top:var(--sp-7); }   /* nối ngay sau lời tâm sự (khung giới thiệu đã co sát chữ) */
   .kicker{ font-family:var(--script); font-style:italic; font-weight:500; font-size:19px; color:var(--red-mid); margin-bottom:var(--sp-2); }
   .sec-kicker{ font-family:var(--script); font-style:italic; font-weight:500; font-size:25px; line-height:1.2; color:var(--gold-line); }
   .band-red .sec-kicker{ color:var(--gold); }
@@ -1203,7 +1204,7 @@
 
   <!-- ============ COUNTDOWN ============ -->
   <!-- ============ COUNTDOWN + CALENDAR (gộp chung 1 card) ============ -->
-  <section>
+  <section class="cd-sec">
     <div class="wrap center">
       <div class="cd-kicker"><span data-vi>Chỉ còn</span><span data-en>Counting down</span></div>
       <div class="cal-card">
@@ -1826,8 +1827,29 @@
     function frame(now){
       var t = (now - t0) / 1000;
       render(t);
-      if(t < T.end + 0.1) requestAnimationFrame(frame); else running = false;
+      if(t < T.end + 0.1) requestAnimationFrame(frame);
+      else { running = false; if(!collapsed) collapse(); }
     }
+
+    /* chạy xong: khung 1 màn hình co lại vừa sát lời tâm sự (bỏ khoảng trống phía dưới).
+       Ảnh + chữ giữ nguyên chỗ; nếu khách đã cuộn qua hẳn thì bù lại vị trí cuộn cho khỏi nhảy */
+    var collapsed = false;
+    function fit(anim){
+      view.style.transition = 'none'; view.style.height = ''; view.style.minHeight = '';
+      var H = view.clientHeight, h = finalStage.offsetHeight, top = Math.max(0, (H - h) / 2);
+      finalStage.style.top = top + 'px'; finalStage.style.transform = 'translateX(-50%)';
+      var newH = Math.min(H, Math.ceil(top + h + 28));
+      if(anim){ view.style.height = H + 'px'; void view.offsetHeight; view.style.transition = 'height .6s ease'; }
+      view.style.minHeight = '0'; view.style.height = newH + 'px';
+      return H - newH;
+    }
+    function collapse(){
+      collapsed = true;
+      var above = view.getBoundingClientRect().bottom <= 0;
+      var d = fit(!above);
+      if(above && d > 0) window.scrollBy(0, -d);
+    }
+    if('ResizeObserver' in window) new ResizeObserver(function(){ if(collapsed) fit(false); }).observe(finalStage);
 
     function playIntro(){
       played = true;
@@ -1863,7 +1885,7 @@
       }, 600);
     }, { once: true });
     camImg.addEventListener('load', function(){ if(!running) render(lastT < 0 ? 0 : lastT); });
-    window.addEventListener('resize', function(){ if(!running) render(lastT < 0 ? 0 : lastT); });
+    window.addEventListener('resize', function(){ if(!running){ render(lastT < 0 ? 0 : lastT); if(collapsed) fit(false); } });
     render(0);
   })();
 
