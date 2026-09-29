@@ -63,9 +63,9 @@ Toàn bộ nằm trong `index.html`. Vài mốc để tìm nhanh:
 ## Việc còn tồn
 
 - [x] ~~Khung giờ chưa đổi theo ngày, và giờ lễ (11:00) đang vênh với giờ ghi ở đầu thiệp (10 giờ 30)~~ — nay tự tính từ `EVENTS[...].target` theo từng ngày.
-- [ ] **Phần hồi âm chưa thật sự gửi đi đâu.** Code đã đấu nối sẵn để ghi thẳng vào sheet "Danh sách khách mời" qua Google Apps Script (xem mục "Nối hồi âm vào Google Sheet" bên dưới), nhưng `APPS_SCRIPT_URL` còn để trống — **bắt buộc triển khai Apps Script rồi điền link Web App thật trước khi gửi thiệp cho khách**, nếu không hồi âm sẽ không tới tay ai cả.
+- [x] ~~Phần hồi âm chưa thật sự gửi đi đâu~~ — đã triển khai Apps Script và điền `APPS_SCRIPT_URL`; hồi âm ghi thẳng vào sheet "Danh sách khách mời".
 - [x] ~~Điểm đón còn là Điểm A, B, C~~ — nay là ô ghi chú tự do, cô dâu chú rể liên hệ lại để hẹn điểm đón.
-- [x] ~~Chưa có file nhạc nền thật~~ — đã có `audio/bg-music.mp3` (nén còn ~2.7MB, 128kbps để tải nhanh). `preload="auto"` để trình duyệt tải sẵn ngay khi vào trang, tránh khựng lúc bấm mở thiệp.
+- [x] ~~Chưa có file nhạc nền thật~~ — đã có `audio/bg-music.mp3` (nén còn ~2.7MB, 128kbps để tải nhanh). `preload="none"` để không giành băng thông với ảnh/font lúc vào trang; chạm mở thiệp mới bắt đầu tải + phát. Trình duyệt chỉ cho phát nhạc có tiếng sau cử chỉ thật (chạm/bấm/gõ phím — lăn chuột không tính), nên nếu bị chặn thì cạnh đĩa nhạc hiện "♪ Bấm để bật nhạc".
 
 ## Câu hỏi mở — cần bàn thêm
 
@@ -96,42 +96,47 @@ Muốn dùng Google Form/Formspree thay vì ghi thẳng vào Sheet thì thay n�
 ## Cấu trúc
 
 ```
-index.html          toàn bộ giao diện và mã xử lý
+index.html            toàn bộ giao diện và mã xử lý
 apps-script/
-  rsvp-sync.gs      code Google Apps Script — ghi hồi âm thẳng vào sheet khách mời
+  rsvp-sync.gs        code Google Apps Script — ghi hồi âm thẳng vào sheet khách mời
 audio/
-  bg-music.mp3      nhạc nền — placeholder, tự thêm file thật (xem mục "Việc còn tồn")
+  bg-music.mp3        nhạc nền
+cal/                  file .ics cho nút "Lưu vào lịch" trên iPhone (21/28 × vi/en)
+fonts/                font tự host (woff2)
 images/
-  album/            ảnh album — xem mục dưới
-    01.webp
-    02.webp
-    ...
-  footer.webp       ảnh nền mờ ở chân trang
-  story.webp        ảnh phần lời tâm sự
-  map-vungtau.webp  bản đồ Merastis
-  map-hungyen.webp  bản đồ QL39A
-  qr-chu-re.svg     mã QR hiển thị trên trang (vẽ lại từ nội dung VietQR gốc, mức sửa lỗi H)
+  save-the-date.webp  ảnh lớn đầu tiên sau khi mở thiệp
+  story.webp          ảnh câu chuyện (khung ảnh sau đoạn ống kính)
+  story-hd.webp       bản nét của ảnh câu chuyện, dùng cho đoạn ống kính zoom vào mặt
+  dress.webp          ảnh phần gợi ý trang phục
+  ring-groom.webp     nhẫn chú rể / cô dâu (ảnh tách nền) — hiệu ứng "tơ hồng se duyên"
+  ring-bride.webp
+  book/               album dạng sách lật trang — xem mục dưới
+    cover.webp        bìa album
+    p01.webp … p10.webp   mỗi file là 1 trang đôi (ảnh nhẹ, hiện trong thiệp)
+    hd/p01.webp …     bản nét 2000px, chỉ tải khi khách bấm "Phóng to ảnh"
+  footer.webp         ảnh nền mờ ở chân trang
+  paper.webp, torn-edge.webp   nền giấy, mép giấy xé
+  map-vungtau.webp    bản đồ Merastis
+  map-hungyen.webp    bản đồ QL39A
+  qr-chu-re.svg       mã QR hiển thị trên trang (vẽ lại từ nội dung VietQR gốc, mức sửa lỗi H)
   qr-co-dau.svg
-  bank-acb.webp     logo ngân hàng trên thẻ QR
+  bank-acb.webp       logo ngân hàng trên thẻ QR
   bank-vcb.webp
-  qr-chu-re.png     bản PNG cho nút "Tải mã QR" (app ngân hàng đọc chắc chắn)
+  qr-chu-re.png       bản PNG gốc của ngân hàng cho nút "Tải mã QR"
   qr-co-dau.png
-  icon-gmaps.png    biểu tượng trên nút chỉ đường
+  icon-gmaps.png      biểu tượng trên nút chỉ đường
 ```
 
-## Thêm ảnh vào album
+## Thêm / đổi trang album
 
-Hai bước:
+Album là cuốn sách lật trang, mỗi trang là 1 ảnh trang đôi (ngang, tỉ lệ 4:3):
 
-1. Chép ảnh vào `images/album/`, đặt tên theo số thứ tự: `06.webp`, `07.webp`...
-2. Thêm tên file vào mảng `ALBUM_FILES` trong `index.html` (tìm dòng `var ALBUM_FILES`), đúng thứ tự muốn hiện:
+1. Ảnh nhẹ: rộng 1400px, WebP, chép vào `images/book/` (vd `p11.webp`).
+2. Ảnh nét: rộng 2000px, WebP, cùng tên, chép vào `images/book/hd/`.
+3. Thêm tên file vào mảng `BOOK_PAGES` trong `index.html`, đúng thứ tự muốn hiện:
 
 ```js
-var ALBUM_FILES = ['01.webp', '02.webp', '03.webp', '04.webp', '05.webp', '06.webp'];
+var BOOK_PAGES = ['p01.webp', 'p02.webp', /* … */ 'p11.webp'];
 ```
 
-Số đếm "01 / 06" tự cập nhật theo độ dài mảng.
-
-Vì sao phải khai báo: trước đây trang tự dò `01, 02, 03...` bằng cách tải thử từng ảnh một, nối đuôi nhau, nên mạng chậm là album hiện rất lâu. Khai báo sẵn thì cả album tải song song. (Để mảng rỗng `[]` thì trang quay về cách tự dò cũ.)
-
-Về dung lượng: ảnh album nên rộng khoảng 800–1000px, định dạng WebP, mỗi ảnh dưới ~110KB. Ảnh đầu tải ngay; các ảnh còn lại tải trước ngay sau khi trang tải xong phần đầu, nên lúc khách kéo tới album thì ảnh đã sẵn. Ảnh nào chưa tải xong sẽ hiện khung vàng có vệt sáng và vòng xoay.
+Số trang và trang cuối "Còn tiếp…" tự cập nhật theo độ dài mảng. Ảnh nét chỉ tải khi khách mở xem lớn (trang đang xem trước, rồi các trang kế bên), có vòng tải vàng nếu chậm.
