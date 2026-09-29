@@ -749,6 +749,12 @@
   .bk-hint{ font-size:11.5px; letter-spacing:.04em; color:var(--ink-soft); opacity:.8; transition:opacity .6s ease; }
   .bk-stage.bk-inline ~ .bk-ctl .bk-hint{ display:none; }     /* trong thiệp: không cần chữ hướng dẫn */
   .bk-hint.fade{ opacity:0; }
+  /* bàn tay mời lật: kéo từ mép phải sang trái, ăn khớp với nhịp trang tự nhấc (peek), 2 lần rồi thôi */
+  .bk-hand{ position:absolute; z-index:4; left:0; top:0; width:46px; height:46px; margin:-8px 0 0 -14px; pointer-events:none; opacity:0; color:var(--gold-line); filter:drop-shadow(0 2px 4px rgba(20,3,6,.55)); }
+  .bk-hand svg{ display:block; width:100%; height:100%; fill:#FFF8EA; stroke:currentColor; stroke-width:1.3; stroke-linecap:round; stroke-linejoin:round; }
+  .bk-hand.go{ animation:bkHand 1.35s ease-in-out 2; }
+  @keyframes bkHand{ 0%{ opacity:0; transform:translateX(6px) scale(1.12); } 18%{ opacity:1; transform:translateX(0) scale(1); } 55%{ opacity:1; transform:translateX(-70px) scale(1); } 76%,100%{ opacity:0; transform:translateX(-84px) scale(1); } }
+  @media (prefers-reduced-motion: reduce){ .bk-hand{ display:none; } }
   /* nút "Phóng to ảnh": cùng tone với < > (viền nâu vàng), nằm dưới hàng lật trang; ẩn khi đang xem lớn */
   .bk-ctl .bk-big{ display:inline-flex; align-items:center; gap:8px; width:auto; height:36px; padding:0 18px; white-space:nowrap; border-radius:18px; border:1px solid rgba(138,94,36,.5); background:transparent;
     color:#8A5E24; font-family:var(--sans); font-size:12.5px; letter-spacing:.08em; position:relative; transition:opacity .4s ease, background-color .2s ease; }
@@ -2566,13 +2572,23 @@
     big.addEventListener('click', function(){ openFull(); });
     /* mời lật: trang phải tự nhấc nhẹ lên rồi hạ xuống 2 lần (dừng ngay nếu khách đã chạm vào album) */
     var touched = false;
+    var hand = document.createElement('div'); hand.className = 'bk-hand'; hand.setAttribute('aria-hidden','true');
+    hand.innerHTML = '<svg viewBox="0 0 24 24"><path d="M9 11V5.5a1.5 1.5 0 0 1 3 0V11m0-1.5a1.5 1.5 0 0 1 3 0V11m0-.5a1.5 1.5 0 0 1 3 0v4.5a6 6 0 0 1-6 6h-.6a6 6 0 0 1-4.9-2.6L4.3 15.2a1.5 1.5 0 0 1 2.4-1.8L9 15"/></svg>';
+    stage.appendChild(hand);
+    function handOff(){ hand.classList.remove('go'); }
+    hand.addEventListener('animationend', handOff);
     function peek(){
       var n = 0;
-      (function once(){
-        if(touched || busy || mode !== 'inline' || cur !== 1 || n++ >= 2) return;
+      /* đặt tay ở khoảng 3/4 bề ngang, dưới giữa trang phải của cuốn album */
+      var b = book.getBoundingClientRect(), sr = stage.getBoundingClientRect();
+      hand.style.left = (b.left - sr.left + b.width * .8) + 'px'; hand.style.top = (b.top - sr.top + b.height * .6) + 'px';
+      if(!touched && mode === 'inline' && cur === 1){ handOff(); void hand.offsetWidth; hand.classList.add('go'); }
+      function once(){
+        if(touched || busy || mode !== 'inline' || cur !== 1 || n++ >= 2) return handOff();
         busy = true;
         tween(cur, 32, 480, function(){ tween(cur, 0, 420, function(){ busy = false; setTimeout(once, 450); }); });
-      })();
+      }
+      setTimeout(once, 240);   // tay hiện ra trước, trang nhấc lên đúng lúc tay bắt đầu kéo
     }
     function hintMode(){
       if(mode === 'inline') setHint('vuốt ngang để lật · chạm vào album để xem lớn', 'swipe to turn · tap the album to enlarge');
@@ -2595,7 +2611,7 @@
     }
     function openFull(){
       if(mode === 'full' || !manual) return;
-      mode = 'full'; stage = fullStage;
+      mode = 'full'; stage = fullStage; handOff();
       fullStage.appendChild(book); full.appendChild(ctl);
       full.classList.add('show'); document.documentElement.classList.add('no-scroll');
       layout(); rotNow = 0; place(1, 0); hintMode();
@@ -2629,8 +2645,8 @@
     }
     function next(){ if(zoomed()) resetZoom(250); if(!manual || busy || cur >= N) return; busy = true; tween(cur, 180, 800, function(){ cur++; busy = false; label(); }); }
     function prev(){ if(zoomed()) resetZoom(250); if(!manual || busy || cur <= 1) return; busy = true; cur--; tween(cur, 0, 750, function(){ busy = false; label(); }); }
-    btnNext.addEventListener('click', next);
-    btnPrev.addEventListener('click', prev);
+    btnNext.addEventListener('click', function(){ touched = true; handOff(); next(); });
+    btnPrev.addEventListener('click', function(){ touched = true; handOff(); prev(); });
     /* ---- phóng to khi xem lớn: chụm 2 ngón / chạm 2 lần / con lăn chuột ----
        Phóng cả lớp .bk-stage toàn màn hình (transform-origin 0 0: điểm màn hình = t + s × điểm gốc).
        Đang phóng to thì vuốt 1 ngón = kéo ảnh đi xem, không lật trang; thu về cỡ gốc thì vuốt lật như cũ. */
@@ -2685,7 +2701,7 @@
        Màn dọc (đã xoay): trang sau ở nửa dưới → vuốt LÊN để lật tới. Màn ngang: vuốt SANG TRÁI. */
     var drag = null;
     function onDown(e){
-      touched = true;
+      touched = true; handOff();
       if(mode === 'full'){
         pts[e.pointerId] = { x:e.clientX, y:e.clientY, id:e.pointerId };
         var n = ptList().length;
