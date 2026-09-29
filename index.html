@@ -3003,7 +3003,7 @@
       var d = portrait ? -dy : -dx, across = portrait ? dx : dy;
       if(!drag.dir){
         if(Math.abs(d) < 8) return;
-        if(Math.abs(across) > Math.abs(d)){ drag = null; return; }       // cử chỉ theo hướng kia → để trình duyệt cuộn
+        if(Math.abs(across) > Math.abs(d) && !axisH){ drag = null; return; }   // cử chỉ theo hướng kia → để trình duyệt cuộn
         drag.dir = d > 0 ? 1 : -1;
         drag.i = drag.dir > 0 ? (cur < N ? cur : -1) : (cur > 1 ? cur - 1 : -1);
         if(drag.i < 0){ drag = null; return; }
@@ -3070,6 +3070,18 @@
       s.addEventListener('pointerup', endDrag);
       s.addEventListener('pointercancel', endDrag);
     });
+    /* iPhone (Safari): album trong thiệp để pan-y nên vuốt ngang hơi chéo là cả trang cũng cuộn theo một chút.
+       Cử chỉ bắt đầu theo chiều ngang thì chặn cuộn trang tới khi nhấc tay; bắt đầu theo chiều dọc thì cuộn như thường */
+    var axisH = false, t0x = null;
+    inlineStage.addEventListener('touchstart', function(e){ var t = e.touches[0]; t0x = { x:t.clientX, y:t.clientY, dec:false }; axisH = false; }, { passive:true });
+    inlineStage.addEventListener('touchmove', function(e){
+      if(mode !== 'inline' || !t0x || e.touches.length > 1) return;
+      var t = e.touches[0], dx = t.clientX - t0x.x, dy = t.clientY - t0x.y;
+      if(!t0x.dec){ if(Math.abs(dx) + Math.abs(dy) < 5) return; t0x.dec = true; axisH = Math.abs(dx) > Math.abs(dy); }
+      if(axisH && e.cancelable) e.preventDefault();
+    }, { passive:false });
+    inlineStage.addEventListener('touchend', function(){ t0x = null; axisH = false; });
+    inlineStage.addEventListener('touchcancel', function(){ t0x = null; axisH = false; });
 
     layout();
     for(var z=0; z<N; z++) renderLeaf(z);
