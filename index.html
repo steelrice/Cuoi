@@ -970,6 +970,28 @@
   .gift-card{ flex:0 0 100%; scroll-snap-align:center; padding:0 2px; }
   .gift-inner{ background:#fff; border:1px solid rgba(207,159,63,.5); border-radius:2px; padding:var(--sp-4); text-align:center; box-shadow:0 12px 28px rgba(76,12,23,.08); }
   .gift-qr{ width:100%; height:auto; display:block; border-radius:2px; }
+  /* thẻ QR theo tone thiệp: mã vẽ lại nét (SVG, cùng nội dung VietQR gốc), khung trắng 4 góc vàng, dấu 囍 giữa mã
+     (mức sửa lỗi H nên che giữa vẫn quét được); thông tin tài khoản viết lại + nút sao chép số tài khoản */
+  .gift-inner{ background:#fffcf6; padding:var(--sp-6) var(--sp-5) var(--sp-5); }
+  .gq-frame{ position:relative; width:min(100%, 236px); margin:0 auto; padding:12px; background:#fff; border:1px solid rgba(169,127,46,.3); }
+  .gq-frame i{ position:absolute; width:16px; height:16px; border:0 solid var(--gold-line); }
+  .gq-frame i:nth-child(1){ top:-7px; left:-7px; border-top-width:1.5px; border-left-width:1.5px; }
+  .gq-frame i:nth-child(2){ top:-7px; right:-7px; border-top-width:1.5px; border-right-width:1.5px; }
+  .gq-frame i:nth-child(3){ bottom:-7px; left:-7px; border-bottom-width:1.5px; border-left-width:1.5px; }
+  .gq-frame i:nth-child(4){ bottom:-7px; right:-7px; border-bottom-width:1.5px; border-right-width:1.5px; }
+  .gq-seal{ position:absolute; left:50%; top:50%; width:36px; height:36px; margin:-18px 0 0 -18px; display:flex; align-items:center; justify-content:center; background:var(--red-mid); border-radius:5px; color:#e9c77e; font-size:20px; line-height:1;
+    box-shadow:0 0 0 3px #fff, inset 0 0 0 2px var(--red-mid), inset 0 0 0 3px rgba(233,199,126,.75); transform:rotate(-6deg); }
+  .gq-hint{ margin-top:var(--sp-5); font-family:var(--sans); font-size:10.5px; letter-spacing:.18em; text-transform:uppercase; color:var(--gold-line); }
+  .gq-info{ margin:var(--sp-3) 0 0; text-align:left; }
+  .gq-info > div{ display:flex; align-items:center; justify-content:space-between; gap:var(--sp-3); padding:11px 0; border-top:1px dashed rgba(169,127,46,.45); }
+  .gq-info dt{ flex:none; font-family:var(--sans); font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-soft); opacity:.8; }
+  .gq-info dd{ margin:0; display:flex; align-items:center; gap:10px; text-align:right; font-family:var(--serif); font-size:15px; color:var(--ink); }
+  .gq-logo{ height:24px; width:auto; mix-blend-mode:multiply; }   /* nền trắng của logo chìm vào nền kem */
+  .gq-logo[alt="Vietcombank"]{ height:30px; }
+  .gq-num{ font-variant-numeric:tabular-nums; letter-spacing:.06em; color:var(--red-deep); font-size:17px; }
+  .gq-copy{ flex:none; padding:4px 11px; border:1px solid rgba(169,127,46,.6); border-radius:14px; background:transparent; font-family:var(--sans); font-size:11px; letter-spacing:.04em; color:#8A5E24; transition:background .2s ease, color .2s ease; }
+  .gq-copy.ok{ background:var(--red-mid); border-color:var(--red-mid); color:var(--cream); }
+  .gift-inner .gift-dl{ margin-top:var(--sp-4); }
   .gift-dl{ display:flex; align-items:center; justify-content:center; gap:6px; width:100%; margin-top:calc(-1 * var(--sp-3)); background:transparent; border:none; padding:0; font-family:var(--sans); font-size:12px; letter-spacing:.03em; color:var(--gold-line); text-decoration:underline; text-underline-offset:3px; text-decoration-thickness:.5px; }
   .gift-dl svg{ width:13px; height:13px; flex:none; }
   .cal-add{ display:inline-flex; align-items:center; justify-content:center; gap:6px; font-family:var(--sans); font-size:13.5px; letter-spacing:.03em; color:var(--gold-line); text-decoration:underline; text-underline-offset:4px; text-decoration-thickness:.5px; }
@@ -1436,11 +1458,29 @@
         </div>
         <div class="gift-rail" id="giftRail">
           <div class="gift-card"><div class="gift-inner">
-            <img class="gift-qr" id="qrGroom" src="images/qr-chu-re.webp" alt="Mã QR chuyển khoản Đào Hoàng Sơn" loading="lazy" decoding="async">
+            <div class="gq-frame"><i></i><i></i><i></i><i></i>
+              <img class="gift-qr" src="images/qr-chu-re.svg" width="450" height="450" alt="Mã QR chuyển khoản Đào Hoàng Sơn" loading="lazy" decoding="async">
+              <span class="gq-seal" aria-hidden="true">囍</span>
+            </div>
+            <div class="gq-hint"><span data-vi>Quét mã bằng app ngân hàng bất kỳ</span><span data-en>Scan with any banking app</span></div>
+            <dl class="gq-info">
+              <div><dt><span data-vi>Ngân hàng</span><span data-en>Bank</span></dt><dd><img class="gq-logo" src="images/bank-acb.webp" width="180" height="80" alt="ACB"></dd></div>
+              <div><dt><span data-vi>Số tài khoản</span><span data-en>Account no.</span></dt><dd><span class="gq-num">333393936</span><button type="button" class="gq-copy" data-num="333393936"><span data-vi>Sao chép</span><span data-en>Copy</span></button></dd></div>
+              <div><dt><span data-vi>Chủ tài khoản</span><span data-en>Account name</span></dt><dd>DAO HOANG SON</dd></div>
+            </dl>
             <button type="button" class="gift-dl" data-file="qr-chu-re.png"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 19h16"/></svg><span data-vi>Tải mã QR</span><span data-en>Save QR code</span></button>
           </div></div>
           <div class="gift-card"><div class="gift-inner">
-            <img class="gift-qr" src="images/qr-co-dau.webp" alt="Mã QR chuyển khoản Phùng Nguyễn Phương Thảo" loading="lazy" decoding="async">
+            <div class="gq-frame"><i></i><i></i><i></i><i></i>
+              <img class="gift-qr" src="images/qr-co-dau.svg" width="450" height="450" alt="Mã QR chuyển khoản Phùng Nguyễn Phương Thảo" loading="lazy" decoding="async">
+              <span class="gq-seal" aria-hidden="true">囍</span>
+            </div>
+            <div class="gq-hint"><span data-vi>Quét mã bằng app ngân hàng bất kỳ</span><span data-en>Scan with any banking app</span></div>
+            <dl class="gq-info">
+              <div><dt><span data-vi>Ngân hàng</span><span data-en>Bank</span></dt><dd><img class="gq-logo" src="images/bank-vcb.webp" width="202" height="78" alt="Vietcombank"></dd></div>
+              <div><dt><span data-vi>Số tài khoản</span><span data-en>Account no.</span></dt><dd><span class="gq-num">9933417879</span><button type="button" class="gq-copy" data-num="9933417879"><span data-vi>Sao chép</span><span data-en>Copy</span></button></dd></div>
+              <div><dt><span data-vi>Chủ tài khoản</span><span data-en>Account name</span></dt><dd>PHUNG NGUYEN PHUONG THAO</dd></div>
+            </dl>
             <button type="button" class="gift-dl" data-file="qr-co-dau.png"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 3v12"/><path d="M7 10l5 5 5-5"/><path d="M4 19h16"/></svg><span data-vi>Tải mã QR</span><span data-en>Save QR code</span></button>
           </div></div>
         </div>
@@ -1591,6 +1631,26 @@
       document.body.appendChild(a);
       a.click();
       document.body.removeChild(a);
+    });
+  });
+
+  /* sao chép số tài khoản (dự phòng cho trình duyệt chặn clipboard: chọn sẵn chữ số để khách tự chép) */
+  document.querySelectorAll('.gq-copy').forEach(function(btn){
+    btn.addEventListener('click', function(){
+      var num = btn.getAttribute('data-num');
+      function ok(){
+        btn.classList.add('ok');
+        btn.innerHTML = '<span data-vi>Đã chép</span><span data-en>Copied</span>';
+        clearTimeout(btn._t);
+        btn._t = setTimeout(function(){ btn.classList.remove('ok'); btn.innerHTML = '<span data-vi>Sao chép</span><span data-en>Copy</span>'; }, 1800);
+      }
+      function pick(){
+        var el = btn.parentNode.querySelector('.gq-num'), r = document.createRange();
+        r.selectNodeContents(el); var sel = getSelection(); sel.removeAllRanges(); sel.addRange(r);
+        try{ if(document.execCommand('copy')){ ok(); } }catch(e){}
+      }
+      if(navigator.clipboard && navigator.clipboard.writeText) navigator.clipboard.writeText(num).then(ok, pick);
+      else pick();
     });
   });
 
