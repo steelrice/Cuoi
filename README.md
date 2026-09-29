@@ -23,6 +23,7 @@ Gắn vào sau đường dẫn để cá nhân hoá từng khách.
 | `genderEn` | `ge` | `m` hoặc `f` | *(trống)* | `m` → Mr., `f` → Ms., bỏ trống thì không có danh xưng |
 | `companionName` | `cn` | tên người đi cùng | *(trống)* | Hiện thành "… và …" |
 | `pronounHost` | `ph` | `chúng mình`, `tụi mình`, `em`, `cháu`… | `chúng mình` | Cách cô dâu chú rể tự xưng ở phần xe đưa đón |
+| `lang` | `l` | `vi` hoặc `en` | `vi` | Ngôn ngữ lúc mở thiệp. Khách vẫn đổi được bằng nút lá cờ ở bìa |
 
 Dùng tên viết tắt để link ngắn hơn (khuyên dùng khi tạo link mời hàng loạt); tên đầy đủ vẫn đọc được bình thường, không cần đổi các link cũ đã gửi.
 

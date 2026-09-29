@@ -2047,7 +2047,7 @@
   // Vẫn đọc được tên param đầy đủ nếu link cũ còn dùng dạng cũ.
   var SHORT_PARAM = {
     date:'d', guestName:'gn', pronounGuest:'pg', genderEn:'ge',
-    companionName:'cn', pronounHost:'ph'
+    companionName:'cn', pronounHost:'ph', lang:'l'
   };
   function getUrlParam(k){
     try{
@@ -2532,10 +2532,14 @@
     fitCoverStage();
     fitGuestName();
   });
+  /* ngôn ngữ lúc mở: ?lang=en (hoặc ?l=en) → tiếng Anh, không truyền / giá trị khác → tiếng Việt.
+     Vừa bấm "Xem lại thiệp mời" thì ưu tiên ngôn ngữ khách đang chọn trước khi tải lại */
+  var startLang = getUrlParam('lang').toLowerCase();
   try{
-    if(sessionStorage.getItem('restartLang') === 'en') langSwitch.click();
-    sessionStorage.removeItem('restartLang');
+    var saved = sessionStorage.getItem('restartLang');
+    if(saved){ startLang = saved; sessionStorage.removeItem('restartLang'); }
   }catch(_){}
+  if(startLang === 'en') langSwitch.click();
 
   var target = new Date(EV.target).getTime();
   function tick(){
