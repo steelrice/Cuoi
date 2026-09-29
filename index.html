@@ -785,7 +785,8 @@
   .bk-base-l{ position:absolute; top:0; bottom:0; left:0; width:var(--pw); border-radius:8px 0 0 8px; background:#4a0b17; box-shadow:0 18px 38px rgba(60,20,10,.35); opacity:0; }
   .bk-block{ position:absolute; top:5px; bottom:5px; left:50%; width:calc(var(--pw) - 7px); background:#efe6d4 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40'%3E%3Ctext x='20' y='27' font-size='15' text-anchor='middle' fill='%23b0894a' fill-opacity='.2' font-family='serif'%3E%E5%9B%8D%3C/text%3E%3C/svg%3E") 0 0/40px 40px;
     box-shadow:1px 0 0 #e2d7c1, 2px 0 0 #f3ebdc, 3px 0 0 #ddd0b8, 4px 0 0 #f1e8d8; }
-  .bk-leaf{ position:absolute; top:5px; bottom:5px; left:50%; width:calc(var(--pw) - 7px); transform-origin:0 50%; transform-style:preserve-3d; will-change:transform; }
+  .bk-leaf{ position:absolute; top:5px; bottom:5px; left:50%; width:calc(var(--pw) - 7px); transform-origin:0 50%; transform-style:preserve-3d; }
+  .bk-book.moving .bk-leaf{ will-change:transform; }   /* chỉ bật lúc đang lật; để yên thì bỏ, cho Safari vẽ lại chữ/ảnh cho nét */
   .bk-leaf.bk-cover{ top:0; bottom:0; width:var(--pw); }
   .bk-face{ position:absolute; inset:0; overflow:hidden; backface-visibility:hidden; -webkit-backface-visibility:hidden; background:#fff; }
   .bk-face.bk-back{ transform:rotateY(180deg); }
@@ -805,9 +806,9 @@
   .bk-cover .bk-back{ background:#4a0b17; border-radius:8px 0 0 8px; }
   .bk-cover .bk-back .bk-in{ position:absolute; top:5px; bottom:5px; left:7px; right:0; overflow:hidden; background:#fff; }
   .bk-cover .bk-back .bk-in img{ left:0; }
-  .bk-fin{ position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:0 var(--sp-4); background:#f7f1e6; }
-  .bk-fin .a{ font-family:var(--script); font-style:italic; font-size:20px; color:#8A5E24; }
-  .bk-fin .b{ font-family:var(--serif); font-size:15px; color:var(--red-deep); margin-top:6px; line-height:1.4; }
+  .bk-fin{ position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:0 6%; background:#f7f1e6; }   /* cỡ chữ theo bề rộng trang (--pw) → xem lớn hay trong thiệp đều ngắt dòng như nhau */
+  .bk-fin .a{ font-family:var(--script); font-style:italic; font-size:calc(var(--pw, 220px) * .091); color:#8A5E24; }
+  .bk-fin .b{ font-family:var(--serif); font-size:calc(var(--pw, 220px) * .068); color:var(--red-deep); margin-top:.4em; line-height:1.4; }
 
   #lightbox{ position:fixed; inset:0; background:rgba(12,2,4,.95); z-index:900; display:none; align-items:center; justify-content:center; padding:var(--sp-6); touch-action:none; overscroll-behavior:contain; }
   #lightbox.show{ display:flex; }
@@ -2739,6 +2740,23 @@
       leaves[i].lastChild.style.opacity = (lift * 0.8).toFixed(3);
       if(i === 0) baseL.style.opacity = a > 90 ? 1 : 0;
     }
+    /* Safari (iPhone) vẽ trang 3D một lần rồi giữ, nên sau khi phóng/xoay/lật chữ trên trang dễ bị mờ
+       (kéo nhẹ trang thì nét lại). Dừng hẳn rồi thì nhích 2 trang đang mở một góc rất nhỏ và trả về
+       ở khung hình sau → trình duyệt vẽ lại ở đúng cỡ đang hiển thị */
+    function sharpen(){
+      clearTimeout(sharpen.t);
+      sharpen.t = setTimeout(function(){
+        if(busy) return;
+        book.classList.remove('moving');
+        [cur - 1, cur].forEach(function(i){
+          if(i < 0 || i >= N) return;
+          var a = ang[i]; ang[i] = a + (a > 90 ? -0.2 : 0.2); renderLeaf(i); ang[i] = a;
+        });
+        requestAnimationFrame(function(){ requestAnimationFrame(function(){
+          [cur - 1, cur].forEach(function(i){ if(i >= 0 && i < N) renderLeaf(i); });
+        }); });
+      }, 160);
+    }
     function renderBook(rz, sc, open, y){
       // đóng: bìa (nửa phải) ở giữa màn hình → mở: cả trang đôi ở giữa → (màn dọc) xoay 90°
       book.style.transform = 'translate(' + (-(1-open) * sc * PW/2) + 'px,' + y + 'px) rotateZ(' + rz + 'deg) scale(' + sc + ')';
@@ -2790,7 +2808,7 @@
       (function step(now){
         apply(Math.min(1, (now - t0) / dur));
         if(st < 1) requestAnimationFrame(step);
-        else { manual = true; cur = 1; label(); ctl.classList.remove('off'); hintMode(); big.classList.add('ping'); setTimeout(peek, 700); }
+        else { manual = true; cur = 1; label(); ctl.classList.remove('off'); hintMode(); big.classList.add('ping'); sharpen(); setTimeout(peek, 700); }
       })(t0);
     }
     /* nút "Phóng to ảnh" dưới hàng lật trang */
@@ -2832,7 +2850,7 @@
       (function step(now){
         if(id !== rotAnim) return;
         var q = Math.min(1, (now - t0) / ms); rotNow = from + (to - from) * ease(q); place(1, rotNow);
-        if(q < 1) requestAnimationFrame(step); else hdSpin();
+        if(q < 1) requestAnimationFrame(step); else { hdSpin(); sharpen(); }
       })(t0);
     }
     function openFull(){
@@ -2842,7 +2860,7 @@
       full.classList.add('show'); document.documentElement.classList.add('no-scroll');
       layout(); rotNow = 0; place(1, 0); hintMode();
       if(rotFull) setTimeout(function(){ animRot(1, 650); }, 120);
-      hdPump(); if(!rotFull) hdSpin();
+      hdPump(); if(!rotFull){ hdSpin(); sharpen(); }
     }
     function closeFull(){
       if(mode !== 'full') return;
@@ -2850,7 +2868,7 @@
       rotAnim++; mode = 'inline'; stage = inlineStage;
       inlineStage.appendChild(book); sticky.appendChild(ctl);
       full.classList.remove('show'); document.documentElement.classList.remove('no-scroll');
-      layout(); rotNow = 0; place(1, 0); hintMode(); hdSpin();
+      layout(); rotNow = 0; place(1, 0); hintMode(); hdSpin(); sharpen();
     }
     full.querySelector('.bk-close').addEventListener('click', closeFull);
     document.addEventListener('keydown', function(e){
@@ -2863,10 +2881,11 @@
     /* ---- giai đoạn chạm/vuốt ---- */
     function tween(i, to, ms, done){
       var from = ang[i], t0 = performance.now();
+      book.classList.add('moving');
       (function step(now){
         var q = Math.min(1, (now - t0) / ms), e = q < .5 ? 4*q*q*q : 1 - Math.pow(-2*q + 2, 3) / 2;
         ang[i] = from + (to - from) * e; renderLeaf(i);
-        if(q < 1) requestAnimationFrame(step); else if(done) done();
+        if(q < 1) requestAnimationFrame(step); else { if(done) done(); sharpen(); }
       })(t0);
     }
     function next(){ if(zoomed()) resetZoom(250); if(!manual || busy || cur >= N) return; busy = true; tween(cur, 180, 800, function(){ cur++; busy = false; label(); }); }
@@ -2884,6 +2903,7 @@
       fullStage.style.transformOrigin = '0 0';
       fullStage.style.transform = zs > 1.001 ? 'translate(' + ztx + 'px,' + zty + 'px) scale(' + zs + ')' : '';
       if(spin.classList.contains('show')) hdSpin();
+      sharpen();                      // phóng/kéo xong (hết gọi ~160ms) thì vẽ lại trang ở cỡ mới cho nét
     }
     function zoomAt(to, cx, cy, ms, done){
       var s0 = zs, x0 = ztx, y0 = zty, px = (cx - x0) / s0, py = (cy - y0) / s0, t0 = performance.now(), id = ++zAnim;
