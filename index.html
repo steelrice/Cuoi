@@ -2138,9 +2138,16 @@
     var el = document.getElementById(id);
     if(el) el.innerHTML = '<span data-vi>' + vi + '</span><span data-en>' + en + '</span>';
   }
+  /* người đi cùng: chỉ viết thường chữ đầu khi là xưng hô / từ chung ("Anh Minh" → "anh Minh",
+     "Gia đình" → "gia đình"), còn lại giữ nguyên như trong link để tên riêng không bị viết thường ("Minh") */
+  var COMPANION_WORDS = ['anh','chị','em','bạn','vợ','chồng','con','cháu','cô','chú','bác','dì','cậu','mợ','thím','ông','bà','gia','người','nhà','các','cả','bé','hai','ba'];
+  function companionText(v){
+    v = v.trim(); var w = v.split(/\s+/)[0].toLowerCase();
+    return COMPANION_WORDS.indexOf(w) >= 0 ? v.charAt(0).toLowerCase() + v.slice(1) : v;
+  }
   function guestLine(lang){
     var name = getUrlParam('guestName') || '';
-    var companion = (getUrlParam('companionName') || '').toLowerCase();
+    var companion = companionText(getUrlParam('companionName') || '');
     if(!name) return (lang === 'en') ? 'Dear guest' : 'Quý khách';
     var nameEl = '<span class="pn">' + name + '</span>';
     var mainLine;
