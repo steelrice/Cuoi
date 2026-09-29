@@ -1001,6 +1001,15 @@
   .cal-add{ display:inline-flex; align-items:center; justify-content:center; gap:6px; font-family:var(--sans); font-size:13.5px; letter-spacing:.03em; color:var(--gold-line); text-decoration:underline; text-underline-offset:4px; text-decoration-thickness:.5px; }
   .cal-add svg{ width:16px; height:16px; flex:none; }
   .cal-add-wrap{ text-align:center; margin-top:var(--sp-5); }
+  /* cặp nhẫn (ảnh tách nền, 2 mảnh) — vị trí cuối: lệch chéo, nhẫn nữ đè lên nhẫn nam */
+  .rings{ margin:var(--sp-7) auto 0; text-align:center; }
+  .rg-stage{ position:relative; width:min(82vw, 320px); aspect-ratio:900/640; margin:0 auto; }
+  .rg-stage img{ position:absolute; height:auto; filter:drop-shadow(0 12px 12px rgba(60,30,10,.28)); }
+  .rg-groom{ width:49%; left:15.5%; top:26%; transform:rotate(9deg); }
+  .rg-bride{ width:45%; left:35.3%; top:49%; transform:rotate(-7deg); }
+  .rings.wait .rg-stage img{ opacity:0; }
+  .rings .rk{ margin-top:var(--sp-2); font-family:var(--script); font-style:italic; font-weight:500; font-size:25px; color:#8A5E24; }
+  .rings p{ margin:var(--sp-2) auto 0; max-width:280px; font-size:14px; line-height:1.65; color:var(--ink-soft); text-wrap:balance; }
   .rsvp-cal[hidden]{ display:none; }
   .rsvp-cal{ text-align:center; margin-top:calc(-1 * var(--sp-4)); }
 
@@ -1239,6 +1248,17 @@
         </div>
         <div class="cal-add-wrap"><a class="cal-add js-cal-add" href="#" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="1.5"/><path d="M3.5 10h17"/><path d="M8 3v4"/><path d="M16 3v4"/><path d="M12 13v5"/><path d="M9.5 15.5h5"/></svg><span data-vi>Lưu vào lịch</span><span data-en>Add to calendar</span></a></div>
       </div>
+      <!-- cặp nhẫn: cuộn tới thì 2 chiếc lần lượt rơi xuống, nghiêng nhẹ, nảy rồi nằm đè lên nhau -->
+      <figure class="rings" id="rings">
+        <div class="rg-stage" aria-hidden="true">
+          <img class="rg-groom" src="images/ring-groom.webp" width="442" height="199" alt="" loading="lazy" decoding="async">
+          <img class="rg-bride" src="images/ring-bride.webp" width="408" height="161" alt="" loading="lazy" decoding="async">
+        </div>
+        <figcaption>
+          <div class="rk"><span data-vi>Một lời hứa</span><span data-en>A promise</span></div>
+          <p><span data-vi>Hai chữ S·T khắc bên trong, cho những năm tháng về sau.</span><span data-en>S·T engraved on the inside, for all the years to come.</span></p>
+        </figcaption>
+      </figure>
     </div>
   </section>
 
@@ -1632,6 +1652,45 @@
       document.body.removeChild(a);
     });
   });
+
+  /* cặp nhẫn: cuộn tới thì nhẫn nam rồi nhẫn nữ rơi xuống (nghiêng nhẹ, nảy 2 nhịp), nhẫn nữ đè lên làm nhẫn nam lún nhẹ.
+     Chạy 1 lần. Máy giảm chuyển động / trình duyệt cũ: hiện sẵn tư thế cuối */
+  (function(){
+    var box = document.getElementById('rings');
+    if(!box || !box.animate || !('IntersectionObserver' in window) || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    var g = box.querySelector('.rg-groom'), b = box.querySelector('.rg-bride');
+    var sh0 = 'drop-shadow(0 30px 16px rgba(60,30,10,0))', sh1 = 'drop-shadow(0 12px 12px rgba(60,30,10,.28))';
+    var fall = 'cubic-bezier(.5,0,.9,.6)', out = 'cubic-bezier(.2,.6,.4,1)', up = 'cubic-bezier(.6,0,.8,.4)';
+    function T(y, r){ return 'translateY(' + y + '%) rotate(' + r + 'deg)'; }
+    function drop(el, from, to, dy, delay, pushed){
+      var s = to > 0 ? 1 : -1;
+      var k = [
+        { transform:T(dy, from), opacity:0, filter:sh0, offset:0, easing:fall },
+        { opacity:1, offset:.2, easing:fall },
+        { transform:T(0, to + 4 * s), filter:sh1, offset:.5, easing:out },
+        { transform:T(-10, to - 2 * s), offset:.66, easing:up },
+        { transform:T(0, to + 1.5 * s), offset:.8, easing:out }
+      ];
+      if(pushed) k.push({ transform:T(2.5, to + 2.5 * s), offset:.87, easing:out });   // nhẫn nữ vừa đè xuống
+      else k.push({ transform:T(-3.5, to), offset:.89, easing:up });
+      k.push({ transform:T(0, to), opacity:1, filter:sh1, offset:1 });
+      el.animate(k, { duration:1500, delay:delay, fill:'both' });
+    }
+    box.classList.add('wait');
+    var io = new IntersectionObserver(function(es){
+      if(!es[0].isIntersecting) return;
+      io.disconnect();
+      Promise.all([g, b].map(function(im){ return im.decode ? im.decode().catch(function(){}) : null; })).then(function(){
+        box.classList.remove('wait');
+        drop(g, -52, 9, -90, 0, true);
+        drop(b, 56, -7, -110, 450, false);   // chạm nền đúng lúc nhẫn nam ở nhịp .8
+      });
+    }, { threshold:0.6 });
+    // chỉ theo dõi SAU khi khách mở thiệp (trước đó nội dung còn ẩn, dễ bị tính là "đã hiện")
+    document.addEventListener('inviteopen', function(){
+      setTimeout(function(){ io.observe(box.querySelector('.rg-stage')); }, 600);
+    }, { once:true });
+  })();
 
   /* sao chép số tài khoản (dự phòng cho trình duyệt chặn clipboard: chọn sẵn chữ số để khách tự chép) */
   document.querySelectorAll('.gq-copy').forEach(function(btn){
