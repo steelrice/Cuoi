@@ -110,8 +110,10 @@ images/
   story.webp        ảnh phần lời tâm sự
   map-vungtau.webp  bản đồ Merastis
   map-hungyen.webp  bản đồ QL39A
-  qr-chu-re.webp    mã QR hiển thị trên trang
-  qr-co-dau.webp
+  qr-chu-re.svg     mã QR hiển thị trên trang (vẽ lại từ nội dung VietQR gốc, mức sửa lỗi H)
+  qr-co-dau.svg
+  bank-acb.webp     logo ngân hàng trên thẻ QR
+  bank-vcb.webp
   qr-chu-re.png     bản PNG cho nút "Tải mã QR" (app ngân hàng đọc chắc chắn)
   qr-co-dau.png
   icon-gmaps.png    biểu tượng trên nút chỉ đường
