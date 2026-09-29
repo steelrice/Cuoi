@@ -1001,13 +1001,27 @@
   .cal-add{ display:inline-flex; align-items:center; justify-content:center; gap:6px; font-family:var(--sans); font-size:13.5px; letter-spacing:.03em; color:var(--gold-line); text-decoration:underline; text-underline-offset:4px; text-decoration-thickness:.5px; }
   .cal-add svg{ width:16px; height:16px; flex:none; }
   .cal-add-wrap{ text-align:center; margin-top:var(--sp-5); }
-  /* cặp nhẫn (ảnh tách nền, 2 mảnh) — vị trí cuối: lệch chéo, nhẫn nữ đè lên nhẫn nam */
+  /* cặp nhẫn "tơ hồng se duyên" (chạy theo tay cuộn): chỉ đỏ luồn qua lòng 2 nhẫn, kéo 2 chiếc lại lồng lên nhau,
+     thắt nơ bên dưới, rồi ánh vàng lướt qua. Vị trí/xoay do JS đặt; không JS thì đứng yên ở tư thế cuối (CSS dưới) */
   .rings{ margin:var(--sp-7) auto 0; text-align:center; }
-  .rg-stage{ position:relative; width:min(82vw, 320px); aspect-ratio:900/640; margin:0 auto; }
-  .rg-stage img{ position:absolute; height:auto; filter:drop-shadow(0 12px 12px rgba(60,30,10,.28)); }
-  .rg-groom{ width:49%; left:15.5%; top:26%; transform:rotate(9deg); }
-  .rg-bride{ width:45%; left:35.3%; top:49%; transform:rotate(-7deg); }
-  .rings.wait .rg-stage img{ opacity:0; }
+  .rg-stage{ position:relative; width:min(92vw, 380px); aspect-ratio:100/66; margin:0 auto; }
+  .rg-thread{ position:absolute; inset:0; width:100%; height:100%; overflow:visible; pointer-events:none; }
+  .rg-thread path{ fill:none; stroke:#a3172a; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; }
+  .rg-thread .rg-line, .rg-thread .rg-bl, .rg-thread .rg-bt{ stroke-dasharray:1; }
+  .rg-thread .rg-knot{ fill:#a3172a; stroke:none; }
+  .rg-ring{ position:absolute; left:0; top:0; will-change:transform; }
+  .rg-ring img{ display:block; width:100%; height:auto; filter:drop-shadow(0 10px 10px rgba(60,30,10,.26)); }
+  .rg-groom{ width:40%; transform:translate(44%, 38%) rotate(9deg); }
+  .rg-bride{ width:37%; transform:translate(115%, 110%) rotate(-7deg); }
+  /* ánh vàng: dải sáng chạy ngang, chỉ hiện trong hình chiếc nhẫn (mask theo chính ảnh nhẫn) */
+  .rg-shine{ position:absolute; inset:0; pointer-events:none; opacity:0; mix-blend-mode:screen;
+    background:linear-gradient(105deg, transparent 38%, rgba(255,246,214,.95) 50%, transparent 62%) no-repeat; background-size:260% 100%; background-position:160% 0;
+    -webkit-mask:var(--m) center / 100% 100% no-repeat; mask:var(--m) center / 100% 100% no-repeat; }
+  .rg-groom .rg-shine{ --m:url(images/ring-groom.webp); }
+  .rg-bride .rg-shine{ --m:url(images/ring-bride.webp); }
+  .rings.glint .rg-shine{ animation:rgShine 1.3s ease-in-out forwards; }
+  .rings.glint .rg-bride .rg-shine{ animation-delay:.18s; }
+  @keyframes rgShine{ 0%{ opacity:1; background-position:160% 0; } 100%{ opacity:1; background-position:-60% 0; } }
   .rings .rk{ margin-top:var(--sp-2); font-family:var(--script); font-style:italic; font-weight:500; font-size:25px; color:#8A5E24; }
   .rings p{ margin:var(--sp-2) auto 0; max-width:280px; font-size:14px; line-height:1.65; color:var(--ink-soft); text-wrap:balance; }
   .rsvp-cal[hidden]{ display:none; }
@@ -1248,11 +1262,12 @@
         </div>
         <div class="cal-add-wrap"><a class="cal-add js-cal-add" href="#" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="1.5"/><path d="M3.5 10h17"/><path d="M8 3v4"/><path d="M16 3v4"/><path d="M12 13v5"/><path d="M9.5 15.5h5"/></svg><span data-vi>Lưu vào lịch</span><span data-en>Add to calendar</span></a></div>
       </div>
-      <!-- cặp nhẫn: cuộn tới thì 2 chiếc lần lượt rơi xuống, nghiêng nhẹ, nảy rồi nằm đè lên nhau -->
+      <!-- cặp nhẫn "tơ hồng se duyên": cuộn tới thì chỉ đỏ luồn qua 2 nhẫn, kéo lại lồng lên nhau, thắt nơ -->
       <figure class="rings" id="rings">
         <div class="rg-stage" aria-hidden="true">
-          <img class="rg-groom" src="images/ring-groom.webp" width="442" height="199" alt="" loading="lazy" decoding="async">
-          <img class="rg-bride" src="images/ring-bride.webp" width="408" height="161" alt="" loading="lazy" decoding="async">
+          <svg class="rg-thread"><path class="rg-line" pathLength="1" d=""/><g class="rg-bow"><path class="rg-bl" pathLength="1" d="M0 0C-6-11-22-15-23-5-24 4-10 5 0 0"/><path class="rg-bl" pathLength="1" d="M0 0C6-11 22-15 23-5 24 4 10 5 0 0"/><path class="rg-bt" pathLength="1" d="M0 0C-2 9-7 16-13 23"/><path class="rg-bt" pathLength="1" d="M0 0C2 9 8 15 14 22"/><circle class="rg-knot" r="2.6"/></g></svg>
+          <div class="rg-ring rg-groom"><img src="images/ring-groom.webp" width="442" height="199" alt="" loading="lazy" decoding="async"><i class="rg-shine"></i></div>
+          <div class="rg-ring rg-bride"><img src="images/ring-bride.webp" width="408" height="161" alt="" loading="lazy" decoding="async"><i class="rg-shine"></i></div>
         </div>
         <figcaption>
           <div class="rk"><span data-vi>Một lời hứa</span><span data-en>A promise</span></div>
@@ -1653,43 +1668,65 @@
     });
   });
 
-  /* cặp nhẫn: cuộn tới thì nhẫn nam rồi nhẫn nữ rơi xuống (nghiêng nhẹ, nảy 2 nhịp), nhẫn nữ đè lên làm nhẫn nam lún nhẹ.
-     Chạy 1 lần. Máy giảm chuyển động / trình duyệt cũ: hiện sẵn tư thế cuối */
+  /* cặp nhẫn "tơ hồng se duyên" — chạy theo tay cuộn (cuộn ngược thì tách ra lại):
+     chỉ đỏ vẽ dần, luồn qua lòng 2 nhẫn → căng lên kéo 2 nhẫn lại lồng lên nhau → thắt nơ bên dưới
+     → tới cuối thì ánh vàng lướt qua nhẫn (1 lần). Máy giảm chuyển động: đứng yên ở tư thế cuối */
   (function(){
     var box = document.getElementById('rings');
-    if(!box || !box.animate || !('IntersectionObserver' in window) || window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    if(!box) return;
+    var stage = box.querySelector('.rg-stage'), svg = box.querySelector('.rg-thread');
+    var line = box.querySelector('.rg-line'), bow = box.querySelector('.rg-bow');
     var g = box.querySelector('.rg-groom'), b = box.querySelector('.rg-bride');
-    var sh0 = 'drop-shadow(0 30px 16px rgba(60,30,10,0))', sh1 = 'drop-shadow(0 12px 12px rgba(60,30,10,.28))';
-    var fall = 'cubic-bezier(.5,0,.9,.6)', out = 'cubic-bezier(.2,.6,.4,1)', up = 'cubic-bezier(.6,0,.8,.4)';
-    function T(y, r){ return 'translateY(' + y + '%) rotate(' + r + 'deg)'; }
-    function drop(el, from, to, dy, delay, pushed){
-      var s = to > 0 ? 1 : -1;
-      var k = [
-        { transform:T(dy, from), opacity:0, filter:sh0, offset:0, easing:fall },
-        { opacity:1, offset:.2, easing:fall },
-        { transform:T(0, to + 4 * s), filter:sh1, offset:.5, easing:out },
-        { transform:T(-10, to - 2 * s), offset:.66, easing:up },
-        { transform:T(0, to + 1.5 * s), offset:.8, easing:out }
-      ];
-      if(pushed) k.push({ transform:T(2.5, to + 2.5 * s), offset:.87, easing:out });   // nhẫn nữ vừa đè xuống
-      else k.push({ transform:T(-3.5, to), offset:.89, easing:up });
-      k.push({ transform:T(0, to), opacity:1, filter:sh1, offset:1 });
-      el.animate(k, { duration:1500, delay:delay, fill:'both' });
+    var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    function clamp(v, a, c){ return Math.max(a, Math.min(c, v)); }
+    function remap(v, a, c){ return clamp((v - a) / (c - a), 0, 1); }
+    function ease(t){ return t * t * (3 - 2 * t); }
+    function mix(a, c, t){ return a + (c - a) * t; }
+    /* [tâm x, tâm y (theo W, H của khung), góc xoay, tỉ lệ] lúc đầu (xa nhau) và lúc cuối (lồng nhau) */
+    var G0 = [.19, .34, -10, .84], G1 = [.40, .33, 9, 1];
+    var B0 = [.81, .34, 12, .84],  B1 = [.585, .52, -7, 1];
+    var W = 0, H = 0, last = -1, ticking = false, opened = false, glinted = false;
+    function size(){ W = stage.clientWidth; H = stage.clientHeight; svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H); }
+    function place(el, wf, aspect, a, c, t){
+      var s = a.map(function(v, i){ return mix(v, c[i], t); });
+      var w = W * wf, h = w * aspect;
+      el.style.width = w + 'px';
+      el.style.transform = 'translate(' + (s[0] * W - w / 2) + 'px,' + (s[1] * H - h / 2) + 'px) rotate(' + s[2] + 'deg) scale(' + s[3] + ')';
+      return [s[0] * W, s[1] * H + h * .1 * s[3]];                       // lòng nhẫn (chỗ chỉ luồn qua)
     }
-    box.classList.add('wait');
-    var io = new IntersectionObserver(function(es){
-      if(!es[0].isIntersecting) return;
-      io.disconnect();
-      Promise.all([g, b].map(function(im){ return im.decode ? im.decode().catch(function(){}) : null; })).then(function(){
-        box.classList.remove('wait');
-        drop(g, -52, 9, -90, 0, true);
-        drop(b, 56, -7, -110, 450, false);   // chạm nền đúng lúc nhẫn nam ở nhịp .8
-      });
-    }, { threshold:0.6 });
-    // chỉ theo dõi SAU khi khách mở thiệp (trước đó nội dung còn ẩn, dễ bị tính là "đã hiện")
-    document.addEventListener('inviteopen', function(){
-      setTimeout(function(){ io.observe(box.querySelector('.rg-stage')); }, 600);
-    }, { once:true });
+    var loops = box.querySelectorAll('.rg-bl'), tails = box.querySelectorAll('.rg-bt'), knot = box.querySelector('.rg-knot');
+    /* 1 sợi chỉ luồn qua lòng 2 nhẫn, 2 đầu thả xuống dưới. Thắt nơ = 2 đầu tiến vào nhau và cuộn thành vòng nơ;
+       chỉ ngắn lại nên kéo 2 nhẫn sát vào nhau — cả 3 việc cùng lúc theo cùng 1 nhịp t */
+    function render(p){
+      var d = ease(remap(p, .02, .34)), t = ease(remap(p, .28, .95));
+      var A = place(g, .40, 199 / 442, G0, G1, t), B = place(b, .37, 161 / 408, B0, B1, t);
+      var K = [(A[0] + B[0]) / 2, Math.max(A[1], B[1]) + mix(.32, .24, t) * H];            // chỗ thắt nơ
+      var e = ease(remap(t, 0, .55));                                                          // 2 đầu chỉ gặp nhau trước rồi mới cuộn nơ
+      var L = [mix(A[0] - .05 * W, K[0], e), mix(A[1] + .42 * H, K[1], e)];                   // đầu chỉ trái
+      var R = [mix(B[0] + .05 * W, K[0], e), mix(B[1] + .42 * H, K[1], e)];                   // đầu chỉ phải
+      var sag = Math.max(A[1], B[1]) + mix(.1, .03, t) * H;
+      line.setAttribute('d',
+        'M' + L[0] + ' ' + L[1] + 'C' + L[0] + ' ' + (L[1] - .12 * H) + ' ' + A[0] + ' ' + (A[1] + .14 * H) + ' ' + A[0] + ' ' + A[1] +
+        'Q' + ((A[0] + B[0]) / 2) + ' ' + sag + ' ' + B[0] + ' ' + B[1] +
+        'C' + B[0] + ' ' + (B[1] + .14 * H) + ' ' + R[0] + ' ' + (R[1] - .12 * H) + ' ' + R[0] + ' ' + R[1]);
+      line.style.strokeDashoffset = String(1 - d);
+      var bl = ease(remap(t, .5, .9)), bt = ease(remap(t, .78, 1));                          // vòng nơ cuộn dần, đuôi nơ ra sau cùng
+      bow.setAttribute('transform', 'translate(' + K[0] + ' ' + K[1] + ')');
+      loops.forEach(function(el){ el.style.strokeDashoffset = String(1 - bl); });
+      tails.forEach(function(el){ el.style.strokeDashoffset = String(1 - bt); });
+      knot.style.opacity = String(ease(remap(t, .5, .7)));
+      if(p >= .995 && opened && !glinted && !reduce){ glinted = true; box.classList.add('glint'); }
+    }
+    function progress(){
+      var r = stage.getBoundingClientRect(), vh = window.innerHeight;
+      return clamp((vh * .92 - r.top) / (vh * .64), 0, 1);             // khung vào đáy màn hình → lên tới ~28% chiều cao
+    }
+    function update(){ ticking = false; var p = reduce ? 1 : progress(); if(p !== last){ last = p; render(p); } }
+    size(); render(reduce ? 1 : 0);
+    if(reduce) return;
+    window.addEventListener('scroll', function(){ if(!ticking){ ticking = true; requestAnimationFrame(update); } }, { passive:true });
+    window.addEventListener('resize', function(){ size(); last = -1; update(); });
+    document.addEventListener('inviteopen', function(){ opened = true; setTimeout(function(){ size(); last = -1; update(); }, 300); }, { once:true });
   })();
 
   /* sao chép số tài khoản (dự phòng cho trình duyệt chặn clipboard: chọn sẵn chữ số để khách tự chép) */
