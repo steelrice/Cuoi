@@ -219,6 +219,18 @@
   #musicToggle svg{ width:46px; height:46px; overflow:visible; transform-origin:50% 50%; }
   #musicToggle.is-on svg{ animation:discSpin 3.6s linear infinite; }
   #musicToggle.is-on{ animation:discRing 2.2s ease-out infinite; }
+  #musicHint{
+    position:fixed; top:calc(var(--sp-4) + 8px); left:calc(max(var(--sp-4), calc(50% - 260px + var(--sp-4))) + 54px); z-index:1500;
+    display:inline-flex; align-items:center; gap:6px; height:30px; padding:0 13px; border-radius:15px;
+    border:1px solid rgba(207,159,63,.55); background:rgba(60,8,16,.88); color:var(--cream);
+    font-family:var(--sans); font-size:12px; letter-spacing:.04em; white-space:nowrap; cursor:pointer;
+    box-shadow:0 6px 16px rgba(30,4,8,.25);
+    opacity:0; transform:translateX(-6px); pointer-events:none; transition:opacity .4s ease, transform .4s ease;
+  }
+  #musicHint span:first-child{ color:var(--gold); font-size:14px; }
+  #musicHint.show{ opacity:1; transform:none; pointer-events:auto; animation:hintPulse 2.4s ease-in-out .6s infinite; }
+  @keyframes hintPulse{ 0%,100%{ box-shadow:0 6px 16px rgba(30,4,8,.25), 0 0 0 0 rgba(207,159,63,.35); } 50%{ box-shadow:0 6px 16px rgba(30,4,8,.25), 0 0 0 6px rgba(207,159,63,0); } }
+  @media (prefers-reduced-motion: reduce){ #musicHint.show{ animation:none; } }
   #musicToggle .slash{ opacity:0; transition:opacity .2s ease; }
   #musicToggle:not(.is-on) .slash{ opacity:1; }
   @keyframes discSpin{ to{ transform:rotate(360deg); } }
@@ -1164,6 +1176,8 @@
     </g>
   </svg>
 </button>
+<!-- trình duyệt chặn nhạc (vd máy tính mở thiệp bằng lăn chuột — lăn chuột không tính là cử chỉ thật): gợi ý bấm để bật -->
+<button type="button" id="musicHint" aria-label="Bấm để bật nhạc nền"><span aria-hidden="true">♪</span><span data-vi>Bấm để bật nhạc</span><span data-en>Tap for music</span></button>
 
 <div id="app">
 
@@ -1296,7 +1310,7 @@
                 <div class="tl-dots"></div>
                 <div class="tl-time" id="tlTime1">10:00</div>
               </div>
-              <div class="tl-desc" id="tlDesc1"><span data-vi>Chụp vài tấm ở photobooth và để lại đôi dòng cảm nghĩ cho cô dâu chú rể nhé</span><span data-en>Take a few photos at the booth and leave us a note</span></div>
+              <div class="tl-desc" id="tlDesc1"><span data-vi>Chụp vài tấm hình và để lại đôi dòng cảm nghĩ cho cô dâu chú rể nhé</span><span data-en>Take a few photos and leave us a note</span></div>
             </div>
             <div class="tl-item">
               <div class="tl-row">
@@ -2232,7 +2246,7 @@
   if(EV.day === '28'){
     bi('tlDesc1', 'Cùng lưu lại vài khoảnh khắc kỷ niệm và gửi lời chúc đến cô dâu chú rể nhé', 'Capture a few memories with us and share your wishes for the couple');
   } else {
-    bi('tlDesc1', 'Chụp vài tấm ở photobooth và để lại đôi dòng cảm nghĩ cho cô dâu chú rể nhé', 'Take a few photos at the booth and leave us a note');
+    bi('tlDesc1', 'Chụp vài tấm hình và để lại đôi dòng cảm nghĩ cho cô dâu chú rể nhé', 'Take a few photos and leave us a note');
   }
   bi('dressLead', rsvpHostCap + ' sẽ rất vui nếu ' + rsvpGuestFullLower + ' diện trang phục hoà cùng tông màu của bữa tiệc', "We'd love it if your outfit echoed the palette of the evening");
   bi('rsvpLead', capFirst(rsvpGuestPronounOnly) + ' hồi âm đôi dòng để ' + rsvpHost + ' chuẩn bị được chu đáo hơn nhé.', 'A short reply helps us prepare for you.');
@@ -2259,6 +2273,8 @@
      thì mới tải + phát, tăng âm lượng dần */
   var bgMusic = document.getElementById('bgMusic');
   var musicToggle = document.getElementById('musicToggle');
+  var musicHint = document.getElementById('musicHint');
+  function showMusicHint(on){ if(musicHint) musicHint.classList.toggle('show', on); }
   var MUSIC_VOLUME = 0.6; // âm lượng vừa phải, khách muốn to hơn thì tự chỉnh volume điện thoại
   function setMusicUI(on){
     if(musicToggle){
@@ -2282,12 +2298,12 @@
     if(!bgMusic || (!bgMusic.muted && !bgMusic.paused)) return;
     bgMusic.muted = false;
     var afterPlay = function(){
-      fadeAudio(bgMusic, MUSIC_VOLUME, 3000); setMusicUI(true);
+      fadeAudio(bgMusic, MUSIC_VOLUME, 3000); setMusicUI(true); showMusicHint(false);
       // một số trình duyệt (Safari iPhone) không coi cú VUỐT là "chạm thật" → nhạc bị dừng lại; chờ lần chạm kế tiếp
-      setTimeout(function(){ if(bgMusic.paused || bgMusic.muted) armMusicRetry(); }, 500);
+      setTimeout(function(){ if(bgMusic.paused || bgMusic.muted){ setMusicUI(false); showMusicHint(true); armMusicRetry(); } }, 500);
     };
     if(bgMusic.paused){
-      bgMusic.play().then(afterPlay).catch(function(){ setMusicUI(false); armMusicRetry(); });
+      bgMusic.play().then(afterPlay).catch(function(){ setMusicUI(false); showMusicHint(true); armMusicRetry(); });
     } else {
       afterPlay();
     }
@@ -2298,16 +2314,18 @@
     bgMusic.muted = true;
     var pr = bgMusic.play(); if(pr && pr.catch) pr.catch(function(){});
   }
-  /* dự phòng: nếu chưa phát được thì lần chạm/bấm kế tiếp ở bất kỳ đâu sẽ bật nhạc (trừ nút nhạc — nút đó tự xử lý) */
-  var musicRetryArmed = false;
+  /* dự phòng: nếu chưa phát được thì lần chạm / nhấn chuột / gõ phím kế tiếp ở bất kỳ đâu sẽ bật nhạc
+     (lăn chuột không tính là cử chỉ thật nên không dùng được; trừ nút nhạc — nút đó tự xử lý) */
+  var musicRetryArmed = false, RETRY_EVENTS = ['touchend', 'pointerdown', 'click', 'keydown'];
   function armMusicRetry(){
     if(musicRetryArmed || !bgMusic) return; musicRetryArmed = true;
     var go = function(e){
-      if(musicToggle && e.target && musicToggle.contains(e.target)) return;
-      document.removeEventListener('touchend', go, true); document.removeEventListener('click', go, true);
+      if(musicToggle && e.target && e.target.nodeType === 1 && musicToggle.contains(e.target)) return;
+      if(e.type === 'keydown' && (e.key === 'Escape' || e.key === 'Tab')) return;
+      RETRY_EVENTS.forEach(function(n){ document.removeEventListener(n, go, true); });
       musicRetryArmed = false; revealMusic();
     };
-    document.addEventListener('touchend', go, true); document.addEventListener('click', go, true);
+    RETRY_EVENTS.forEach(function(n){ document.addEventListener(n, go, true); });
   }
   if(bgMusic){
     bgMusic.volume = 0;
@@ -2323,6 +2341,7 @@
       }
     });
   }
+  if(musicHint) musicHint.addEventListener('click', function(){ showMusicHint(false); revealMusic(); });
 
   /* rèm tự kéo hé: chờ font của bìa (Prata + Cormorant Garamond) tải xong rồi mới cho tên hiện
      dần (class .names-in) để chữ không đổi font giữa chừng; mạng chậm thì tối đa 1s là hiện luôn.
