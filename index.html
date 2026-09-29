@@ -1006,7 +1006,8 @@
   .rings{ margin:var(--sp-7) auto 0; text-align:center; }
   .rg-stage{ position:relative; width:min(92vw, 380px); aspect-ratio:100/66; margin:0 auto; }
   .rg-thread{ position:absolute; inset:0; width:100%; height:100%; overflow:visible; pointer-events:none; }
-  .rg-thread path{ fill:none; stroke:#a3172a; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; }
+  .rg-thread path{ fill:none; stroke:#a3172a; stroke-width:2.3; stroke-linecap:round; stroke-linejoin:round; }
+  .rg-thread .rg-bow path{ stroke-width:1.7; }   /* nơ được phóng 1,35 lần → nét ~2,3 như sợi chỉ */
   .rg-thread .rg-line, .rg-thread .rg-bl, .rg-thread .rg-bt{ stroke-dasharray:1; }
   .rg-thread .rg-knot{ fill:#a3172a; stroke:none; }
   .rg-ring{ position:absolute; left:0; top:0; will-change:transform; }
@@ -1668,9 +1669,9 @@
     });
   });
 
-  /* cặp nhẫn "tơ hồng se duyên" — chạy theo tay cuộn (cuộn ngược thì tách ra lại):
-     chỉ đỏ vẽ dần, luồn qua lòng 2 nhẫn → căng lên kéo 2 nhẫn lại lồng lên nhau → thắt nơ bên dưới
-     → tới cuối thì ánh vàng lướt qua nhẫn (1 lần). Máy giảm chuyển động: đứng yên ở tư thế cuối */
+  /* cặp nhẫn "tơ hồng se duyên" — cuộn tới (≥55% khung hiện ra, sau khi mở thiệp) thì tự chạy 1 mạch ~3,4s:
+     chỉ đỏ vẽ dần, luồn qua lòng 2 nhẫn → 2 đầu chỉ thắt nơ, kéo 2 nhẫn lại lồng lên nhau
+     → ánh vàng lướt qua nhẫn. Chạy 1 lần. Máy giảm chuyển động: đứng yên ở tư thế cuối */
   (function(){
     var box = document.getElementById('rings');
     if(!box) return;
@@ -1685,7 +1686,7 @@
     /* [tâm x, tâm y (theo W, H của khung), góc xoay, tỉ lệ] lúc đầu (xa nhau) và lúc cuối (lồng nhau) */
     var G0 = [.19, .34, -10, .84], G1 = [.40, .33, 9, 1];
     var B0 = [.81, .34, 12, .84],  B1 = [.585, .52, -7, 1];
-    var W = 0, H = 0, last = -1, ticking = false, opened = false, glinted = false;
+    var W = 0, H = 0, last = 0, glinted = false;
     function size(){ W = stage.clientWidth; H = stage.clientHeight; svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H); }
     function place(el, wf, aspect, a, c, t){
       var s = a.map(function(v, i){ return mix(v, c[i], t); });
@@ -1711,22 +1712,28 @@
         'C' + B[0] + ' ' + (B[1] + .14 * H) + ' ' + R[0] + ' ' + (R[1] - .12 * H) + ' ' + R[0] + ' ' + R[1]);
       line.style.strokeDashoffset = String(1 - d);
       var bl = ease(remap(t, .5, .9)), bt = ease(remap(t, .78, 1));                          // vòng nơ cuộn dần, đuôi nơ ra sau cùng
-      bow.setAttribute('transform', 'translate(' + K[0] + ' ' + K[1] + ')');
-      loops.forEach(function(el){ el.style.strokeDashoffset = String(1 - bl); });
-      tails.forEach(function(el){ el.style.strokeDashoffset = String(1 - bt); });
+      bow.setAttribute('transform', 'translate(' + K[0] + ' ' + K[1] + ') scale(1.35)');
+      loops.forEach(function(el){ el.style.strokeDashoffset = String(1 - bl); el.style.opacity = bl > .01 ? '1' : '0'; });   // ẩn hẳn khi chưa vẽ (đầu nét tròn vẫn để lại 1 chấm)
+      tails.forEach(function(el){ el.style.strokeDashoffset = String(1 - bt); el.style.opacity = bt > .01 ? '1' : '0'; });
       knot.style.opacity = String(ease(remap(t, .5, .7)));
-      if(p >= .995 && opened && !glinted && !reduce){ glinted = true; box.classList.add('glint'); }
+      if(p >= 1 && !glinted && !reduce){ glinted = true; box.classList.add('glint'); }
     }
-    function progress(){
-      var r = stage.getBoundingClientRect(), vh = window.innerHeight;
-      return clamp((vh * .92 - r.top) / (vh * .64), 0, 1);             // khung vào đáy màn hình → lên tới ~28% chiều cao
+    function play(){
+      var t0 = performance.now(), DUR = 3400;
+      (function step(now){
+        last = Math.min(1, (now - t0) / DUR); render(last);
+        if(last < 1) requestAnimationFrame(step);
+      })(t0);
     }
-    function update(){ ticking = false; var p = reduce ? 1 : progress(); if(p !== last){ last = p; render(p); } }
     size(); render(reduce ? 1 : 0);
-    if(reduce) return;
-    window.addEventListener('scroll', function(){ if(!ticking){ ticking = true; requestAnimationFrame(update); } }, { passive:true });
-    window.addEventListener('resize', function(){ size(); last = -1; update(); });
-    document.addEventListener('inviteopen', function(){ opened = true; setTimeout(function(){ size(); last = -1; update(); }, 300); }, { once:true });
+    window.addEventListener('resize', function(){ size(); render(reduce ? 1 : last); });
+    if(reduce || !('IntersectionObserver' in window)){ render(1); return; }
+    var io = new IntersectionObserver(function(es){
+      if(es[0].intersectionRatio < .55) return;
+      io.disconnect(); play();
+    }, { threshold:[0, .55, 1] });
+    // chỉ theo dõi SAU khi khách mở thiệp (trước đó nội dung còn ẩn, dễ bị tính là "đã hiện")
+    document.addEventListener('inviteopen', function(){ setTimeout(function(){ size(); render(0); io.observe(stage); }, 600); }, { once:true });
   })();
 
   /* sao chép số tài khoản (dự phòng cho trình duyệt chặn clipboard: chọn sẵn chữ số để khách tự chép) */
