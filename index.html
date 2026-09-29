@@ -1042,12 +1042,12 @@
   .rsvp-cal{ text-align:center; margin-top:calc(-1 * var(--sp-4)); }
 
   /* ---------- footer ---------- */
-  .footer{ position:relative; isolation:isolate; overflow:hidden; background:var(--red-deep); color:var(--cream); text-align:center; padding:var(--sp-9) var(--sp-6) var(--sp-7); }
+  .footer{ position:relative; isolation:isolate; overflow:hidden; background:#2a1a12; color:var(--cream); text-align:center; padding:var(--sp-9) var(--sp-6) var(--sp-7); }
   /* ảnh cưới mờ phía sau (images/footer.webp), phủ đỏ đậm để chữ vẫn rõ; mép trên đỏ đặc để nối liền phần trên */
   .footer::before{ content:''; position:absolute; inset:-8px; z-index:-2; background:var(--red-deep) center 42%/cover no-repeat; filter:blur(3px) saturate(.75); }
   /* ảnh nền footer chỉ tải khi khách cuộn gần tới (class .bg-in, xem script) để không giành băng thông lúc đầu */
   .footer.bg-in::before{ background-image:url(images/footer.webp); }
-  .footer::after{ content:''; position:absolute; inset:0; z-index:-1; background:linear-gradient(to bottom, var(--red-deep) 0%, rgba(76,12,23,.66) 40%, rgba(76,12,23,.78) 100%); }
+  .footer::after{ content:''; position:absolute; inset:0; z-index:-1; background:linear-gradient(to bottom, #2a1a12 0%, rgba(42,26,18,.62) 40%, rgba(42,26,18,.8) 100%); }  /* nâu espresso */
   .footer .rule{ width:44px; height:1px; background:rgba(207,159,63,.65); margin:var(--sp-4) auto 0; }
   .footer .mono{ width:84px; margin:0 auto; color:var(--gold); }
   .footer .mono svg{ display:block; width:100%; height:auto; overflow:visible; }
