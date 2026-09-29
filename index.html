@@ -2075,11 +2075,12 @@
   // Chỉ riêng xưng hô (không kèm tên) — dùng ở những chỗ khách "tự xưng" qua nút bấm, hoặc câu chào ngắn
   var guestPronounOnly = getUrlParam('pronounGuest') || 'bạn';
 
-  // Khách xưng hô "Em" hoặc "Bạn" (pronounGuest=Em|Bạn): gọi đúng tên khách (không kèm
-  // xưng hô phía trước) ở các chỗ RSVP/gợi ý trang phục/lời cảm ơn. pronounHost luôn viết
+  // Khách xưng hô "Em" hoặc "Bạn" (pronounGuest=Em|Bạn), hoặc có tên mà không truyền xưng hô
+  // (tên đã gồm cách gọi, vd guestName=Chế lớn): gọi đúng tên khách (không kèm xưng hô phía
+  // trước) ở các chỗ RSVP/gợi ý trang phục/lời cảm ơn. pronounHost luôn viết
   // thường (hostPronounLower/hostPronounCap) ở mọi trường hợp.
   var pronounGuestLower = (getUrlParam('pronounGuest') || '').trim().toLowerCase();
-  var isEmGuest = pronounGuestLower === 'em' || pronounGuestLower === 'bạn';
+  var isEmGuest = pronounGuestLower === 'em' || pronounGuestLower === 'bạn' || (!pronounGuestLower && hasGuestName);
   var rsvpHost = hostPronounLower;
   var rsvpHostCap = hostPronounCap;
   var rsvpGuestFull = isEmGuest ? guestNameRaw : guestFull;
