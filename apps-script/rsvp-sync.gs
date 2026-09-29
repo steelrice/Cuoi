@@ -107,7 +107,7 @@ function findGuestRow(sheet, pronounGuest, guestName, date) {
 
 function buildNotes(pickup, formName, guestName) {
   var parts = [];
-  if (pickup) parts.push('Điểm đón: ' + pickup);
+  if (pickup) parts.push('Ghi chú đưa đón: ' + pickup);
   if (formName && formName !== guestName) parts.push('Tên tự gõ trong form: ' + formName);
   return parts.join(' · ');
 }

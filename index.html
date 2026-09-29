@@ -906,7 +906,10 @@
   .rsvp-form .attend-toggle.sec::before{ transform:translateX(100%); }
   .rsvp-form .attend-toggle button, .rsvp-form .attend-toggle button.active{ position:relative; z-index:1; border:0; background:transparent; padding:12px 6px; transition:color .3s ease; }
   .rsvp-form .attend-toggle button.active{ color:var(--cream); font-weight:500; }
-  .rsvp-form .rsvp-submit{ margin-top:var(--sp-3); }
+  .rsvp-form .rsvp-submit{ margin-top:var(--sp-3); display:flex; align-items:center; justify-content:center; gap:10px; }
+  .rsvp-form.sending > :not(.rsvp-submit):not(.rsvp-note){ opacity:.5; transition:opacity .3s ease; }
+  .rsvp-form.sending .rsvp-submit{ opacity:.9; cursor:progress; }
+  .rs-spin{ width:13px; height:13px; border-radius:50%; border:1.5px solid rgba(253,248,239,.35); border-top-color:var(--cream); animation:bkSpin .8s linear infinite; }
   .rsvp-form .rsvp-note{ margin-top:var(--sp-3); line-height:1.55; }
   .rsvp-form .rsvp-cal{ margin-top:var(--sp-2); }
   /* gửi xong: form thu lại, con dấu 囍 lớn dập vào giữa thẻ + lời cảm ơn; "Sửa hồi âm" mở lại form */
@@ -1401,17 +1404,12 @@
             </div>
           </div>
           <div class="collapse" id="pickupBlock">
-            <!-- TODO (xem README, mục "Điểm đón"): các option bên dưới còn là dữ liệu giả (Điểm A/B/C).
-                 Bắt buộc phải thay bằng tên/địa chỉ điểm đón thật trước khi gửi thiệp cho khách. -->
+            <!-- Ghi chú đưa đón: khách tự ghi nơi ở / giờ muốn đón, cô dâu chú rể liên hệ lại để hẹn điểm đón.
+                 Vẫn gửi lên Apps Script dưới tên trường "pickup" -->
             <div class="field" style="margin-top:var(--sp-5)">
-              <label><span data-vi>Điểm đón</span><span data-en>Pickup point</span></label>
-              <select id="rsvpPickup">
-                <option value="" data-vi="— Chọn điểm đón —" data-en="— Select pickup point —">— Chọn điểm đón —</option>
-                <option value="Điểm A" data-vi="Điểm A" data-en="Point A">Điểm A</option>
-                <option value="Điểm B" data-vi="Điểm B" data-en="Point B">Điểm B</option>
-                <option value="Điểm C" data-vi="Điểm C" data-en="Point C">Điểm C</option>
-                <option value="Khác" data-vi="Điểm khác" data-en="Other">Điểm khác</option>
-              </select>
+              <label for="rsvpPickup"><span data-vi>Ghi chú</span><span data-en>Notes</span></label>
+              <textarea id="rsvpPickup" rows="2" maxlength="300"></textarea>
+              <div class="field-hint" id="pickupHint"></div>
             </div>
             <div class="field" style="margin-top:var(--sp-5)">
               <label><span data-vi>Số điện thoại</span><span data-en>Phone number</span></label>
@@ -2328,16 +2326,16 @@
     document.addEventListener('keydown', function(e){ if(canSwipe() && (e.key === 'ArrowDown' || e.key === ' ' || e.key === 'PageDown')) openInvite(); });
   })();
 
-  // <option> không nhận span data-vi/data-en như chữ thường, nên đổi chữ theo ngôn ngữ
-  // qua thuộc tính data-vi/data-en gắn sẵn trên từng option
-  function syncSelectLang(lang){
-    var pickupEl = document.getElementById('rsvpPickup');
-    if(!pickupEl) return;
-    Array.prototype.forEach.call(pickupEl.options, function(opt){
-      var text = opt.getAttribute(lang === 'en' ? 'data-en' : 'data-vi');
-      if(text) opt.textContent = text;
-    });
+
+  /* gợi ý cho ô Ghi chú đưa đón (placeholder không nhận span data-vi/data-en nên đổi theo ngôn ngữ ở đây) */
+  function syncPickupHint(en){
+    var ta = document.getElementById('rsvpPickup'), h = document.getElementById('pickupHint');
+    if(!ta || !h) return;
+    ta.placeholder = en ? 'E.g. where you are staying, what time suits you…' : 'VD: nơi ở, giờ muốn được đón…';
+    h.textContent = en ? "We'll get in touch to arrange the pickup point."
+      : rsvpHostCap + ' sẽ liên hệ lại để hẹn điểm đón với ' + rsvpGuestPronounOnly + ' nhé.';
   }
+  syncPickupHint(document.body.classList.contains('lang-en'));
 
   langSwitch.addEventListener('click', function(){
     var toEn = !langSwitch.classList.contains('is-en');
@@ -2345,7 +2343,7 @@
     langSwitch.setAttribute('aria-pressed', toEn ? 'true' : 'false');
     document.body.classList.toggle('lang-en', toEn);
     document.documentElement.lang = toEn ? 'en' : 'vi';
-    syncSelectLang(toEn ? 'en' : 'vi');
+    syncPickupHint(toEn);
     fitGuestName();
     fitCoverStage();
     fitGuestName();
@@ -2996,8 +2994,19 @@
     a.href = calHref();
   });
 
+  /* đang gửi: khoá cả form (không sửa, không bấm gửi lần 2) cho tới khi có kết quả */
+  function lockRsvp(form, on){
+    form.classList.toggle('sending', on);
+    form.setAttribute('aria-busy', on ? 'true' : 'false');
+    form.querySelectorAll('input, select, textarea, button').forEach(function(el){ el.disabled = on; });
+    var btn = form.querySelector('.rsvp-submit');
+    if(on){ btn._html = btn.innerHTML; btn.innerHTML = '<i class="rs-spin" aria-hidden="true"></i><span data-vi>Đang gửi…</span><span data-en>Sending…</span>'; }
+    else if(btn._html){ btn.innerHTML = btn._html; }
+  }
   document.getElementById('rsvpForm').addEventListener('submit', async function(e){
     e.preventDefault();
+    var form = e.currentTarget;
+    if(form.classList.contains('sending')) return;
     var note = document.getElementById('rsvpNote');
     var phoneEl = document.getElementById('rsvpPhone');
     var phone = phoneEl ? phoneEl.value.trim() : '';
@@ -3043,7 +3052,8 @@
     }
     var wasAttending = attendVal === 'yes';
     if(rsvpCal) rsvpCal.hidden = true;
-    note.textContent = isEn() ? 'Sending…' : 'Đang gửi…';
+    note.textContent = '';
+    lockRsvp(form, true);
     try{
       if(!rsvpConfigured()){
         console.warn('APPS_SCRIPT_URL chưa được điền — hồi âm này không gửi tới đâu cả. Xem README, mục "Nối hồi âm vào Google Sheet".');
@@ -3059,7 +3069,9 @@
       if(moveBtns[0]) moveBtns[0].parentNode.classList.remove('sec');
       syncMove();
     }catch(err){
-      note.textContent = isEn() ? 'Could not send right now.' : 'Chưa gửi được lúc này.';
+      note.textContent = isEn() ? 'Could not send right now. Please try again.' : 'Chưa gửi được lúc này, bạn thử gửi lại nhé.';
+    }finally{
+      lockRsvp(form, false);
     }
   });
   document.getElementById('rdEdit').addEventListener('click', function(){

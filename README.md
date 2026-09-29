@@ -49,7 +49,7 @@ Lưu ý: dấu cách trong tham số phải viết thành `%20`.
 | Địa điểm | Sảnh 2 Merastis Tower | Tư gia nhà trai, QL39A |
 | Xe đưa đón | Có | Không |
 
-Phần hỏi cách di chuyển, điểm đón và số điện thoại chỉ hiện với `date=21`.
+Phần hỏi cách di chuyển, ghi chú đưa đón và số điện thoại chỉ hiện với `date=21`.
 
 ## Sửa nội dung
 
@@ -57,14 +57,14 @@ Toàn bộ nằm trong `index.html`. Vài mốc để tìm nhanh:
 
 - **Nội dung hai ngày**: tìm `var EVENTS` — chứa toàn bộ chữ nghĩa, giờ giấc, đường dẫn bản đồ của cả hai lễ
 - **Khung giờ**: tìm `TIMELINE` — hiện đang cố định, chưa đổi theo ngày
-- **Điểm đón**: tìm `rsvpPickup` — hiện là Điểm A, B, C (đánh dấu `TODO` ngay phía trên trong HTML), **bắt buộc thay bằng tên/địa chỉ điểm đón thật trước khi gửi thiệp cho khách**
+- **Ghi chú đưa đón**: tìm `rsvpPickup` — ô ghi chú tự do (hiện khi khách chọn xe đưa đón), cô dâu chú rể liên hệ lại để hẹn điểm đón. Vẫn gửi lên Apps Script dưới tên trường `pickup`
 - **Màu sắc và phông chữ**: tìm `:root` ở đầu phần `<style>`
 
 ## Việc còn tồn
 
 - [x] ~~Khung giờ chưa đổi theo ngày, và giờ lễ (11:00) đang vênh với giờ ghi ở đầu thiệp (10 giờ 30)~~ — nay tự tính từ `EVENTS[...].target` theo từng ngày.
 - [ ] **Phần hồi âm chưa thật sự gửi đi đâu.** Code đã đấu nối sẵn để ghi thẳng vào sheet "Danh sách khách mời" qua Google Apps Script (xem mục "Nối hồi âm vào Google Sheet" bên dưới), nhưng `APPS_SCRIPT_URL` còn để trống — **bắt buộc triển khai Apps Script rồi điền link Web App thật trước khi gửi thiệp cho khách**, nếu không hồi âm sẽ không tới tay ai cả.
-- [ ] Điểm đón còn là Điểm A, B, C — có đánh dấu `TODO` trong `index.html`, cần thay bằng địa điểm thật.
+- [x] ~~Điểm đón còn là Điểm A, B, C~~ — nay là ô ghi chú tự do, cô dâu chú rể liên hệ lại để hẹn điểm đón.
 - [x] ~~Chưa có file nhạc nền thật~~ — đã có `audio/bg-music.mp3` (nén còn ~2.7MB, 128kbps để tải nhanh). `preload="auto"` để trình duyệt tải sẵn ngay khi vào trang, tránh khựng lúc bấm mở thiệp.
 
 ## Câu hỏi mở — cần bàn thêm
