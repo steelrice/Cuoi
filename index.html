@@ -2437,7 +2437,13 @@
       : (en ? 'View the invitation again' : 'Xem lại thiệp mời'));
   }
   reviewToggle.addEventListener('click', function(){ setReview(!cover.classList.contains('review')); });
-  document.getElementById('reviewLink').addEventListener('click', function(){ setReview(true); });
+  /* link "Xem lại thiệp mời" ở chân trang: tải lại trang cho mọi thứ chạy lại từ đầu như lúc mới mở link
+     (giữ ngôn ngữ khách đang chọn — ghi tạm vào sessionStorage, đọc lại ở dưới) */
+  document.getElementById('reviewLink').addEventListener('click', function(){
+    try{ sessionStorage.setItem('restartLang', document.body.classList.contains('lang-en') ? 'en' : 'vi'); }catch(_){}
+    window.scrollTo(0, 0);
+    location.reload();
+  });
   document.addEventListener('keydown', function(e){ if(e.key === 'Escape' && cover.classList.contains('review')) setReview(false); });
 
   function openInvite(){
@@ -2526,6 +2532,10 @@
     fitCoverStage();
     fitGuestName();
   });
+  try{
+    if(sessionStorage.getItem('restartLang') === 'en') langSwitch.click();
+    sessionStorage.removeItem('restartLang');
+  }catch(_){}
 
   var target = new Date(EV.target).getTime();
   function tick(){
