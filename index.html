@@ -1305,7 +1305,7 @@
               <div class="tl-row">
                 <div class="tl-name"><span data-vi>Đón khách</span><span data-en>Guests arrive</span></div>
                 <div class="tl-dots"></div>
-                <div class="tl-time" id="tlTime1">11:00</div>
+                <div class="tl-time" id="tlTime1">10:30</div>
               </div>
               <div class="tl-desc" id="tlDesc1"><span data-vi>Chụp vài tấm hình và để lại đôi dòng cảm nghĩ cho cô dâu chú rể nhé</span><span data-en>Take a few photos and leave us a note</span></div>
             </div>
@@ -2104,6 +2104,7 @@
     '21': {
       day:'21', maps:'https://maps.app.goo.gl/tdT1LGaSET7pAMx68', shuttle:true,
       target:'2026-11-21T11:30:00+07:00',
+      tl:[-60, 0, 30],   // đón khách sớm 1 tiếng (350 khách chụp hình) · 11:30 làm lễ · 12:00 khai tiệc
       vi:{ title:'TIỆC CHUNG VUI', time:'Được tổ chức vào lúc ', hi:'11 giờ 30 trưa, Thứ Bảy',
            lunar:'Tức ngày 13 tháng 10', yearLunar:'Năm Bính Ngọ',
            venue:'TẠI SẢNH 2 MERASTIS TOWER', addr:'356 - 358 Trương Công Định, Tam Thắng, TP. Vũng Tàu',
@@ -2236,17 +2237,19 @@
     bi('thanks',    v.thanks, e.thanks);
     bi('credit',    v.credit, e.credit);
 
-    // Khung giờ timeline: suy ra từ giờ chính (EV.target) ± 30 phút, giờ hiển thị theo múi giờ Việt Nam
+    // Khung giờ timeline: suy ra từ giờ chính (EV.target) + độ lệch từng mốc (EV.tl, mặc định -30/0/+30 phút), giờ Việt Nam
     function fmtTime(offsetMin){
       var d = new Date(new Date(EV.target).getTime() + offsetMin * 60000);
       return d.toLocaleTimeString('en-GB', { hour:'2-digit', minute:'2-digit', hour12:false, timeZone:'Asia/Ho_Chi_Minh' });
     }
-    var t1 = document.getElementById('tlTime1'); if(t1) t1.textContent = fmtTime(-30);
-    var t2 = document.getElementById('tlTime2'); if(t2) t2.textContent = fmtTime(0);
-    var t3 = document.getElementById('tlTime3'); if(t3) t3.textContent = fmtTime(30);
+    var TL = EV.tl || [-30, 0, 30];
+    var t1 = document.getElementById('tlTime1'); if(t1) t1.textContent = fmtTime(TL[0]);
+    var t2 = document.getElementById('tlTime2'); if(t2) t2.textContent = fmtTime(TL[1]);
+    var t3 = document.getElementById('tlTime3'); if(t3) t3.textContent = fmtTime(TL[2]);
     if(EV.day === '21'){
-      bi('tlTitle2', 'Tiệc chung vui', 'Celebration begins');
-      bi('tlDesc2',  'Khoảnh khắc mở đầu buổi tiệc, cùng nâng ly chúc mừng đôi uyên ương', 'The opening moment of the party — join us in raising a toast');
+      bi('tlTitle2', 'Lễ cưới', 'Wedding ceremony');
+      bi('tlDesc2',  'Cô dâu chú rể bước lên lễ đường, cùng chứng kiến khoảnh khắc đôi uyên ương nên duyên', 'The couple walks down the aisle — be there for the moment they say "I do"');
+      bi('tlDesc3',  'Cùng nâng ly chúc mừng và dùng bữa trưa thân mật với hai bên gia đình', 'Raise a glass and enjoy a warm lunch with both families');
     } else {
       bi('tlTitle2', 'Lễ thành hôn', 'Wedding ceremony');
       bi('tlDesc2',  'Nghi lễ chính của ngày hôm ấy, cũng là lúc hai đứa nên duyên vợ chồng', 'The heart of the day — the moment we become husband and wife');
@@ -3145,9 +3148,9 @@
   /* Lưu vào lịch: iPhone/iPad mở file .ics (cal/) để hiện hộp "Thêm sự kiện" của app Lịch;
      máy khác mở Google Calendar điền sẵn. Giờ theo UTC (VN = UTC+7), kéo dài 3 tiếng, nhắc trước 1 ngày. */
   var CAL = {
-    '21': { dates:'20261121T043000Z/20261121T073000Z', maps:EVENTS['21'].maps,
-      vi:{ t:'Tiệc chung vui · Hoàng Sơn & Phương Thảo', loc:'Sảnh 2 Merastis Tower, 356 - 358 Trương Công Định, Tam Thắng, TP. Vũng Tàu', d:'Đón khách từ 11:00, làm lễ 11:30, khai tiệc 12:00.\nChỉ đường: ' },
-      en:{ t:'Hoàng Sơn & Phương Thảo · Celebration Party', loc:'Hall 2, Merastis Tower, 356 - 358 Trương Công Định Street, Tam Thắng Ward, Vũng Tàu City', d:'Welcome from 11:00 AM, celebration at 11:30 AM, lunch at 12:00 PM.\nDirections: ' } },
+    '21': { dates:'20261121T033000Z/20261121T073000Z', maps:EVENTS['21'].maps,
+      vi:{ t:'Tiệc chung vui · Hoàng Sơn & Phương Thảo', loc:'Sảnh 2 Merastis Tower, 356 - 358 Trương Công Định, Tam Thắng, TP. Vũng Tàu', d:'Đón khách từ 10:30, làm lễ 11:30, khai tiệc 12:00.\nChỉ đường: ' },
+      en:{ t:'Hoàng Sơn & Phương Thảo · Celebration Party', loc:'Hall 2, Merastis Tower, 356 - 358 Trương Công Định Street, Tam Thắng Ward, Vũng Tàu City', d:'Welcome from 10:30 AM, ceremony at 11:30 AM, lunch at 12:00 PM.\nDirections: ' } },
     '28': { dates:'20261128T020000Z/20261128T050000Z', maps:EVENTS['28'].maps,
       vi:{ t:'Lễ thành hôn · Hoàng Sơn & Phương Thảo', loc:'Tư gia nhà trai, QL39A, xã Tân Hưng, TP. Hưng Yên', d:'Chỉ đường: ' },
       en:{ t:'Hoàng Sơn & Phương Thảo · Wedding Ceremony', loc:"Groom's family residence, National Highway 39A, Tân Hưng Commune, Hưng Yên City", d:'Directions: ' } }

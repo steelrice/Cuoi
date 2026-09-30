@@ -6,13 +6,13 @@ METHOD:PUBLISH
 BEGIN:VEVENT
 UID:wedding-21-2026@steelrice.github.io
 DTSTAMP:20260930T000000Z
-DTSTART:20261121T043000Z
+DTSTART:20261121T033000Z
 DTEND:20261121T073000Z
 SUMMARY:Hoàng Sơn & Phương Thảo · Celebration Party
 LOCATION:Hall 2\, Merastis Tower\, 356 - 358 Trương Công Định Street\
  , Tam Thắng Ward\, Vũng Tàu City
-DESCRIPTION:Welcome from 11:00 AM\, celebration at 11:30 AM\, lunch at 12:0
- 0 PM.\nDirections: https://maps.app.goo.gl/tdT1LGaSET7pAMx68
+DESCRIPTION:Welcome from 10:30 AM\, ceremony at 11:30 AM\, lunch at 12:00 P
+ M.\nDirections: https://maps.app.goo.gl/tdT1LGaSET7pAMx68
 URL:https://maps.app.goo.gl/tdT1LGaSET7pAMx68
 BEGIN:VALARM
 ACTION:DISPLAY
