@@ -22,7 +22,7 @@ Gắn vào sau đường dẫn để cá nhân hoá từng khách.
 | `pronounGuest` | `pg` | `Bạn`, `Anh`, `Chị`, `Cô`, `Chú`… | *(trống)* | Cách xưng hô, chỉ áp dụng bản tiếng Việt. Không truyền thì mọi chỗ chỉ gọi đúng tên (không tự thêm "bạn"; link không có cả tên thì gọi "Quý khách" và form hồi âm hỏi thêm tên) — dùng khi `guestName` đã có sẵn xưng hô trong đó, vd `guestName=Chế lớn` |
 | `genderEn` | `ge` | `m` hoặc `f` | *(trống)* | `m` → Mr., `f` → Ms., bỏ trống thì không có danh xưng |
 | `companionName` | `cn` | tên người đi cùng | *(trống)* | Hiện thành "… và …" (bỏ qua khi `pg` là "Gia đình"). Chữ đầu là xưng hô / từ chung (anh, chị, gia đình, vợ…) thì tự viết thường, còn lại giữ nguyên như link (vd `Anh Minh` → "và anh Minh", `Minh` → "và Minh") |
-| `pronounHost` | `ph` | `chúng mình`, `tụi mình`, `em`, `cháu`… | *(trống)* | **Không còn hiện trên thiệp** (các câu đã viết cố định "cô dâu chú rể" / "Sơn và Thảo"). Chỉ gửi kèm hồi âm, ghi vào cột F khi khách chưa có hàng trong Sheet. Link cũ có `ph` vẫn mở bình thường |
+| `pronounHost` | `ph` | — | — | **Đã bỏ.** Các câu trên thiệp viết cố định "cô dâu chú rể" / "Sơn và Thảo"; link cũ có `ph` vẫn mở bình thường, `ph` bị bỏ qua |
 | `lang` | `l` | `vi` hoặc `en` | `vi` | Ngôn ngữ lúc mở thiệp. Khách vẫn đổi được bằng nút lá cờ ở bìa |
 | `side` | `s` | `1` hoặc `2` | `1` | Khách bên nào: `1` = bên Sơn → hồi âm ghi vào tab "Sơn", `2` = bên Thảo → tab "Thảo"; không truyền = bên Sơn. Không hiện gì trên thiệp |
 
@@ -40,7 +40,7 @@ Ví dụ (tên đầy đủ, tương đương):
 ?date=21&pronounGuest=Chị&guestName=Lan&genderEn=f&companionName=anh_Minh
 ```
 
-Lưu ý: dấu cách trong tham số viết thành `_` (vd `gn=Loan_Trường`) — thiệp tự đổi lại thành dấu cách; `%20` kiểu cũ vẫn đọc được. Ký tự `%`, `&`, `#`, `+` trong tên phải mã hoá (`%25`, `%26`, `%23`, `%2B`) — công thức cột H trong Sheet đã làm sẵn. Nên copy link từ ô trong Sheet: copy từ thanh địa chỉ trình duyệt thì chữ có dấu bị đổi thành dạng `%C4%91…` khó nhìn.
+Lưu ý: dấu cách trong tham số viết thành `_` (vd `gn=Loan_Trường`) — thiệp tự đổi lại thành dấu cách; `%20` kiểu cũ vẫn đọc được. Ký tự `%`, `&`, `#`, `+` trong tên phải mã hoá (`%25`, `%26`, `%23`, `%2B`) — công thức cột G trong Sheet đã làm sẵn. Nên copy link từ ô trong Sheet: copy từ thanh địa chỉ trình duyệt thì chữ có dấu bị đổi thành dạng `%C4%91…` khó nhìn.
 
 ### Mã viết tắt cho `pg` và `cn`
 
@@ -58,7 +58,7 @@ Lưu ý: dấu cách trong tham số viết thành `_` (vd `gn=Loan_Trường`) 
 | Vợ | `vo` (chỉ `cn`) | | Bà | `ba` |
 | Chồng | `chong` (chỉ `cn`) | | Các con | `con` (chỉ `cn`) |
 
-Bảng nằm ở `PARAM_CODES` trong `index.html`; trong Sheet là tab **"Mã"** (cột A chữ, cột B mã) để công thức cột H tra. **Không đổi hay xoá mã đã dùng** (link đã gửi sẽ hiện sai) — chỉ thêm mã mới, và thêm cả ở `PARAM_CODES` lẫn tab "Mã". Chữ chưa có mã thì cứ để Sheet gửi nguyên chữ.
+Bảng nằm ở `PARAM_CODES` trong `index.html`; trong Sheet là tab **"Code"** (cột A chữ, cột B mã) để công thức cột G tra. **Không đổi hay xoá mã đã dùng** (link đã gửi sẽ hiện sai) — chỉ thêm mã mới, và thêm cả ở `PARAM_CODES` lẫn tab "Code". Chữ chưa có mã thì cứ để Sheet gửi nguyên chữ.
 
 ## Khác nhau giữa hai ngày
 
@@ -96,20 +96,30 @@ Toàn bộ nằm trong `index.html`. Vài mốc để tìm nhanh:
 
 ## Nối hồi âm vào Google Sheet
 
-Hồi âm không tạo dòng mới lung tung — trang gửi kèm `pronounGuest`+`guestName` lấy từ URL, Apps Script dò đúng hàng của khách đó trong sheet "Danh sách khách mời" để **cập nhật đè** (RSVP status, số điện thoại, ghi chú). Khách gửi lại nhiều lần vẫn ghi vào đúng 1 hàng. Khách không khớp được hàng nào (link không tham số, hoặc lạ) thì tự thêm hàng mới ở cuối.
+Mỗi bên một tab, cùng thứ tự cột: **Sơn** (link có `s=1` hoặc không có `s`) và **Thảo** (`s=2`).
 
-Cài đặt:
+| Cột | A | B | C | D | E | F | G | H | I | J | K |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| | Xưng hô | Tên khách | Nhóm | Ngày mời | Đi cùng | RSVP status | Link mời | Số người đi cùng | SĐT | Di chuyển | Notes |
 
-1. Mở Google Sheet chứa danh sách khách mời → menu **Extensions → Apps Script**.
-2. Xoá nội dung mặc định, dán toàn bộ nội dung file [`apps-script/rsvp-sync.gs`](apps-script/rsvp-sync.gs) trong repo này vào.
-3. Kiểm tra khối `COL` ở đầu file khớp đúng thứ tự cột thật trong sheet của bạn (A=Xưng hô, B=Tên khách... theo đúng sheet hiện tại thì không cần sửa gì).
-4. Sửa `STATUS_YES`/`STATUS_NO` cho khớp **chính xác** chữ trong dropdown "RSVP status" của bạn (vd "Đã xác nhận"/"Từ chối") — sai chữ thì dropdown sẽ không nhận diện được giá trị ghi vào.
-5. Bấm **Deploy → New deployment** → chọn loại **Web app** → Execute as: **Me**, Who has access: **Anyone** → Deploy. Lần đầu Google sẽ hỏi cấp quyền cho script, đồng ý hết.
-6. Copy URL kết thúc bằng `/exec`.
-7. Trong `index.html`, tìm `APPS_SCRIPT_URL` (gần đầu phần xử lý hồi âm), dán URL vào.
-8. Gửi thử một hồi âm trên trang, kiểm tra đúng hàng của khách đó trong sheet có cập nhật RSVP status/số điện thoại không.
+Hồi âm không tạo dòng mới lung tung — thiệp gửi kèm xưng hô + tên + ngày mời lấy từ link, Apps Script dò đúng dòng của khách đó trong tab của bên đó để **cập nhật đè** (F, H, I, J, K). Ô "--" được coi như ô trống. Khách gửi lại nhiều lần vẫn ghi vào đúng 1 dòng; đổi ý sang "Không đến được" thì xoá số người và cách đi cũ. Không khớp được dòng nào (link không tên — form hỏi thêm tên, hoặc đã sửa tên sau khi gửi link) thì thêm dòng mới ở cuối tab. Số điện thoại được giữ số 0 ở đầu; cột Notes ghi nguyên ghi chú đưa đón khách gõ.
 
-Mỗi lần sửa lại code Apps Script phải **Deploy → Manage deployments → sửa (bút chì) → Version: New version → Deploy** thì thay đổi mới có hiệu lực — sửa code không tự áp dụng vào URL `/exec` đang chạy.
+**Link mời (cột G)** do công thức tạo, dùng 2 hàm tự đặt tên (Dữ liệu → Hàm được đặt tên):
+
+- `ENCODE_PARAM(TEXT_VALUE)` — đổi `%`, `&`, `#`, `+` thành mã, dấu cách thành `_`
+- `INVITE_LINK(GUEST_PRONOUN; GUEST_NAME; EVENT_DAY; COMPANION; SIDE[; LANG])` — ghép link, tra mã `pg`/`cn` ở tab **Code**
+
+Ô G2 tab Sơn: `=ARRAYFORMULA(INVITE_LINK(A2:A;B2:B;D2:D;E2:E;"1"))` — tab Thảo thay `"1"` bằng `"2"`. Nên khoá cột G và tab Code (Dữ liệu → Trang tính và dải ô được bảo vệ).
+
+Cài đặt Apps Script:
+
+1. Mở Google Sheet → menu **Tiện ích mở rộng → Apps Script**.
+2. Xoá nội dung cũ, dán toàn bộ file [`apps-script/rsvp-sync.gs`](apps-script/rsvp-sync.gs).
+3. Kiểm tra `SIDE_SHEETS` (tên tab từng bên) và khối `COL` khớp thứ tự cột thật; `STATUS_YES`/`STATUS_NO`, `MOVE_SELF`/`MOVE_SHUTTLE` khớp **chính xác** chữ trong dropdown.
+4. Lần đầu: **Triển khai → Tùy chọn triển khai mới** → loại **Ứng dụng web**, Thực thi bằng tên: **Tôi**, Người có quyền truy cập: **Bất kỳ ai** → copy URL `/exec` dán vào `APPS_SCRIPT_URL` trong `index.html`.
+5. Gửi thử một hồi âm từ mỗi tab, kiểm tra đúng dòng, đúng cột.
+
+Mỗi lần sửa code Apps Script phải **Triển khai → Quản lý các tùy chọn triển khai → bút chì → Phiên bản mới → Triển khai** thì mới có hiệu lực (URL `/exec` giữ nguyên). Đừng tạo "Tùy chọn triển khai mới" — sẽ ra URL khác.
 
 Muốn dùng Google Form/Formspree thay vì ghi thẳng vào Sheet thì thay nội dung hàm `sendRsvpToSheet` trong `index.html` bằng lệnh gọi tới dịch vụ đó.
 

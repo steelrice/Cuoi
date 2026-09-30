@@ -192,7 +192,6 @@
   #app.paper-in{ background-image:url(images/paper.webp); background-size:300px 300px; }
   /* mép giấy xé: tờ giấy ngà đè lên khối đỏ ở chỗ chuyển tiếp (dải ảnh có sẵn vân giấy + bóng đổ) */
   .torn-top{ position:absolute; left:0; right:0; bottom:100%; aspect-ratio:1142 / 64; transform:translateY(1px); pointer-events:none; z-index:3; }
-  .torn-top.flipx{ transform:translateY(1px) scaleX(-1); }
   /* mép dưới của tờ giấy ngà (đè lên khối đỏ phía dưới): dùng lại cùng dải ảnh, lật ngược */
   .torn-bot{ position:absolute; left:0; right:0; top:0; aspect-ratio:1142 / 64; transform:translateY(-1px) scale(-1,-1); pointer-events:none; z-index:3; }
   #app.paper-in .torn-top, #app.paper-in .torn-bot{ background:url(images/torn-edge.webp) var(--tx,0%) 100% / 180% 100% no-repeat; }
@@ -263,7 +262,6 @@
     opacity:0; pointer-events:none; transition:opacity .5s ease .15s;
   }
   #reviewToggle.show{ opacity:1; pointer-events:auto; }
-  body.lb-open #reviewToggle{ opacity:0; pointer-events:none; }
   /* vòng sáng vàng lan ra (giống nút đổi ngôn ngữ) để khách chú ý — chỉ 4 nhịp rồi dừng,
      khách đã bấm lần nào thì tắt hẳn */
   #reviewToggle.show:not(.seen){ animation:langRing 3.2s ease-out .6s 4; }
@@ -331,7 +329,6 @@
   }
   /* chỉ hiện ở bìa — mở thiệp rồi (kể cả lúc xem lại thiệp) thì ẩn */
   #cover.open .cover-version{ display:none; }
-  .cover-kicker{ font-family:var(--script); font-style:italic; font-weight:500; font-size:16px; letter-spacing:.1em; color:var(--gold); }
   .cover-names{ font-family:var(--serif); font-weight:400; font-size:clamp(30px,9vw,42px); color:var(--cream); margin-top:var(--sp-3); line-height:1.25; letter-spacing:.01em; }
   .cover-date{ margin-top:var(--sp-3); font-size:15px; letter-spacing:.08em; color:var(--cream-dim); }
   /* tên 3 dòng: Hoàng Sơn / & / Phương Thảo — dấu & nghiêng vàng (Cormorant) */
@@ -823,24 +820,6 @@
   .bk-fin{ position:absolute; inset:0; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:0 6%; background:#f7f1e6; }   /* cỡ chữ theo bề rộng trang (--pw) → xem lớn hay trong thiệp đều ngắt dòng như nhau */
   .bk-fin .a{ font-family:var(--script); font-style:italic; font-size:calc(var(--pw, 220px) * .091); color:#8A5E24; }
   .bk-fin .b{ font-family:var(--serif); font-size:calc(var(--pw, 220px) * .068); color:var(--red-deep); margin-top:.4em; line-height:1.4; }
-
-  #lightbox{ position:fixed; inset:0; background:rgba(12,2,4,.95); z-index:900; display:none; align-items:center; justify-content:center; padding:var(--sp-6); touch-action:none; overscroll-behavior:contain; }
-  #lightbox.show{ display:flex; }
-  /* ảnh lớn chưa tải xong: ẩn ảnh cũ, hiện vòng xoay vàng giống ô album đang tải */
-  #lightbox.is-loading img{ opacity:0; }
-  #lightbox.is-loading::after{ content:''; position:absolute; top:50%; left:50%; width:30px; height:30px; margin:-15px 0 0 -15px; border-radius:50%; border:1.5px solid rgba(207,159,63,.25); border-top-color:var(--gold); animation:magSpin .9s linear infinite; }
-  #lightbox img{ max-width:100%; max-height:82vh; border-radius:3px; box-shadow:0 24px 60px rgba(0,0,0,.6); transition:opacity .16s ease, transform .16s ease; will-change:opacity, transform; }
-  #lightbox img.slide-l{ opacity:0; transform:translateX(-26px); }
-  #lightbox img.slide-r{ opacity:0; transform:translateX(26px); }
-  body.lb-open{ overflow:hidden; }
-  /* xem lớn trang đôi album khi điện thoại đang dọc: xoay 90° cho khách xoay ngang máy xem */
-  #lightbox.lb-rot img{ max-width:calc(100vh - 140px); max-height:calc(100vw - 40px); transform:rotate(90deg); }
-  #lightbox-close{ position:absolute; top:var(--sp-5); right:var(--sp-5); color:var(--gold); font-size:32px; line-height:1; background:none; border:none; }
-  .lb-nav{ position:absolute; top:50%; transform:translateY(-50%); width:40px; height:40px; border-radius:2px; border:1px solid rgba(207,159,63,.45); background:rgba(12,2,4,.5); color:var(--gold); font-size:20px; line-height:1; display:flex; align-items:center; justify-content:center; }
-  .lb-nav[disabled]{ opacity:.25; }
-  #lb-prev{ left:var(--sp-3); }
-  #lb-next{ right:var(--sp-3); }
-  #lb-count{ position:absolute; bottom:var(--sp-6); left:0; right:0; text-align:center; font-family:var(--serif); font-size:15px; letter-spacing:.1em; color:var(--cream-dim); }
 
   /* ---------- location ---------- */
   /* một thẻ địa điểm liền khối: tiêu đề + địa chỉ → bản đồ tràn sát mép thẻ → nút → chân thẻ xe đưa đón */
@@ -1576,14 +1555,6 @@
 </div>
 </div>
 
-<!-- ============ LIGHTBOX ============ -->
-<div id="lightbox">
-  <button id="lightbox-close" aria-label="close">&times;</button>
-  <img id="lightbox-img" src="" alt="">
-  <button class="lb-nav" id="lb-prev" aria-label="ảnh trước">&#8249;</button>
-  <button class="lb-nav" id="lb-next" aria-label="ảnh sau">&#8250;</button>
-  <div id="lb-count"></div>
-</div>
 
 <script>
   // tải lại trang (reload) luôn bắt đầu từ đầu: tắt việc trình duyệt tự nhớ vị trí cuộn cũ.
@@ -2068,13 +2039,13 @@
   })();
 
   // ===== Hiển thị theo ?date : 21 = buổi tiệc chung vui, 28/trống = lễ thành hôn =====
-  // "--" là giá trị placeholder của ô dropdown chưa chọn trong Google Sheet (companionName, pronounHost...)
+  // "--" là giá trị placeholder của ô dropdown chưa chọn trong Google Sheet (pronounGuest, companionName...)
   // — coi như trống luôn ở đây, khỏi phải lọc riêng từng chỗ dùng.
   // Tên param rút gọn dùng trong link mời để URL đỡ dài (date=d, guestName=gn...).
   // Vẫn đọc được tên param đầy đủ nếu link cũ còn dùng dạng cũ.
   var SHORT_PARAM = {
     date:'d', guestName:'gn', pronounGuest:'pg', genderEn:'ge',
-    companionName:'cn', pronounHost:'ph', lang:'l', side:'s'
+    companionName:'cn', lang:'l', side:'s'
   };
   /* mã viết tắt cho xưng hô (pg) và người đi cùng (cn) để link ngắn, không dấu: Sheet tra tab "Mã" rồi gửi
      mã (pg=chi, cn=gd). Mã là chữ cố định, KHÔNG đổi/xoá mã đã dùng (link đã gửi sẽ sai) — chỉ thêm mã mới.
@@ -2101,9 +2072,9 @@
     }catch(e){ return ''; }
   }
 
-  // Tên khách (mặc định "bạn" khi không truyền) — dùng để thay các chỗ "bạn" đang viết cứng trong nội dung.
-  // Cô dâu chú rể tự xưng thì viết cứng trong từng câu ("cô dâu chú rể" / "Sơn và Thảo"); pronounHost (ph)
-  // không hiện trên thiệp nữa, chỉ còn gửi kèm hồi âm để ghi vào Sheet
+  // Tên khách — dùng để thay các chỗ gọi khách đang viết cứng trong nội dung.
+  // Cô dâu chú rể tự xưng thì viết cứng trong từng câu ("cô dâu chú rể" / "Sơn và Thảo"); tham số ph
+  // trên link cũ được bỏ qua
   // link không có tên khách (và không có xưng hô) thì gọi là "Quý khách" — khớp bìa "Quý khách"
   var DEFAULT_GUEST = 'Quý khách';
   var guestNameRaw = getUrlParam('guestName') || DEFAULT_GUEST;
@@ -2119,7 +2090,6 @@
   // trước) ở các chỗ RSVP/gợi ý trang phục/lời cảm ơn.
   var pronounGuestLower = (getUrlParam('pronounGuest') || '').trim().toLowerCase();
   var isEmGuest = pronounGuestLower === 'em' || pronounGuestLower === 'bạn' || (!pronounGuestLower && hasGuestName);
-  var rsvpGuestFull = isEmGuest ? guestNameRaw : guestFull;
   var rsvpGuestPronounOnly = isEmGuest ? guestNameRaw : guestPronounOnly;
 
   // Bản viết thường xưng hô khách (Chị/Anh/Cô/Chú...) dùng ở giữa câu văn xuôi
@@ -2636,91 +2606,6 @@
     window.addEventListener('load', function(){ setTimeout(footerBg, 1500); });
   }
 
-  var lightbox = document.getElementById('lightbox');
-  var lightboxImg = document.getElementById('lightbox-img');
-  // đặt ảnh cho lightbox; ảnh chưa có sẵn (chưa tải xong) thì hiện vòng xoay tới khi load/error
-  function setLbSrc(src){
-    lightbox.classList.add('is-loading');
-    lightboxImg.src = src;
-    if(lightboxImg.complete && lightboxImg.naturalWidth) lightbox.classList.remove('is-loading');
-  }
-  lightboxImg.addEventListener('load', function(){ lightbox.classList.remove('is-loading'); });
-  lightboxImg.addEventListener('error', function(){ lightbox.classList.remove('is-loading'); });
-  var lbPrev = document.getElementById('lb-prev');
-  var lbNext = document.getElementById('lb-next');
-  var lbCount = document.getElementById('lb-count');
-  var lbImgs = [];
-  var lbIdx = 0;
-
-  function lbMeta(){
-    lbCount.textContent = String(lbIdx+1).padStart(2,'0') + ' / ' + String(lbImgs.length).padStart(2,'0');
-    lbPrev.disabled = (lbIdx === 0);
-    lbNext.disabled = (lbIdx === lbImgs.length - 1);
-  }
-  var lbBusy = false;
-  function lbGo(step){
-    var n = lbIdx + step;
-    if(lbBusy || n < 0 || n >= lbImgs.length) return;
-    lbBusy = true;
-    lightboxImg.classList.add(step > 0 ? 'slide-l' : 'slide-r');
-    setTimeout(function(){
-      lbIdx = n;
-      setLbSrc(lbImgs[lbIdx].src || lbImgs[lbIdx].dataset.src);
-      lightboxImg.alt = lbImgs[lbIdx].alt || '';
-      lbMeta();
-      lightboxImg.classList.remove('slide-l','slide-r');
-      lightboxImg.classList.add(step > 0 ? 'slide-r' : 'slide-l');
-      requestAnimationFrame(function(){
-        requestAnimationFrame(function(){
-          lightboxImg.classList.remove('slide-l','slide-r');
-          lbBusy = false;
-        });
-      });
-    }, 160);
-  }
-  function lbOpen(i){
-    lbIdx = i;
-    lightboxImg.classList.remove('slide-l','slide-r');
-    setLbSrc(lbImgs[i].src || lbImgs[i].dataset.src);
-    lightboxImg.alt = lbImgs[i].alt || '';
-    lbMeta();
-    lightbox.classList.add('show');
-    document.body.classList.add('lb-open');
-  }
-  function lbClose(){
-    lightbox.classList.remove('show', 'lb-rot');
-    document.body.classList.remove('lb-open');
-  }
-
-  lbPrev.addEventListener('click', function(e){ e.stopPropagation(); lbGo(-1); });
-  lbNext.addEventListener('click', function(e){ e.stopPropagation(); lbGo(1); });
-  document.getElementById('lightbox-close').addEventListener('click', lbClose);
-  lightbox.addEventListener('click', function(e){ if(e.target === lightbox) lbClose(); });
-
-  /* vuốt ngang để xem ảnh khác */
-  var lbX = 0, lbY = 0, lbSwiping = false;
-  lightbox.addEventListener('touchstart', function(e){
-    lbX = e.changedTouches[0].clientX;
-    lbY = e.changedTouches[0].clientY;
-    lbSwiping = true;
-  }, {passive:true});
-  lightbox.addEventListener('touchmove', function(e){
-    if(lbSwiping) e.preventDefault();
-  }, {passive:false});
-  lightbox.addEventListener('touchend', function(e){
-    lbSwiping = false;
-    var dx = e.changedTouches[0].clientX - lbX;
-    var dy = e.changedTouches[0].clientY - lbY;
-    if(Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.2) lbGo(dx < 0 ? 1 : -1);
-  }, {passive:true});
-
-  document.addEventListener('keydown', function(e){
-    if(!lightbox.classList.contains('show')) return;
-    if(e.key === 'ArrowRight') lbGo(1);
-    else if(e.key === 'ArrowLeft') lbGo(-1);
-    else if(e.key === 'Escape') lbClose();
-  });
-
   /* ---------- album bìa ảnh (xem CSS .bk-*) ----------
      BOOK_PAGES: các file trang đôi của studio (4:3), đúng thứ tự. Mỗi lần mở thấy trọn 1 file:
      nửa trái nằm ở mặt sau tờ trước (tờ đầu = bìa), nửa phải ở mặt trước tờ hiện tại. */
@@ -2748,7 +2633,6 @@
     leaf('<img alt="" draggable="false" decoding="async" data-src="'+BOOK_DIR+'cover.webp"><div class="bk-gloss"></div><div class="bk-spine"></div>', '<div class="bk-in">'+img(0)+'</div>', true);
     for(var k=0; k<P; k++) leaf(img(k), k+1 < P ? img(k+1) : finHtml);
     var N = leaves.length;               // = P + 1
-    var spreads = BOOK_PAGES.map(function(f){ return { src: BOOK_DIR + f, alt:'' }; });
 
     var loaded = false;
     function loadAll(){ if(loaded) return; loaded = true; [].forEach.call(book.querySelectorAll('img[data-src]'), function(im){ im.src = im.dataset.src; }); }
@@ -2868,10 +2752,6 @@
           [cur - 1, cur].forEach(function(i){ if(i >= 0 && i < N) renderLeaf(i); });
         }); });
       }, 160);
-    }
-    function renderBook(rz, sc, open, y){
-      // đóng: bìa (nửa phải) ở giữa màn hình → mở: cả trang đôi ở giữa → (màn dọc) xoay 90°
-      book.style.transform = 'translate(' + (-(1-open) * sc * PW/2) + 'px,' + y + 'px) rotateZ(' + rz + 'deg) scale(' + sc + ')';
     }
 
     function setHint(vi, en){ hint.innerHTML = '<span data-vi>'+vi+'</span><span data-en>'+en+'</span>'; }
@@ -3192,7 +3072,6 @@
     fd.append('guestName', getUrlParam('guestName'));
     fd.append('date', getUrlParam('date'));
     fd.append('companionName', getUrlParam('companionName'));
-    fd.append('pronounHost', getUrlParam('pronounHost'));
     fd.append('side', getUrlParam('side')); // s=1 bên Sơn, s=2 bên Thảo → Apps Script ghi vào đúng tab; không có s → tab "Sơn"
     fd.append('formName', entry.name); // tên khách tự gõ trong form, có thể khác guestName trên URL
     fd.append('attend', entry.attend);
