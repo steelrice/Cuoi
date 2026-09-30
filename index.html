@@ -1447,6 +1447,12 @@
           <p class="lead" id="rsvpLead"><span data-vi>Bạn hồi âm đôi dòng để cô dâu chú rể chuẩn bị được chu đáo hơn nhé.</span><span data-en>A short reply helps us prepare for you.</span></p>
         </div>
         <form class="rsvp-form" id="rsvpForm">
+        <!-- link không có tên khách (gn) thì hỏi tên, để hồi âm trong Sheet biết là ai; link có tên thì ẩn -->
+        <div class="field" id="nameField" hidden>
+          <label for="rsvpName"><span data-vi>Tên của Quý khách</span><span data-en>Your name</span></label>
+          <input type="text" id="rsvpName" maxlength="80" autocomplete="name" placeholder="VD: Chị Lan, anh Minh…">
+          <div class="rsvp-err" id="nameErr"></div>
+        </div>
         <div class="field">
           <label id="rsvpAttendLabel"><span data-vi>Bạn sẽ đến tham dự chứ</span><span data-en>Will you be joining us</span></label>
           <div class="attend-toggle">
@@ -2564,6 +2570,7 @@
     var ta = document.getElementById('rsvpPickup'), h = document.getElementById('pickupHint');
     if(!ta || !h) return;
     ta.placeholder = en ? 'E.g. where you are staying, what time suits you…' : 'VD: nơi ở, giờ muốn được đón…';
+    var nm = document.getElementById('rsvpName'); if(nm) nm.placeholder = en ? 'E.g. Lan, Minh…' : 'VD: Chị Lan, anh Minh…';
     h.textContent = en ? "We'll get in touch to arrange the pickup point."
       : 'Sẽ có người liên hệ lại để hẹn điểm đón với ' + rsvpGuestPronounOnlyLower + ' nhé.';
   }
@@ -3226,6 +3233,12 @@
   });
   syncMove();
 
+  var nameInput = document.getElementById('rsvpName');
+  if(!hasGuestName){
+    document.getElementById('nameField').hidden = false;
+    nameInput.addEventListener('input', function(){ document.getElementById('nameErr').textContent = ''; });
+  }
+
   var phoneInput = document.getElementById('rsvpPhone');
   if(phoneInput){
     phoneInput.addEventListener('input', function(){
@@ -3284,6 +3297,12 @@
     var phone = phoneEl ? phoneEl.value.trim() : '';
     var phoneErr = document.getElementById('phoneErr');
     var needPhone = isVungTau && attendVal === 'yes' && moveVal === 'shuttle';
+    var typedName = hasGuestName ? '' : nameInput.value.trim();
+    if(!hasGuestName && !typedName){
+      document.getElementById('nameErr').textContent = isEn() ? 'Please tell us your name' : 'Quý khách vui lòng cho biết tên nhé';
+      nameInput.focus();
+      return;
+    }
 
     var digits = phone.replace(/[^0-9]/g,'');
     if(needPhone && !digits){
@@ -3299,7 +3318,7 @@
     phoneErr.textContent = '';
 
     var pickupEl = document.getElementById('rsvpPickup');
-    var entry = { name:guestNameRaw, phone:phone, attend:attendVal, guests:guestCount, ts:Date.now() };
+    var entry = { name:typedName || guestNameRaw, phone:phone, attend:attendVal, guests:guestCount, ts:Date.now() };
     if(isVungTau && attendVal === 'yes'){
       entry.move = moveVal;
       if(moveVal === 'shuttle' && pickupEl) entry.pickup = pickupEl.value || '';
