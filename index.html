@@ -3176,7 +3176,7 @@
     fd.append('date', getUrlParam('date'));
     fd.append('companionName', getUrlParam('companionName'));
     fd.append('pronounHost', getUrlParam('pronounHost'));
-    fd.append('side', getUrlParam('side')); // s=t → khách bên Thảo: Apps Script ghi vào tab "Thảo", không có → tab "Sơn"
+    fd.append('side', getUrlParam('side')); // s=1 bên Sơn, s=2 bên Thảo → Apps Script ghi vào đúng tab; không có s → tab "Sơn"
     fd.append('formName', entry.name); // tên khách tự gõ trong form, có thể khác guestName trên URL
     fd.append('attend', entry.attend);
     if(entry.attend === 'yes') fd.append('guests', String(entry.guests));

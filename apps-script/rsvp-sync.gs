@@ -11,9 +11,9 @@
 // thanh tím phía trên nếu bạn có dùng tính năng "Table" (Table đặt tên riêng,
 // không phải tên tab). Kiểm tra đúng tên tab trước khi deploy.
 var SHEET_NAME = 'Sơn';
-// Mỗi bên một tab, cùng thứ tự cột. Link khách bên Thảo có thêm s=t → ghi vào tab 'Thảo';
-// không có s (link cũ, khách bên Sơn) → tab SHEET_NAME ở trên
-var SIDE_SHEETS = { t: 'Thảo' };
+// Mỗi bên một tab, cùng thứ tự cột. Tham số s trên link: 1 = bên Sơn, 2 = bên Thảo;
+// không có s (link cũ) hoặc giá trị lạ → tab SHEET_NAME ở trên (Sơn)
+var SIDE_SHEETS = { '1': 'Sơn', '2': 'Thảo' };
 var HEADER_ROW = 1; // dòng tiêu đề cột
 
 // Thứ tự cột trong sheet — sửa lại số nếu bạn đổi vị trí cột
@@ -41,7 +41,7 @@ var MOVE_SHUTTLE = 'Đi xe chung';
 
 function doPost(e) {
   var data = (e && e.parameter) || {};
-  var side = norm(data.side).toLowerCase();
+  var side = norm(data.side);
   var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SIDE_SHEETS[side] || SHEET_NAME);
 
   var pronounGuest = (data.pronounGuest || '').trim();

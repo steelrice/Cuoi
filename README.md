@@ -24,7 +24,7 @@ Gắn vào sau đường dẫn để cá nhân hoá từng khách.
 | `companionName` | `cn` | tên người đi cùng | *(trống)* | Hiện thành "… và …" (bỏ qua khi `pg` là "Gia đình"). Chữ đầu là xưng hô / từ chung (anh, chị, gia đình, vợ…) thì tự viết thường, còn lại giữ nguyên như link (vd `Anh Minh` → "và anh Minh", `Minh` → "và Minh") |
 | `pronounHost` | `ph` | `chúng mình`, `tụi mình`, `em`, `cháu`… | *(trống)* | **Không còn hiện trên thiệp** (các câu đã viết cố định "cô dâu chú rể" / "Sơn và Thảo"). Chỉ gửi kèm hồi âm, ghi vào cột F khi khách chưa có hàng trong Sheet. Link cũ có `ph` vẫn mở bình thường |
 | `lang` | `l` | `vi` hoặc `en` | `vi` | Ngôn ngữ lúc mở thiệp. Khách vẫn đổi được bằng nút lá cờ ở bìa |
-| `side` | `s` | `t` | *(trống)* | Khách bên nào: `t` = bên Thảo → hồi âm ghi vào tab "Thảo"; bỏ trống = bên Sơn → tab "Sơn". Không hiện gì trên thiệp |
+| `side` | `s` | `1` hoặc `2` | `1` | Khách bên nào: `1` = bên Sơn → hồi âm ghi vào tab "Sơn", `2` = bên Thảo → tab "Thảo"; không truyền = bên Sơn. Không hiện gì trên thiệp |
 
 Dùng tên viết tắt để link ngắn hơn (khuyên dùng khi tạo link mời hàng loạt); tên đầy đủ vẫn đọc được bình thường, không cần đổi các link cũ đã gửi.
 
