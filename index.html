@@ -1799,11 +1799,16 @@
         if(t < 1) requestAnimationFrame(step);
       })(t0);
     }
+    /* chờ khách cuộn tới cuối: cả khung chân trang hiện gần hết (≥ 90%, màn thấp hơn khung thì ~85% chiều cao màn)
+       rồi mới vẽ — trước đây bắt đầu khi chữ vừa ló ở mép dưới nên cuộn tới nơi thì đã vẽ gần xong */
+    var foot = box.closest('.footer') || box, timer = 0;
     var io = new IntersectionObserver(function(es){
-      if(es[0].intersectionRatio < .6) return;
-      io.disconnect(); play();
-    }, { threshold:[0, .6, 1] });
-    document.addEventListener('inviteopen', function(){ render(0); setTimeout(function(){ io.observe(box); }, 600); }, { once:true });
+      var e = es[0], need = Math.min(.9, innerHeight * .85 / Math.max(1, e.boundingClientRect.height));
+      clearTimeout(timer);
+      if(e.intersectionRatio < need) return;
+      timer = setTimeout(function(){ io.disconnect(); play(); }, 350);   // đợi cú cuộn dừng hẳn
+    }, { threshold:[0, .25, .5, .6, .7, .8, .85, .9, .95, 1] });
+    document.addEventListener('inviteopen', function(){ render(0); setTimeout(function(){ io.observe(foot); }, 600); }, { once:true });
   })();
 
   /* sao chép số tài khoản (dự phòng cho trình duyệt chặn clipboard: chọn sẵn chữ số để khách tự chép) */
