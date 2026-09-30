@@ -2549,7 +2549,7 @@
   function syncPickupHint(en){
     var ta = document.getElementById('rsvpPickup'), h = document.getElementById('pickupHint');
     if(!ta || !h) return;
-    ta.placeholder = en ? 'E.g. where you are staying, what time suits you…' : 'VD: nơi ở, giờ muốn được đón…';
+    ta.placeholder = en ? 'E.g. where you are staying, what time suits you…' : capFirst(rsvpGuestPronounOnly) + ' đang ở đâu, muốn được đón lúc mấy giờ?';
     var nm = document.getElementById('rsvpName'); if(nm) nm.placeholder = en ? 'E.g. Lan, Minh…' : 'VD: Chị Lan, anh Minh…';
     h.textContent = en ? "We'll get in touch to arrange the pickup point."
       : 'Sẽ có người liên hệ lại để hẹn điểm đón với ' + rsvpGuestPronounOnlyLower + ' nhé.';
