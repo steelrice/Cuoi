@@ -19,7 +19,7 @@ Gắn vào sau đường dẫn để cá nhân hoá từng khách.
 |---|---|---|---|---|
 | `date` | `d` | `21` hoặc `28` | `21` | `21` = tiệc Vũng Tàu, `28` = lễ Hưng Yên |
 | `guestName` | `gn` | tên khách | *(trống)* | Không truyền thì hiện "Quý khách" |
-| `pronounGuest` | `pg` | `Bạn`, `Anh`, `Chị`, `Cô`, `Chú`… | *(trống)* | Cách xưng hô, chỉ áp dụng bản tiếng Việt. Không truyền thì mọi chỗ chỉ gọi đúng tên (không tự thêm "bạn"; link không có cả tên thì gọi "bạn") — dùng khi `guestName` đã có sẵn xưng hô trong đó, vd `guestName=Chế lớn` |
+| `pronounGuest` | `pg` | `Bạn`, `Anh`, `Chị`, `Cô`, `Chú`… | *(trống)* | Cách xưng hô, chỉ áp dụng bản tiếng Việt. Không truyền thì mọi chỗ chỉ gọi đúng tên (không tự thêm "bạn"; link không có cả tên thì gọi "Quý khách" và form hồi âm hỏi thêm tên) — dùng khi `guestName` đã có sẵn xưng hô trong đó, vd `guestName=Chế lớn` |
 | `genderEn` | `ge` | `m` hoặc `f` | *(trống)* | `m` → Mr., `f` → Ms., bỏ trống thì không có danh xưng |
 | `companionName` | `cn` | tên người đi cùng | *(trống)* | Hiện thành "… và …" (bỏ qua khi `pg` là "Gia đình"). Chữ đầu là xưng hô / từ chung (anh, chị, gia đình, vợ…) thì tự viết thường, còn lại giữ nguyên như link (vd `Anh Minh` → "và anh Minh", `Minh` → "và Minh") |
 | `pronounHost` | `ph` | `chúng mình`, `tụi mình`, `em`, `cháu`… | *(trống)* | **Không còn hiện trên thiệp** (các câu đã viết cố định "cô dâu chú rể" / "Sơn và Thảo"). Chỉ gửi kèm hồi âm, ghi vào cột F khi khách chưa có hàng trong Sheet. Link cũ có `ph` vẫn mở bình thường |

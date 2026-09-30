@@ -2097,13 +2097,15 @@
   // Tên khách (mặc định "bạn" khi không truyền) — dùng để thay các chỗ "bạn" đang viết cứng trong nội dung.
   // Cô dâu chú rể tự xưng thì viết cứng trong từng câu ("cô dâu chú rể" / "Sơn và Thảo"); pronounHost (ph)
   // không hiện trên thiệp nữa, chỉ còn gửi kèm hồi âm để ghi vào Sheet
-  var guestNameRaw = getUrlParam('guestName') || 'bạn';
+  // link không có tên khách (và không có xưng hô) thì gọi là "Quý khách" — khớp bìa "Quý khách"
+  var DEFAULT_GUEST = 'Quý khách';
+  var guestNameRaw = getUrlParam('guestName') || DEFAULT_GUEST;
   // Link không có tên khách: chỉ dùng xưng hô, không ghép thêm 'bạn' (tránh 'bạn bạn', 'anh bạn')
   var hasGuestName = !!getUrlParam('guestName');
   // Ghép xưng hô + tên khi có, giống hệt cách trang mở đầu ghép (guestLine) — mềm mại hơn khi nhắc tới khách
-  var guestFull = hasGuestName ? (getUrlParam('pronounGuest') + ' ' + guestNameRaw).trim() : (getUrlParam('pronounGuest') || 'bạn');
+  var guestFull = hasGuestName ? (getUrlParam('pronounGuest') + ' ' + guestNameRaw).trim() : (getUrlParam('pronounGuest') || DEFAULT_GUEST);
   // Chỉ riêng xưng hô (không kèm tên) — dùng ở những chỗ khách "tự xưng" qua nút bấm, hoặc câu chào ngắn
-  var guestPronounOnly = getUrlParam('pronounGuest') || 'bạn';
+  var guestPronounOnly = getUrlParam('pronounGuest') || DEFAULT_GUEST;
 
   // Khách xưng hô "Em" hoặc "Bạn" (pronounGuest=Em|Bạn), hoặc có tên mà không truyền xưng hô
   // (tên đã gồm cách gọi, vd guestName=Chế lớn): gọi đúng tên khách (không kèm xưng hô phía
@@ -2115,7 +2117,8 @@
 
   // Bản viết thường xưng hô khách (Chị/Anh/Cô/Chú...) dùng ở giữa câu văn xuôi
   // (dressLead/storyQuote/giftLead/thanks) — Em/Bạn vẫn chỉ dùng tên, không đổi.
-  var guestPronounMidSentence = (getUrlParam('pronounGuest') || 'bạn').toLowerCase();
+  // giữa câu: xưng hô viết thường (chị, anh…), riêng "Quý khách" giữ viết hoa cho trang trọng
+  var guestPronounMidSentence = getUrlParam('pronounGuest') ? getUrlParam('pronounGuest').toLowerCase() : DEFAULT_GUEST;
   var guestFullMidSentence = hasGuestName ? (guestPronounMidSentence + ' ' + guestNameRaw).trim() : guestPronounMidSentence;
   var rsvpGuestFullLower = isEmGuest ? guestNameRaw : guestFullMidSentence;
   var rsvpGuestPronounOnlyLower = isEmGuest ? guestNameRaw : guestPronounMidSentence;
