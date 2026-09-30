@@ -2061,7 +2061,7 @@
   // Vẫn đọc được tên param đầy đủ nếu link cũ còn dùng dạng cũ.
   var SHORT_PARAM = {
     date:'d', guestName:'gn', pronounGuest:'pg', genderEn:'ge',
-    companionName:'cn', pronounHost:'ph', lang:'l'
+    companionName:'cn', pronounHost:'ph', lang:'l', side:'s'
   };
   /* mã viết tắt cho xưng hô (pg) và người đi cùng (cn) để link ngắn, không dấu: Sheet tra tab "Mã" rồi gửi
      mã (pg=chi, cn=gd). Mã là chữ cố định, KHÔNG đổi/xoá mã đã dùng (link đã gửi sẽ sai) — chỉ thêm mã mới.
@@ -3176,6 +3176,7 @@
     fd.append('date', getUrlParam('date'));
     fd.append('companionName', getUrlParam('companionName'));
     fd.append('pronounHost', getUrlParam('pronounHost'));
+    fd.append('side', getUrlParam('side')); // s=t → khách bên Thảo: Apps Script ghi vào tab "Thảo", không có → tab "Sơn"
     fd.append('formName', entry.name); // tên khách tự gõ trong form, có thể khác guestName trên URL
     fd.append('attend', entry.attend);
     if(entry.attend === 'yes') fd.append('guests', String(entry.guests));
