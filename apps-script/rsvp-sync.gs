@@ -19,14 +19,13 @@ var COL = {
   guestName:    2,  // B - Tên khách
   group:        3,  // C - Nhóm
   date:         4,  // D - Ngày mời
-  companion:    5,  // E - Người đi cùng
-  pronounHost:  6,  // F - Cô dâu Chú rể xưng hô
-  rsvp:         7,  // G - RSVP status
-  link:         8,  // H - Link mời (công thức, không đụng vào)
-  guestsCount:  9,  // I - Số người đi cùng
-  phone:        10, // J - Số điện thoại
-  move:         11, // K - Cách di chuyển (dropdown Tự di chuyển / Đi xe chung)
-  notes:        12  // L - Notes
+  companion:    5,  // E - Đi cùng
+  rsvp:         6,  // F - RSVP status
+  link:         7,  // G - Link mời (công thức, không đụng vào)
+  guestsCount:  8,  // H - Số người đi cùng
+  phone:        9,  // I - Số điện thoại
+  move:         10, // J - Cách di chuyển (dropdown Tự di chuyển / Đi xe chung)
+  notes:        11  // K - Notes
 };
 
 // Chỉnh 2 dòng này cho khớp CHÍNH XÁC chữ trong dropdown "RSVP status" của bạn
@@ -49,7 +48,6 @@ function doPost(e) {
   var move         = data.move || '';
   var pickup       = data.pickup || '';
   var companion    = data.companionName || '';
-  var pronounHost  = data.pronounHost || '';
   var date         = data.date || '';
   var formName     = data.formName || '';
 
@@ -73,7 +71,6 @@ function doPost(e) {
     row[COL.group - 1] = '';
     row[COL.date - 1] = normDate(date);
     row[COL.companion - 1] = companion;
-    row[COL.pronounHost - 1] = pronounHost;
     row[COL.rsvp - 1] = statusText;
     row[COL.link - 1] = '';
     row[COL.guestsCount - 1] = guestsCount;
