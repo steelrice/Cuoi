@@ -65,7 +65,7 @@ Bảng nằm ở `PARAM_CODES` trong `index.html`; trong Sheet là tab **"Code"*
 | | 21/11 Vũng Tàu | 28/11 Hưng Yên |
 |---|---|---|
 | Sự kiện | Buổi tiệc chung vui | Lễ thành hôn |
-| Giờ | 11 giờ 30 trưa (đón khách 10:30, khai tiệc 12:00) | 9 giờ sáng |
+| Giờ | 11 giờ 30 trưa (đón khách 10:30, khai tiệc 11:50) | 9 giờ sáng |
 | Địa điểm | Sảnh 2 Merastis Tower | Tư gia nhà trai, QL39A |
 | Xe đưa đón | Có | Không |
 
