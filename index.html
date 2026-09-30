@@ -2062,11 +2062,9 @@
     }catch(e){ return ''; }
   }
 
-  // Cô dâu chú rể tự xưng (mặc định "chúng mình") và tên khách (mặc định "bạn" khi không truyền)
-  // — dùng để thay các chỗ "chúng mình"/"bạn" đang viết cứng trong nội dung
-  // Luôn viết thường, trừ khi đứng đầu câu thì viết hoa chữ cái đầu (hostPronounCap)
-  var hostPronounLower = (getUrlParam('pronounHost') || 'chúng mình').toLowerCase();
-  var hostPronounCap = hostPronounLower.charAt(0).toUpperCase() + hostPronounLower.slice(1);
+  // Tên khách (mặc định "bạn" khi không truyền) — dùng để thay các chỗ "bạn" đang viết cứng trong nội dung.
+  // Cô dâu chú rể tự xưng thì viết cứng trong từng câu ("cô dâu chú rể" / "Sơn và Thảo"); pronounHost (ph)
+  // không hiện trên thiệp nữa, chỉ còn gửi kèm hồi âm để ghi vào Sheet
   var guestNameRaw = getUrlParam('guestName') || 'bạn';
   // Link không có tên khách: chỉ dùng xưng hô, không ghép thêm 'bạn' (tránh 'bạn bạn', 'anh bạn')
   var hasGuestName = !!getUrlParam('guestName');
@@ -2077,12 +2075,9 @@
 
   // Khách xưng hô "Em" hoặc "Bạn" (pronounGuest=Em|Bạn), hoặc có tên mà không truyền xưng hô
   // (tên đã gồm cách gọi, vd guestName=Chế lớn): gọi đúng tên khách (không kèm xưng hô phía
-  // trước) ở các chỗ RSVP/gợi ý trang phục/lời cảm ơn. pronounHost luôn viết
-  // thường (hostPronounLower/hostPronounCap) ở mọi trường hợp.
+  // trước) ở các chỗ RSVP/gợi ý trang phục/lời cảm ơn.
   var pronounGuestLower = (getUrlParam('pronounGuest') || '').trim().toLowerCase();
   var isEmGuest = pronounGuestLower === 'em' || pronounGuestLower === 'bạn' || (!pronounGuestLower && hasGuestName);
-  var rsvpHost = hostPronounLower;
-  var rsvpHostCap = hostPronounCap;
   var rsvpGuestFull = isEmGuest ? guestNameRaw : guestFull;
   var rsvpGuestPronounOnly = isEmGuest ? guestNameRaw : guestPronounOnly;
 
@@ -2282,7 +2277,7 @@
     document.fonts.ready.then(function(){ fitGuestName(); fitCoverStage(); });
   }
 
-  // Thay "chúng mình"/"mình" bằng pronounHost, "bạn" bằng guestName ở các chỗ đang viết cứng
+  // Thay "bạn" bằng guestName ở các chỗ đang viết cứng
   bi('countdownLead', 'đến giây phút cô dâu chú rể chính thức về chung một nhà', 'until we officially become family');
   bi('noteBoxText', 'Khách từ TP.HCM đã có xe đưa đón về Vũng Tàu.', "Coming from HCMC? We've arranged a shuttle to Vung Tau.");
   if(EV.day === '28'){
@@ -2540,7 +2535,7 @@
     if(!ta || !h) return;
     ta.placeholder = en ? 'E.g. where you are staying, what time suits you…' : 'VD: nơi ở, giờ muốn được đón…';
     h.textContent = en ? "We'll get in touch to arrange the pickup point."
-      : rsvpHostCap + ' sẽ liên hệ lại để hẹn điểm đón với ' + rsvpGuestPronounOnlyLower + ' nhé.';
+      : 'Sẽ có người liên hệ lại để hẹn điểm đón với ' + rsvpGuestPronounOnlyLower + ' nhé.';
   }
   syncPickupHint(document.body.classList.contains('lang-en'));
 
@@ -3286,9 +3281,9 @@
       function bil(vi, en){ return '<span data-vi>' + vi + '</span><span data-en>' + en + '</span>'; }
       document.getElementById('rdTitle').innerHTML = bil('Cảm ơn ' + P + (yes ? '!' : ''), yes ? 'Thank you!' : 'Thank you');
       document.getElementById('rdText').innerHTML = yes
-        ? bil(rsvpHostCap + ' đã nhận được hồi âm của ' + P + '. Hẹn gặp ' + P + ' ngày ' + whenVi + ' nhé!',
+        ? bil('Sơn và Thảo đã nhận được hồi âm của ' + P + '. Hẹn gặp ' + P + ' ngày ' + whenVi + ' nhé!',
               "We've received your reply. See you on " + whenEn + '!')
-        : bil('Tiếc vì không được gặp ' + P + ' hôm ấy, nhưng ' + rsvpHost + ' biết ' + P + ' vẫn luôn hướng về ngày vui này. Hẹn ' + P + ' một dịp gần nhất nhé!',
+        : bil('Tiếc vì không được gặp ' + P + ' hôm ấy, nhưng Sơn và Thảo biết ' + P + ' vẫn luôn hướng về ngày vui này. Hẹn ' + P + ' một dịp gần nhất nhé!',
               "We're sorry to miss you that day, but we know you'll be with us in spirit. Hope to see you again soon!");
       var rdCal = document.getElementById('rdCal'); rdCal.hidden = !yes;
       if(rsvpCal){ rdCal.appendChild(rsvpCal); rsvpCal.hidden = !yes; }
