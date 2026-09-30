@@ -1455,7 +1455,7 @@
           </div>
         </div>
         <div class="field" id="guestField">
-          <label><span data-vi>Số người đi cùng</span><span data-en>Guests coming with you</span></label>
+          <label id="guestLabel"><span data-vi>Bạn đi cùng mấy người?</span><span data-en>How many guests are coming with you?</span></label>
           <div class="stepper">
             <button type="button" id="minusBtn" aria-label="minus">−</button>
             <span id="guestCount">0</span>
@@ -2316,6 +2316,8 @@
   bi('dressLead', 'Một chút gợi ý cho ' + rsvpGuestFullLower + ': những gam màu dưới đây sẽ giúp ảnh chung thêm hài hoà, còn lại cứ diện thật thoải mái nhé.', "A little suggestion: these shades will make our photos together look lovely — otherwise, just wear whatever feels comfortable.");
   bi('rsvpLead', capFirst(rsvpGuestPronounOnly) + ' hồi âm đôi dòng để cô dâu chú rể chuẩn bị được chu đáo hơn nhé.', 'A short reply helps us prepare for you.');
   bi('rsvpAttendLabel', capFirst(rsvpGuestPronounOnly) + ' sẽ đến tham dự chứ', 'Will you be joining us');
+  // số người đi cùng (không tính khách, mặc định 0): "Chị đi cùng mấy người?"
+  bi('guestLabel', capFirst(rsvpGuestPronounOnly) + ' đi cùng mấy người?', 'How many guests are coming with you?');
   bi('rsvpKicker', 'Rất mong được đón tiếp', 'We hope to see you');
   var rsvpGuestTitleCap = rsvpGuestPronounOnlyLower.charAt(0).toUpperCase() + rsvpGuestPronounOnlyLower.slice(1);
   function capFirst(t){ return t ? t.charAt(0).toUpperCase() + t.slice(1) : t; } // đầu câu: 'bạn' → 'Bạn'
