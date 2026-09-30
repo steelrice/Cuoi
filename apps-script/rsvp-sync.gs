@@ -40,52 +40,78 @@ var MOVE_SELF    = 'Tự di chuyển';
 var MOVE_SHUTTLE = 'Đi xe chung';
 
 function doPost(e) {
-  var data = (e && e.parameter) || {};
+  // thiệp gửi "mù" (no-cors) nên không biết Apps Script có lỗi hay không → ở đây phải tự chống lỗi:
+  // khoá để 2 hồi âm cùng lúc không ghi chồng / tạo dòng trùng, lỗi thì vẫn trả về JSON
+  var lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(20000);
+    handleRsvp((e && e.parameter) || {});
+    return json({ ok: true });
+  } catch (err) {
+    console.error(err);
+    return json({ ok: false, error: String(err) });
+  } finally {
+    lock.releaseLock();
+  }
+}
+
+function handleRsvp(data) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
   var side = norm(data.side);
-  var sheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SIDE_SHEETS[side] || SHEET_NAME);
+  // chưa có tab của bên đó (vd chưa tạo tab 'Thảo') thì ghi vào tab mặc định, không để mất hồi âm
+  var sheet = ss.getSheetByName(SIDE_SHEETS[side] || SHEET_NAME) || ss.getSheetByName(SHEET_NAME);
 
   var pronounGuest = (data.pronounGuest || '').trim();
   var guestName    = (data.guestName || '').trim();
   var attend       = data.attend || '';
-  var phone        = data.phone || '';
-  var guests       = data.guests || '';
+  var phone        = (data.phone || '').trim();
   var move         = data.move || '';
   var pickup       = data.pickup || '';
   var companion    = data.companionName || '';
   var date         = data.date || '';
-  var formName     = data.formName || '';
+  var formName     = (data.formName || '').trim();
+
+  var yes = attend === 'yes', no = attend === 'no';
+  var statusText = yes ? STATUS_YES : (no ? STATUS_NO : '');
+  var moveText = move === 'shuttle' ? MOVE_SHUTTLE : (move === 'self' ? MOVE_SELF : '');
+  var notesText = buildNotes(pickup, formName, guestName);
+  // số người đi cùng: ghi cả 0; khách từ chối thì để trống
+  var guestsCount = yes && data.guests !== undefined && data.guests !== '' ? Number(data.guests) : '';
+  // dấu ' ở đầu để Sheets giữ nguyên số 0 đầu của số điện thoại (0901… không thành 901…)
+  var phoneText = phone ? "'" + phone : '';
 
   var rowIndex = findGuestRow(sheet, pronounGuest, guestName, date);
 
-  var statusText = attend === 'yes' ? STATUS_YES : (attend === 'no' ? STATUS_NO : '');
-  var moveText = move === 'shuttle' ? MOVE_SHUTTLE : (move === 'self' ? MOVE_SELF : '');
-  var notesText = buildNotes(pickup, formName, guestName);
-  var guestsCount = attend === 'yes' ? guests : '';
-
   if (rowIndex > -1) {
     if (statusText) sheet.getRange(rowIndex, COL.rsvp).setValue(statusText);
-    if (guestsCount) sheet.getRange(rowIndex, COL.guestsCount).setValue(guestsCount);
-    if (phone) sheet.getRange(rowIndex, COL.phone).setValue(phone);
-    if (moveText) sheet.getRange(rowIndex, COL.move).setValue(moveText);
+    if (yes) {
+      sheet.getRange(rowIndex, COL.guestsCount).setValue(guestsCount);
+      if (moveText) sheet.getRange(rowIndex, COL.move).setValue(moveText);
+    } else if (no) {
+      // đổi ý từ "có mặt" sang "không đến được" → xoá số người + cách đi cũ cho khỏi nhầm
+      sheet.getRange(rowIndex, COL.guestsCount).setValue('');
+      sheet.getRange(rowIndex, COL.move).setValue('');
+    }
+    if (phoneText) sheet.getRange(rowIndex, COL.phone).setValue(phoneText);
     if (notesText) sheet.getRange(rowIndex, COL.notes).setValue(notesText);
   } else {
     var row = [];
+    for (var c = 0; c < COL.notes; c++) row[c] = '';
     row[COL.pronounGuest - 1] = pronounGuest;
     row[COL.guestName - 1] = guestName || formName;
-    row[COL.group - 1] = '';
     row[COL.date - 1] = normDate(date);
     row[COL.companion - 1] = companion;
     row[COL.rsvp - 1] = statusText;
-    row[COL.link - 1] = '';
     row[COL.guestsCount - 1] = guestsCount;
-    row[COL.phone - 1] = phone;
-    row[COL.move - 1] = moveText;
+    row[COL.phone - 1] = phoneText;
+    row[COL.move - 1] = yes ? moveText : '';
     row[COL.notes - 1] = notesText;
     sheet.appendRow(row);
   }
+}
 
-  return ContentService.createTextOutput(JSON.stringify({ ok: true }))
-    .setMimeType(ContentService.MimeType.JSON);
+function json(obj) {
+  return ContentService.createTextOutput(JSON.stringify(obj)).setMimeType(ContentService.MimeType.JSON);
 }
 
 // "--" là giá trị ô dropdown chưa chọn trong Sheet; thiệp coi "--" là trống và gửi lên chuỗi rỗng
