@@ -117,6 +117,7 @@ images/
     p01.webp … p10.webp   mỗi file là 1 trang đôi (ảnh nhẹ, hiện trong thiệp)
     hd/p01.webp …     bản nét 2000px, chỉ tải khi khách bấm "Phóng to ảnh"
   footer.webp         ảnh nền mờ ở chân trang
+  og.jpg              ảnh xem trước 1200×630 khi dán link vào Zalo / Messenger / Facebook (thẻ og: ở đầu index.html)
   paper.webp, torn-edge.webp   nền giấy, mép giấy xé
   map-vungtau.webp    bản đồ Merastis
   map-hungyen.webp    bản đồ QL39A
