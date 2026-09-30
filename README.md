@@ -41,6 +41,24 @@ Ví dụ (tên đầy đủ, tương đương):
 
 Lưu ý: dấu cách trong tham số viết thành `_` (vd `gn=Loan_Trường`) — thiệp tự đổi lại thành dấu cách; `%20` kiểu cũ vẫn đọc được. Ký tự `%`, `&`, `#`, `+` trong tên phải mã hoá (`%25`, `%26`, `%23`, `%2B`) — công thức cột H trong Sheet đã làm sẵn. Nên copy link từ ô trong Sheet: copy từ thanh địa chỉ trình duyệt thì chữ có dấu bị đổi thành dạng `%C4%91…` khó nhìn.
 
+### Mã viết tắt cho `pg` và `cn`
+
+Để link ngắn và không dấu, `pg` và `cn` nhận mã thay cho chữ (vd `?d=21&pg=chi&gn=Trinh&cn=gd`). Chữ đầy đủ vẫn đọc được như cũ — giá trị không có trong bảng thì thiệp dùng nguyên chữ.
+
+| Chữ | Mã | | Chữ | Mã |
+|---|---|---|---|---|
+| Anh | `anh` | | Cô | `co` |
+| Chị | `chi` | | Chú | `chu` |
+| Em | `em` | | Bác | `bac` |
+| Bạn | `ban` | | Dì | `di` |
+| Chế | `che` | | Cậu | `cau` |
+| Gia đình | `gd` | | Mợ | `mo` |
+| Người thương | `nt` (chỉ `cn`) | | Ông | `ong` |
+| Vợ | `vo` (chỉ `cn`) | | Bà | `ba` |
+| Chồng | `chong` (chỉ `cn`) | | Các con | `con` (chỉ `cn`) |
+
+Bảng nằm ở `PARAM_CODES` trong `index.html`; trong Sheet là tab **"Mã"** (cột A chữ, cột B mã) để công thức cột H tra. **Không đổi hay xoá mã đã dùng** (link đã gửi sẽ hiện sai) — chỉ thêm mã mới, và thêm cả ở `PARAM_CODES` lẫn tab "Mã". Chữ chưa có mã thì cứ để Sheet gửi nguyên chữ.
+
 ## Khác nhau giữa hai ngày
 
 | | 21/11 Vũng Tàu | 28/11 Hưng Yên |

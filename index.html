@@ -2063,6 +2063,14 @@
     date:'d', guestName:'gn', pronounGuest:'pg', genderEn:'ge',
     companionName:'cn', pronounHost:'ph', lang:'l'
   };
+  /* mã viết tắt cho xưng hô (pg) và người đi cùng (cn) để link ngắn, không dấu: Sheet tra tab "Mã" rồi gửi
+     mã (pg=chi, cn=gd). Mã là chữ cố định, KHÔNG đổi/xoá mã đã dùng (link đã gửi sẽ sai) — chỉ thêm mã mới.
+     Giá trị không có trong bảng thì dùng nguyên chữ như cũ (pg=Chị, cn=Gia_đình vẫn đọc được) */
+  var PARAM_CODES = {
+    pronounGuest: { anh:'Anh', chi:'Chị', em:'Em', ban:'Bạn', che:'Chế', gd:'Gia đình',
+      co:'Cô', chu:'Chú', bac:'Bác', di:'Dì', cau:'Cậu', mo:'Mợ', ong:'Ông', ba:'Bà' },
+    companionName: { gd:'Gia đình', nt:'Người thương', vo:'Vợ', chong:'Chồng', con:'Các con' }
+  };
   function getUrlParam(k){
     try{
       var qs = new URLSearchParams(window.location.search);
@@ -2074,6 +2082,8 @@
       }
       // link tạo từ Sheet dùng "_" thay dấu cách cho gọn (gn=chị_Loan) → đổi lại thành dấu cách
       v = v.replace(/_/g, ' ');
+      var codes = PARAM_CODES[k], code = v.trim().toLowerCase();
+      if(codes && Object.prototype.hasOwnProperty.call(codes, code)) v = codes[code];
       return /^-+$/.test(v.trim()) ? '' : v;
     }catch(e){ return ''; }
   }
