@@ -2168,7 +2168,9 @@
   }
   function guestLine(lang){
     var name = getUrlParam('guestName') || '';
-    var companion = companionText(getUrlParam('companionName') || '');
+    // xưng hô đã là "Gia đình" (pg=gd) thì bỏ qua người đi cùng — tránh "Gia đình chế Nhỏ / và gia đình"
+    var isFamily = (getUrlParam('pronounGuest') || '').trim().toLowerCase() === 'gia đình';
+    var companion = isFamily ? '' : companionText(getUrlParam('companionName') || '');
     if(!name) return (lang === 'en') ? 'Dear guest' : 'Quý khách';
     var nameEl = '<span class="pn">' + name + '</span>';
     var mainLine;
