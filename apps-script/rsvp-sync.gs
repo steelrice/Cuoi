@@ -71,7 +71,7 @@ function doPost(e) {
     row[COL.pronounGuest - 1] = pronounGuest;
     row[COL.guestName - 1] = guestName || formName;
     row[COL.group - 1] = '';
-    row[COL.date - 1] = date;
+    row[COL.date - 1] = normDate(date);
     row[COL.companion - 1] = companion;
     row[COL.pronounHost - 1] = pronounHost;
     row[COL.rsvp - 1] = statusText;
@@ -87,18 +87,30 @@ function doPost(e) {
     .setMimeType(ContentService.MimeType.JSON);
 }
 
+// "--" là giá trị ô dropdown chưa chọn trong Sheet; thiệp coi "--" là trống và gửi lên chuỗi rỗng
+// → so khớp phải coi "--" và ô trống là như nhau, không thì tạo dòng trùng
+function norm(v) {
+  v = String(v || '').trim();
+  return v === '--' ? '' : v;
+}
+// Ngày mời: thiệp hiểu mọi giá trị khác 28 (kể cả thiếu d trên link) là 21
+function normDate(v) {
+  return norm(v) === '28' ? '28' : '21';
+}
+
 function findGuestRow(sheet, pronounGuest, guestName, date) {
+  guestName = norm(guestName); pronounGuest = norm(pronounGuest); date = normDate(date);
   if (!guestName) return -1;
   var lastRow = sheet.getLastRow();
   if (lastRow <= HEADER_ROW) return -1;
   var numRows = lastRow - HEADER_ROW;
   var values = sheet.getRange(HEADER_ROW + 1, 1, numRows, COL.notes).getValues();
   for (var i = 0; i < values.length; i++) {
-    var rowPronoun = String(values[i][COL.pronounGuest - 1] || '').trim();
-    var rowName = String(values[i][COL.guestName - 1] || '').trim();
-    var rowDate = String(values[i][COL.date - 1] || '').trim();
+    var rowPronoun = norm(values[i][COL.pronounGuest - 1]);
+    var rowName = norm(values[i][COL.guestName - 1]);
+    var rowDate = normDate(values[i][COL.date - 1]);
     // Khớp cả 3: xưng hô + tên + ngày mời — tránh nhận nhầm khi trùng tên giữa 2 miền/2 sheet
-    if (rowName === guestName && rowPronoun === pronounGuest && rowDate === String(date).trim()) {
+    if (rowName === guestName && rowPronoun === pronounGuest && rowDate === date) {
       return HEADER_ROW + 1 + i;
     }
   }
