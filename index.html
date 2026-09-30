@@ -2072,6 +2072,8 @@
       for(var n = 0; n < 3 && /%[0-9A-Fa-f]{2}/.test(v); n++){
         try{ v = decodeURIComponent(v.replace(/\+/g, ' ')); }catch(e){ break; }
       }
+      // link tạo từ Sheet dùng "_" thay dấu cách cho gọn (gn=chị_Loan) → đổi lại thành dấu cách
+      v = v.replace(/_/g, ' ');
       return /^-+$/.test(v.trim()) ? '' : v;
     }catch(e){ return ''; }
   }

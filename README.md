@@ -30,16 +30,16 @@ Dùng tên viết tắt để link ngắn hơn (khuyên dùng khi tạo link m�
 Ví dụ (rút gọn):
 
 ```
-?d=21&gn=Lan&pg=Chị&ge=f&cn=anh%20Minh
+?d=21&pg=Chị&gn=Lan&ge=f&cn=anh_Minh
 ```
 
 Ví dụ (tên đầy đủ, tương đương):
 
 ```
-?date=21&guestName=Lan&pronounGuest=Chị&genderEn=f&companionName=anh%20Minh
+?date=21&pronounGuest=Chị&guestName=Lan&genderEn=f&companionName=anh_Minh
 ```
 
-Lưu ý: dấu cách trong tham số phải viết thành `%20`.
+Lưu ý: dấu cách trong tham số viết thành `_` (vd `gn=Loan_Trường`) — thiệp tự đổi lại thành dấu cách; `%20` kiểu cũ vẫn đọc được. Ký tự `%`, `&`, `#`, `+` trong tên phải mã hoá (`%25`, `%26`, `%23`, `%2B`) — công thức cột H trong Sheet đã làm sẵn. Nên copy link từ ô trong Sheet: copy từ thanh địa chỉ trình duyệt thì chữ có dấu bị đổi thành dạng `%C4%91…` khó nhìn.
 
 ## Khác nhau giữa hai ngày
 
