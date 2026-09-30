@@ -1,6 +1,6 @@
 /**
- * Nhận hồi âm (RSVP) từ index.html và ghi thẳng vào sheet "Danh sách khách mời".
- * Dò đúng hàng của khách (khớp Xưng hô + Tên khách) để cập nhật đè — khách gửi
+ * Nhận hồi âm (RSVP) từ index.html và ghi thẳng vào tab của từng bên (Sơn / Thảo).
+ * Dò đúng hàng của khách (khớp Xưng hô + Tên khách + Ngày mời) để cập nhật đè — khách gửi
  * lại nhiều lần vẫn ghi vào đúng 1 hàng, không tạo dòng trùng. Không tìm thấy
  * (link không tham số, hoặc khách lạ) thì thêm hàng mới ở cuối.
  *
