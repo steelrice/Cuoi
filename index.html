@@ -421,7 +421,7 @@
   .swipe-hint .sw-hand svg{ width:28px; height:28px; fill:none; stroke:currentColor; stroke-width:1.4; stroke-linecap:round; stroke-linejoin:round; animation:swHand 1.8s ease-in-out infinite; }
   .swipe-hint .sw-txt{ font-family:var(--sans); font-size:11.5px; font-weight:500; letter-spacing:.18em; text-transform:uppercase; color:var(--cream-dim); margin-top:6px; }
   @keyframes swHand{ 0%,15%{ transform:translateY(8px); opacity:0; } 30%{ opacity:1; } 70%{ transform:translateY(-10px); opacity:1; } 100%{ transform:translateY(-14px); opacity:0; } }
-  /* laptop (chuột / trackpad, không cảm ứng): đổi tay vuốt + mũi tên thành con trỏ đang bấm, chữ "Bấm để xem tiếp".
+  /* laptop (chuột / trackpad, không cảm ứng): đổi tay vuốt + mũi tên thành con trỏ đang bấm, chữ "Chạm để xem tiếp".
      Lăn chuột, vuốt trackpad, kéo chuột vẫn mở được như cũ */
   .swipe-hint .sw-click, .swipe-hint .sw-t-mouse{ display:none; }
   .swipe-hint .sw-click svg{ width:38px; height:38px; overflow:visible; }
@@ -1118,7 +1118,7 @@
         <span class="sw-hand" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 11V5.5a1.5 1.5 0 0 1 3 0V11m0-1.5a1.5 1.5 0 0 1 3 0V11m0-.5a1.5 1.5 0 0 1 3 0v4.5a6 6 0 0 1-6 6h-.6a6 6 0 0 1-4.9-2.6L4.3 15.2a1.5 1.5 0 0 1 2.4-1.8L9 15"/></svg></span>
         <span class="sw-click" aria-hidden="true"><svg viewBox="0 0 32 32"><circle class="ring" cx="11" cy="9" r="6"/><path class="ptr" d="M11 9l2.2 15 3.3-5.3 6.1-.4L11 9z"/></svg></span>
         <span class="sw-txt sw-t-touch"><span data-vi>Vuốt lên để xem tiếp</span><span data-en>Swipe up to continue</span></span>
-        <span class="sw-txt sw-t-mouse"><span data-vi>Bấm để xem tiếp</span><span data-en>Click to continue</span></span>
+        <span class="sw-txt sw-t-mouse"><span data-vi>Chạm để xem tiếp</span><span data-en>Click to continue</span></span>
       </button>
     </div>
   </div>
@@ -2172,7 +2172,7 @@
            locKicker:'Nhà hàng', locBig:'Merastis', locAddr:'Sảnh 2 · <span class="nowrap">356 - 358</span> Trương Công Định<br>TP. Vũng Tàu' },
       en:{ title:'OUR CELEBRATION PARTY', time:'To be held at ', hi:'11:30 AM, Saturday',
            lunar:'(Lunar Calendar: October 13th)', yearLunar:'Year of the Fire Horse',
-           venue:'AT HALL 2, MERASTIS TOWER', addr:'356 - 358 Trương Công Định Street, Tam Thắng Ward, Vũng Tàu City',
+           venue:'AT HALL 2, MERASTIS TOWER', addr:'356 - 358 Truong Cong Dinh Street, Tam Thang Ward, Vung Tau City',
            locKicker:'Restaurant', locBig:'Merastis', locAddr:'Hall 2 · <span class="nowrap">356 - 358</span> Truong Cong Dinh St.<br>Vung Tau City' }
     },
     '28': {
@@ -2184,8 +2184,8 @@
            locKicker:'Tại tư gia', locBig:'Nhà Trai', locAddr:'QL39A · xã Tân Hưng<br>TP. Hưng Yên' },
       en:{ title:'OUR WEDDING CEREMONY', time:'To be held at ', hi:'9:00 AM, Saturday',
            lunar:'(Lunar Calendar: October 20th)', yearLunar:'Year of the Fire Horse',
-           venue:"AT THE GROOM'S FAMILY RESIDENCE", addr:'National Highway 39A, Tân Hưng Commune, Hưng Yên City',
-           locKicker:'At the', locBig:"Groom's Home", locAddr:'National Highway 39A · Tân Hưng Commune<br>Hưng Yên City' }
+           venue:"AT THE GROOM'S FAMILY RESIDENCE", addr:'National Highway 39A, Tan Hung Commune, Hung Yen City',
+           locKicker:'At the', locBig:"Groom's Home", locAddr:'National Highway 39A · Tan Hung Commune<br>Hung Yen City' }
     }
   };
 
@@ -2570,7 +2570,7 @@
     document.dispatchEvent(new Event('inviteopen'));
   }
   openBtn.addEventListener('click', openInvite);
-  if(window.matchMedia && matchMedia('(hover:hover) and (pointer:fine)').matches) openBtn.setAttribute('aria-label', 'Bấm để xem tiếp');
+  if(window.matchMedia && matchMedia('(hover:hover) and (pointer:fine)').matches) openBtn.setAttribute('aria-label', 'Chạm để xem tiếp');
 
   /* vuốt lên để mở: khối thiệp đi theo ngón tay, thả quá ~1/4 màn hình (hoặc vuốt nhanh) thì mở,
      chưa đủ thì bật về. Mở trong touchend/pointerup nên vẫn tính là "cử chỉ thật" → nhạc phát được. */
@@ -3258,10 +3258,10 @@
   var CAL = {
     '21': { dates:'20261121T033000Z/20261121T073000Z', maps:EVENTS['21'].maps,
       vi:{ t:'Tiệc chung vui · Hoàng Sơn & Phương Thảo', loc:'Sảnh 2 Merastis Tower, 356 - 358 Trương Công Định, Tam Thắng, TP. Vũng Tàu', d:'Đón khách từ 10:30, làm lễ 11:30, khai tiệc 11:50.\nChỉ đường: ' },
-      en:{ t:'Hoàng Sơn & Phương Thảo · Celebration Party', loc:'Hall 2, Merastis Tower, 356 - 358 Trương Công Định Street, Tam Thắng Ward, Vũng Tàu City', d:'Welcome from 10:30 AM, ceremony at 11:30 AM, lunch at 11:50 AM.\nDirections: ' } },
+      en:{ t:'Hoàng Sơn & Phương Thảo · Celebration Party', loc:'Hall 2, Merastis Tower, 356 - 358 Truong Cong Dinh Street, Tam Thang Ward, Vung Tau City', d:'Welcome from 10:30 AM, ceremony at 11:30 AM, lunch at 11:50 AM.\nDirections: ' } },
     '28': { dates:'20261128T020000Z/20261128T050000Z', maps:EVENTS['28'].maps,
       vi:{ t:'Lễ thành hôn · Hoàng Sơn & Phương Thảo', loc:'Tư gia nhà trai, QL39A, xã Tân Hưng, TP. Hưng Yên', d:'Chỉ đường: ' },
-      en:{ t:'Hoàng Sơn & Phương Thảo · Wedding Ceremony', loc:"Groom's family residence, National Highway 39A, Tân Hưng Commune, Hưng Yên City", d:'Directions: ' } }
+      en:{ t:'Hoàng Sơn & Phương Thảo · Wedding Ceremony', loc:"Groom's family residence, National Highway 39A, Tan Hung Commune, Hung Yen City", d:'Directions: ' } }
   };
   var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
   function calHref(){
