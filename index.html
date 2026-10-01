@@ -776,6 +776,13 @@
   .bk-full.rot .bk-cnt{ position:absolute; left:26px; top:calc(var(--mt) / 2); min-width:0; transform:translate(-50%,-50%) rotate(90deg); white-space:nowrap; }
   .bk-full.rot .bk-hint{ position:absolute; left:30px; top:50%; transform:translate(-50%,-50%) rotate(90deg); white-space:nowrap; padding:5px 14px; border-radius:14px; background:rgba(20,3,6,.72); opacity:1; pointer-events:none; }
   .bk-full.rot .bk-hint.fade{ opacity:0; }
+  /* laptop / điện thoại cầm ngang: ‹ › to hơn, nằm giữa hai khoảng trống hai bên sách; số trang + hướng dẫn ở dưới */
+  .bk-full.side .bk-row{ display:contents; }
+  .bk-full.side #bkPrev, .bk-full.side #bkNext{ position:fixed; top:var(--by); width:52px; height:52px; margin:-26px 0 0 -26px; background:rgba(20,3,6,.35); }
+  .bk-full.side #bkPrev{ left:var(--bx); }
+  .bk-full.side #bkNext{ left:calc(100% - var(--bx)); }
+  .bk-full.side #bkPrev svg, .bk-full.side #bkNext svg{ width:20px; height:20px; }
+  .bk-full.side #bkPrev:not(:disabled):hover, .bk-full.side #bkNext:not(:disabled):hover{ background:rgba(207,159,63,.14); }
   .bk-full.rot .bk-close{ top:auto; bottom:calc(var(--sp-4) + env(safe-area-inset-bottom)); }
   .bk-close{ position:absolute; top:calc(var(--sp-4) + env(safe-area-inset-top)); right:var(--sp-4); z-index:4; width:42px; height:42px; border-radius:50%; border:1px solid rgba(207,159,63,.5); background:rgba(20,3,6,.5); color:var(--gold); font-size:24px; line-height:1; display:flex; align-items:center; justify-content:center; }
   .bk-head{ position:absolute; top:0; left:0; right:0; z-index:2; padding-top:var(--sp-8); text-align:center; pointer-events:none; }
@@ -2802,6 +2809,10 @@
         PW = SW / 2; PH = Math.round(SW * 3 / 4);
         sFlat = fSW / SW; sRot = rotFull ? rotSW / SW : sFlat; sClosed = sFlat;
         full.style.setProperty('--mt', Math.max(72, (h - rotSW) / 2) + 'px');   // bề cao lề trống trên/dưới khi xoay
+        // không xoay (laptop, điện thoại cầm ngang): hai bên sách còn trống đủ rộng → đưa ‹ › ra giữa hai khoảng trống đó
+        var gap = (w - fSW) / 2, side = !rotFull && gap >= 76;
+        full.classList.toggle('side', side);
+        if(side){ full.style.setProperty('--bx', (gap / 2) + 'px'); full.style.setProperty('--by', (h / 2 + offY) + 'px'); }
       }
       book.style.setProperty('--sw', SW + 'px'); book.style.setProperty('--pw', PW + 'px'); book.style.setProperty('--ph', PH + 'px');
     }
@@ -2943,7 +2954,7 @@
       resetZoom(0); pts = {}; pinch = pan = null; clearTimeout(tapTimer);
       rotAnim++; mode = 'inline'; stage = inlineStage;
       inlineStage.appendChild(book); sticky.appendChild(ctl);
-      full.classList.remove('show', 'rot'); document.documentElement.classList.remove('no-scroll');
+      full.classList.remove('show', 'rot', 'side'); document.documentElement.classList.remove('no-scroll');
       layout(); rotNow = 0; place(1, 0); hintMode(); hdSpin(); sharpen();
     }
     full.querySelector('.bk-close').addEventListener('click', closeFull);
