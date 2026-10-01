@@ -144,7 +144,7 @@ images/
   book/               album dạng sách lật trang — xem mục dưới
     cover.webp        bìa album
     p01.webp … p10.webp   mỗi file là 1 trang đôi (ảnh nhẹ, hiện trong thiệp)
-    hd/p01.webp …     bản nét 2000px, chỉ tải khi khách bấm "Phóng to ảnh"
+    hd/p01.jpg …      bản nét = nguyên file JPG gốc (không nén lại), chỉ tải khi khách bấm "Phóng to ảnh"
   footer.webp         ảnh nền mờ ở chân trang
   og.jpg              ảnh xem trước 1200×630 khi dán link vào Zalo / Messenger / Facebook (thẻ og: ở đầu index.html)
   paper.webp, torn-edge.webp   nền giấy, mép giấy xé
@@ -164,7 +164,7 @@ images/
 Album là cuốn sách lật trang, mỗi trang là 1 ảnh trang đôi (ngang, tỉ lệ 4:3):
 
 1. Ảnh nhẹ: rộng 1400px, WebP, chép vào `images/book/` (vd `p11.webp`).
-2. Ảnh nét: rộng 2000px, WebP, cùng tên, chép vào `images/book/hd/`.
+2. Ảnh nét: chép nguyên file JPG gốc (không nén lại), cùng tên nhưng đuôi `.jpg` (vd `p11.jpg`), vào `images/book/hd/`.
 3. Thêm tên file vào mảng `BOOK_PAGES` trong `index.html`, đúng thứ tự muốn hiện:
 
 ```js

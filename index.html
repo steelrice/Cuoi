@@ -2807,7 +2807,7 @@
       }
       im.onload = function(){ if(im.decode) im.decode().then(function(){ done(true); }, function(){ done(true); }); else done(true); };
       im.onerror = function(){ done(false); };
-      im.src = HD_DIR + BOOK_PAGES[i];
+      im.src = HD_DIR + BOOK_PAGES[i].replace(/\.webp$/, '.jpg');   // bản nét = nguyên file JPG gốc của studio, không nén lại
       hdSpin();
     }
     function hdSpin(){
