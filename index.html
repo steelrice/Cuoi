@@ -790,7 +790,7 @@
      (máy tính: tay chạm + vòng sóng trên trang phải, giống nút mở thiệp ở bìa = bấm để lật). Chạy ~5 giây rồi tắt; chạm/lật/phóng là tắt ngay. Chữ hướng dẫn vẫn giữ cho trình đọc màn hình */
   .bk-full .bk-hint{ position:absolute!important; width:1px; height:1px; overflow:hidden; clip:rect(0 0 0 0); white-space:nowrap; }
   .bk-guide{ position:fixed; left:50%; top:var(--gy, 50%); z-index:5; width:104px; height:104px; margin:-52px 0 0 -52px; border-radius:50%;
-    background:rgba(20,3,6,.58); color:#FFF8EA; opacity:0; transform:rotate(var(--grot, 0deg)) scale(.92); transition:opacity .35s ease, transform .35s ease; pointer-events:none; }
+    background:rgba(20,3,6,.6); border:1px solid rgba(207,159,63,.5); box-sizing:border-box; color:var(--gold); opacity:0;   /* cùng tone nút ‹ › × và tay vàng ở bìa */ transform:rotate(var(--grot, 0deg)) scale(.92); transition:opacity .35s ease, transform .35s ease; pointer-events:none; }
   .bk-guide.show{ opacity:1; transform:rotate(var(--grot, 0deg)) scale(1); }
   .bk-full.rot .bk-guide{ --grot:90deg; }
   .bk-guide svg{ position:absolute; inset:12px; width:80px; height:80px; display:none; overflow:visible; fill:none; stroke:currentColor; stroke-width:1.6; stroke-linecap:round; stroke-linejoin:round; }
