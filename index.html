@@ -1763,11 +1763,34 @@
         p.style.fillOpacity = k(t, g[2], g[3]).toFixed(3);
       });
     }
+    /* vẽ xong: một vệt sáng chéo lướt qua mặt chữ như ánh kim vàng bắt sáng (lớp chữ bản sao tô gradient, chạy xong thì gỡ) */
+    function shine(){
+      var NS = 'http://www.w3.org/2000/svg', svg = box.querySelector('svg');
+      var lg = document.createElementNS(NS, 'linearGradient');
+      lg.id = 'monoShine'; lg.setAttribute('gradientUnits', 'userSpaceOnUse');
+      lg.setAttribute('x1', -70); lg.setAttribute('x2', 70); lg.setAttribute('y1', 0); lg.setAttribute('y2', 0);
+      [[0, 0], [.5, .9], [1, 0]].forEach(function(s){
+        var st = document.createElementNS(NS, 'stop');
+        st.setAttribute('offset', s[0]); st.setAttribute('stop-color', '#fff8e1'); st.setAttribute('stop-opacity', s[1]);
+        lg.appendChild(st);
+      });
+      var defs = document.createElementNS(NS, 'defs'); defs.appendChild(lg);
+      var g = document.createElementNS(NS, 'g');
+      g.setAttribute('fill', 'url(#monoShine)');
+      ps.forEach(function(p){ var c = document.createElementNS(NS, 'path'); c.setAttribute('d', p.getAttribute('d')); g.appendChild(c); });
+      svg.appendChild(defs); svg.appendChild(g);
+      var t0 = performance.now(), D = 1100;
+      (function step(now){
+        var t = Math.min(1, (now - t0) / D), x = -330 + 660 * ease(t);
+        lg.setAttribute('gradientTransform', 'translate(' + x.toFixed(1) + ' 0) rotate(20)');
+        if(t < 1) requestAnimationFrame(step); else { svg.removeChild(g); svg.removeChild(defs); }
+      })(t0);
+    }
     function play(){
       var t0 = performance.now();
       (function step(now){
         var t = Math.min(1, (now - t0) / DUR); render(t);
-        if(t < 1) requestAnimationFrame(step);
+        if(t < 1) requestAnimationFrame(step); else setTimeout(shine, 150);
       })(t0);
     }
     /* chờ khách cuộn tới cuối: cả khung chân trang hiện gần hết (≥ 90%, màn thấp hơn khung thì ~85% chiều cao màn)
