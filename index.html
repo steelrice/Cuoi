@@ -776,7 +776,11 @@
   .bk-full.rot .bk-cnt{ position:absolute; left:26px; top:calc(var(--mt) / 2); min-width:0; transform:translate(-50%,-50%) rotate(90deg); white-space:nowrap; }
   .bk-full.rot .bk-hint{ position:absolute; left:30px; top:50%; transform:translate(-50%,-50%) rotate(90deg); white-space:nowrap; padding:5px 14px; border-radius:14px; background:rgba(20,3,6,.72); opacity:1; pointer-events:none; }
   .bk-full.rot .bk-hint.fade{ opacity:0; }
-  /* laptop / điện thoại cầm ngang: ‹ › to hơn, nằm giữa hai khoảng trống hai bên sách; số trang + hướng dẫn ở dưới */
+  /* laptop / điện thoại cầm ngang: ‹ › to hơn, nằm giữa hai khoảng trống hai bên sách; số trang (trái) + hướng dẫn (giữa)
+     lên hàng trên cùng, ngang nút × → nhường đáy màn hình cho sách to hơn */
+  .bk-full.side .bk-ctl{ top:calc(var(--sp-4) + env(safe-area-inset-top)); bottom:auto; height:42px; flex-direction:row; justify-content:center; }
+  .bk-full.side .bk-cnt{ position:absolute; left:var(--sp-5); top:50%; transform:translateY(-50%); text-align:left; }
+  .bk-full.side .bk-hint{ max-width:calc(100% - 260px); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
   .bk-full.side .bk-row{ display:contents; }
   .bk-full.side #bkPrev, .bk-full.side #bkNext{ position:fixed; top:var(--by); width:52px; height:52px; margin:-26px 0 0 -26px; background:rgba(20,3,6,.35); }
   .bk-full.side #bkPrev{ left:var(--bx); }
@@ -2801,6 +2805,11 @@
         w = fullStage.clientWidth; h = fullStage.clientHeight;
         portrait = rotFull;
         var top = 64;
+        /* không xoay (laptop, điện thoại cầm ngang) mà hai bên sách còn trống đủ rộng: ‹ › ra giữa hai khoảng trống,
+           số trang + hướng dẫn lên hàng trên cùng cạnh nút × → đáy chỉ chừa 16px, sách to thêm */
+        var side = !rotFull && (w - Math.min(w - 24, (h - top - 16) * 4 / 3)) / 2 >= 76;
+        full.classList.toggle('side', side);
+        if(side) ch = 16;
         offY = rotFull ? 0 : (top - ch) / 2;
         // xoay: nút nằm ở 2 lề trống trên/dưới màn dọc (= trái/phải khi cầm ngang) → chừa mỗi bên 72px
         var rotSW  = rotFull ? Math.min((w - 10) * 4 / 3, h - 2 * 72) : 0;
@@ -2809,10 +2818,7 @@
         PW = SW / 2; PH = Math.round(SW * 3 / 4);
         sFlat = fSW / SW; sRot = rotFull ? rotSW / SW : sFlat; sClosed = sFlat;
         full.style.setProperty('--mt', Math.max(72, (h - rotSW) / 2) + 'px');   // bề cao lề trống trên/dưới khi xoay
-        // không xoay (laptop, điện thoại cầm ngang): hai bên sách còn trống đủ rộng → đưa ‹ › ra giữa hai khoảng trống đó
-        var gap = (w - fSW) / 2, side = !rotFull && gap >= 76;
-        full.classList.toggle('side', side);
-        if(side){ full.style.setProperty('--bx', (gap / 2) + 'px'); full.style.setProperty('--by', (h / 2 + offY) + 'px'); }
+        if(side){ full.style.setProperty('--bx', ((w - fSW) / 4) + 'px'); full.style.setProperty('--by', (h / 2 + offY) + 'px'); }
       }
       book.style.setProperty('--sw', SW + 'px'); book.style.setProperty('--pw', PW + 'px'); book.style.setProperty('--ph', PH + 'px');
     }
