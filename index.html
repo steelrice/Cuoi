@@ -2148,43 +2148,47 @@
 
   var EVENTS = {
     '21': {
-      day:'21', maps:'https://maps.app.goo.gl/tdT1LGaSET7pAMx68', shuttle:true,
+      day:'21', place:{ vi:'Vũng Tàu', en:'Vung Tau' }, maps:'https://maps.app.goo.gl/tdT1LGaSET7pAMx68', shuttle:true,
       target:'2026-11-21T11:30:00+07:00',
       tl:[-60, 0, 20],   // đón khách sớm 1 tiếng (350 khách chụp hình) · 11:30 làm lễ · 11:50 khai tiệc
       vi:{ title:'TIỆC CHUNG VUI', time:'Được tổ chức vào lúc ', hi:'11 giờ 30 trưa, Thứ Bảy',
            lunar:'Tức ngày 13 tháng 10', yearLunar:'Năm Bính Ngọ',
            venue:'TẠI SẢNH 2 MERASTIS TOWER', addr:'356 - 358 Trương Công Định, Tam Thắng, TP. Vũng Tàu',
-           coverDate:'21 · 11 · 2026 · Vũng Tàu', heroDate:'Thứ Bảy · 21 Tháng 11, 2026 · Vũng Tàu',
-           locKicker:'Nhà hàng', locBig:'Merastis', locAddr:'Sảnh 2 · <span class="nowrap">356 - 358</span> Trương Công Định<br>TP. Vũng Tàu',
-           thanks:'Cảm ơn ' + rsvpGuestFullLower + ' đã dành thời gian đọc hết thiệp mời của Sơn và Thảo. Hẹn gặp ' + rsvpGuestPronounOnlyLower + ' ngày 21.11.2026 tại Vũng Tàu!',
-           credit:'21 · 11 · 2026 — VŨNG TÀU' },
+           locKicker:'Nhà hàng', locBig:'Merastis', locAddr:'Sảnh 2 · <span class="nowrap">356 - 358</span> Trương Công Định<br>TP. Vũng Tàu' },
       en:{ title:'OUR CELEBRATION PARTY', time:'To be held at ', hi:'11:30 AM, Saturday',
            lunar:'(Lunar Calendar: October 13th)', yearLunar:'Year of the Fire Horse',
            venue:'AT HALL 2, MERASTIS TOWER', addr:'356 - 358 Trương Công Định Street, Tam Thắng Ward, Vũng Tàu City',
-           coverDate:'Nov 21, 2026 · Vung Tau', heroDate:'Saturday · November 21, 2026 · Vung Tau',
-           locKicker:'Restaurant', locBig:'Merastis', locAddr:'Hall 2 · <span class="nowrap">356 - 358</span> Truong Cong Dinh St.<br>Vung Tau City',
-           thanks:'Thank you for taking the time to read through our invitation. See you on November 21, 2026 in Vung Tau!',
-           credit:'NOV 21, 2026 — VUNG TAU' }
+           locKicker:'Restaurant', locBig:'Merastis', locAddr:'Hall 2 · <span class="nowrap">356 - 358</span> Truong Cong Dinh St.<br>Vung Tau City' }
     },
     '28': {
-      day:'28', maps:'https://maps.app.goo.gl/GCHuv1PDPoEEhdEt7', shuttle:false,
+      day:'28', place:{ vi:'Hưng Yên', en:'Hung Yen' }, maps:'https://maps.app.goo.gl/GCHuv1PDPoEEhdEt7', shuttle:false,
       target:'2026-11-28T09:00:00+07:00',
       vi:{ title:'LỄ THÀNH HÔN', time:'Được tổ chức vào lúc ', hi:'9 giờ sáng, Thứ Bảy',
            lunar:'Tức ngày 20 tháng 10', yearLunar:'Năm Bính Ngọ',
            venue:'TẠI TƯ GIA NHÀ TRAI', addr:'QL39A, xã Tân Hưng, TP. Hưng Yên',
-           coverDate:'28 · 11 · 2026 · Hưng Yên', heroDate:'Thứ Bảy · 28 Tháng 11, 2026 · Hưng Yên',
-           locKicker:'Tại tư gia', locBig:'Nhà Trai', locAddr:'QL39A · xã Tân Hưng<br>TP. Hưng Yên',
-           thanks:'Cảm ơn ' + rsvpGuestFullLower + ' đã dành thời gian đọc hết thiệp mời của Sơn và Thảo. Hẹn gặp ' + rsvpGuestPronounOnlyLower + ' ngày 28.11.2026 tại Hưng Yên!',
-           credit:'28 · 11 · 2026 — HƯNG YÊN' },
+           locKicker:'Tại tư gia', locBig:'Nhà Trai', locAddr:'QL39A · xã Tân Hưng<br>TP. Hưng Yên' },
       en:{ title:'OUR WEDDING CEREMONY', time:'To be held at ', hi:'9:00 AM, Saturday',
            lunar:'(Lunar Calendar: October 20th)', yearLunar:'Year of the Fire Horse',
            venue:"AT THE GROOM'S FAMILY RESIDENCE", addr:'National Highway 39A, Tân Hưng Commune, Hưng Yên City',
-           coverDate:'Nov 28, 2026 · Hung Yen', heroDate:'Saturday · November 28, 2026 · Hung Yen',
-           locKicker:'At the', locBig:"Groom's Home", locAddr:'National Highway 39A · Tân Hưng Commune<br>Hưng Yên City',
-           thanks:'Thank you for taking the time to read through our invitation. See you on November 28, 2026 in Hung Yen!',
-           credit:'NOV 28, 2026 — HUNG YEN' }
+           locKicker:'At the', locBig:"Groom's Home", locAddr:'National Highway 39A · Tân Hưng Commune<br>Hưng Yên City' }
     }
   };
+
+  /* các chữ có ngày (bìa, hero, lời cảm ơn, dòng ngày chân thiệp) tự ghép từ day + place của từng sự kiện:
+     đổi ngày / nơi / cách viết chỉ sửa ở đây, không phải lần theo từng chỗ */
+  Object.keys(EVENTS).forEach(function(k){
+    var ev = EVENTS[k], d = ev.day, pl = ev.place;
+    ev.vi.coverDate = d + ' · 11 · 2026 · ' + pl.vi;
+    ev.vi.heroDate  = 'Thứ Bảy · ' + d + ' Tháng 11, 2026 · ' + pl.vi;
+    ev.vi.when      = d + '.11.2026 tại ' + pl.vi;
+    ev.vi.thanks    = 'Cảm ơn ' + rsvpGuestFullLower + ' đã dành thời gian đọc hết thiệp mời của Sơn và Thảo. Hẹn gặp ' + rsvpGuestPronounOnlyLower + ' ngày ' + ev.vi.when + '!';
+    ev.vi.credit    = d + ' · 11 · 2026 — ' + pl.vi.toUpperCase();
+    ev.en.coverDate = 'Nov ' + d + ', 2026 · ' + pl.en;
+    ev.en.heroDate  = 'Saturday · November ' + d + ', 2026 · ' + pl.en;
+    ev.en.when      = 'November ' + d + ', 2026 in ' + pl.en;
+    ev.en.thanks    = 'Thank you for taking the time to read through our invitation. See you on ' + ev.en.when + '!';
+    ev.en.credit    = 'NOV ' + d + ', 2026 — ' + pl.en.toUpperCase();
+  });
 
   var EV = EVENTS[getUrlParam('date') === '28' ? '28' : '21'];
 
@@ -2669,7 +2673,7 @@
     var P = BOOK_PAGES.length;
 
     function img(i){ return '<img alt="" draggable="false" decoding="async" data-i="'+i+'" data-src="'+BOOK_DIR+BOOK_PAGES[i]+'">'; }
-    var finDay = getUrlParam('date') === '28' ? '28' : '21';   // khách Hưng Yên (?date=28) hay Vũng Tàu
+    var finDay = EV.day;   // 21 (Vũng Tàu) hoặc 28 (Hưng Yên) theo ?date
     var finHtml = '<div class="bk-fin"><div class="a"><span data-vi>Còn tiếp…</span><span data-en>To be continued…</span></div><div class="b"><span data-vi>Và chương mới bắt đầu<br>từ ngày '+finDay+'.11</span><span data-en>And a new chapter begins<br>on November '+finDay+'</span></div></div>';
     book.innerHTML = '<div class="bk-base-l"></div><div class="bk-base"></div><div class="bk-block"></div>';
     var baseL = book.firstChild;
@@ -3284,8 +3288,7 @@
     var rsvpCal = document.getElementById('rsvpCal');
     function showDone(yes){
       var P = rsvpGuestPronounOnlyLower, frame = document.querySelector('.rsvp-frame');
-      var whenVi = isVungTau ? '21.11.2026 tại Vũng Tàu' : '28.11.2026 tại Hưng Yên';
-      var whenEn = isVungTau ? 'November 21, 2026 in Vung Tau' : 'November 28, 2026 in Hung Yen';
+      var whenVi = EV.vi.when, whenEn = EV.en.when;
       function bil(vi, en){ return '<span data-vi>' + vi + '</span><span data-en>' + en + '</span>'; }
       document.getElementById('rdTitle').innerHTML = bil('Cảm ơn ' + P + (yes ? '!' : ''), yes ? 'Thank you!' : 'Thank you');
       document.getElementById('rdText').innerHTML = yes
