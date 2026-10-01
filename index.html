@@ -423,14 +423,19 @@
   @keyframes swHand{ 0%,15%{ transform:translateY(8px); opacity:0; } 30%{ opacity:1; } 70%{ transform:translateY(-10px); opacity:1; } 100%{ transform:translateY(-14px); opacity:0; } }
   /* laptop (chuột / trackpad, không cảm ứng): không vuốt được → bỏ mũi tên đi lên, tay "chạm" tại chỗ, chữ "Chạm để xem tiếp" */
   .swipe-hint .sw-t-mouse{ display:none; }
+  .swipe-hint .sw-hand .tap-ring{ display:none; fill:none; stroke:currentColor; stroke-width:1.1; transform-box:fill-box; transform-origin:center; opacity:0; }
+  /* vòng sóng toả ra từ đầu ngón tay đúng lúc tay ấn xuống (50% nhịp swTap) */
+  @keyframes swRipple{ 0%,48%{ transform:scale(.4); opacity:0; } 52%{ opacity:.9; } 90%,100%{ transform:scale(3.3); opacity:0; } }
   @keyframes swTap{ 0%,100%{ transform:translateY(0) scale(1); opacity:.85; } 35%{ transform:translateY(-3px) scale(1); opacity:1; } 50%{ transform:translateY(2px) scale(.88); opacity:1; } 65%{ transform:translateY(0) scale(1); } }
   @media (hover:hover) and (pointer:fine){
     .swipe-hint .sw-arrows, .swipe-hint .sw-t-touch{ display:none; }
-    .swipe-hint .sw-hand svg{ animation-name:swTap; }
+    .swipe-hint .sw-hand svg{ animation-name:swTap; overflow:visible; }
+    .swipe-hint .sw-hand .tap-ring{ display:block; animation:swRipple 1.8s ease-out infinite; }
+    .swipe-hint .sw-hand .tap-ring.r2{ animation-delay:.22s; }
     .swipe-hint .sw-t-mouse{ display:inline; }
   }
   @keyframes swArrow{ 0%,100%{ transform:translateY(0); opacity:.4; } 50%{ transform:translateY(-4px); opacity:1; } }
-  @media (prefers-reduced-motion: reduce){ .swipe-hint svg{ animation:none!important; } }
+  @media (prefers-reduced-motion: reduce){ .swipe-hint svg{ animation:none!important; } .swipe-hint .sw-hand .tap-ring{ display:none!important; } }
   #cover.parted:not(.open):not(.review){ touch-action:none; }
   #cover.review .swipe-hint{ display:none; }
   .stage .seal-btn{ margin-top:var(--sp-5); animation:none; }
@@ -1110,7 +1115,7 @@
 
       <button type="button" class="swipe-hint r" style="--d:2.35s" id="openBtn" aria-label="Vuốt lên để xem tiếp">
         <span class="sw-arrows" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 15l6-6 6 6"/></svg><svg viewBox="0 0 24 24"><path d="M6 15l6-6 6 6"/></svg></span>
-        <span class="sw-hand" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 11V5.5a1.5 1.5 0 0 1 3 0V11m0-1.5a1.5 1.5 0 0 1 3 0V11m0-.5a1.5 1.5 0 0 1 3 0v4.5a6 6 0 0 1-6 6h-.6a6 6 0 0 1-4.9-2.6L4.3 15.2a1.5 1.5 0 0 1 2.4-1.8L9 15"/></svg></span>
+        <span class="sw-hand" aria-hidden="true"><svg viewBox="0 0 24 24"><circle class="tap-ring" cx="10.5" cy="4.2" r="3"/><circle class="tap-ring r2" cx="10.5" cy="4.2" r="3"/><path d="M9 11V5.5a1.5 1.5 0 0 1 3 0V11m0-1.5a1.5 1.5 0 0 1 3 0V11m0-.5a1.5 1.5 0 0 1 3 0v4.5a6 6 0 0 1-6 6h-.6a6 6 0 0 1-4.9-2.6L4.3 15.2a1.5 1.5 0 0 1 2.4-1.8L9 15"/></svg></span>
         <span class="sw-txt sw-t-touch"><span data-vi>Vuốt lên để xem tiếp</span><span data-en>Swipe up to continue</span></span>
         <span class="sw-txt sw-t-mouse"><span data-vi>Chạm để xem tiếp</span><span data-en>Click to continue</span></span>
       </button>
