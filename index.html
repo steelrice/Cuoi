@@ -421,17 +421,12 @@
   .swipe-hint .sw-hand svg{ width:28px; height:28px; fill:none; stroke:currentColor; stroke-width:1.4; stroke-linecap:round; stroke-linejoin:round; animation:swHand 1.8s ease-in-out infinite; }
   .swipe-hint .sw-txt{ font-family:var(--sans); font-size:11.5px; font-weight:500; letter-spacing:.18em; text-transform:uppercase; color:var(--cream-dim); margin-top:6px; }
   @keyframes swHand{ 0%,15%{ transform:translateY(8px); opacity:0; } 30%{ opacity:1; } 70%{ transform:translateY(-10px); opacity:1; } 100%{ transform:translateY(-14px); opacity:0; } }
-  /* laptop (chuột / trackpad, không cảm ứng): đổi tay vuốt + mũi tên thành con trỏ đang bấm, chữ "Chạm để xem tiếp".
-     Lăn chuột, vuốt trackpad, kéo chuột vẫn mở được như cũ */
-  .swipe-hint .sw-click, .swipe-hint .sw-t-mouse{ display:none; }
-  .swipe-hint .sw-click svg{ width:38px; height:38px; overflow:visible; }
-  .swipe-hint .sw-click .ptr{ fill:var(--gold); stroke:#2a0a10; stroke-width:1; stroke-linejoin:round; transform-origin:11px 9px; animation:swPress 1.8s ease-in-out infinite; }
-  .swipe-hint .sw-click .ring{ fill:none; stroke:currentColor; stroke-width:1.4; transform-origin:11px 9px; opacity:0; animation:swRing 1.8s ease-out infinite; }
-  @keyframes swPress{ 0%,30%,60%,100%{ transform:scale(1); } 42%{ transform:scale(.86); } }
-  @keyframes swRing{ 0%,40%{ transform:scale(.3); opacity:0; } 45%{ opacity:.9; } 85%,100%{ transform:scale(1.7); opacity:0; } }
+  /* laptop (chuột / trackpad, không cảm ứng): không vuốt được → bỏ mũi tên đi lên, tay "chạm" tại chỗ, chữ "Chạm để xem tiếp" */
+  .swipe-hint .sw-t-mouse{ display:none; }
+  @keyframes swTap{ 0%,100%{ transform:translateY(0) scale(1); opacity:.85; } 35%{ transform:translateY(-3px) scale(1); opacity:1; } 50%{ transform:translateY(2px) scale(.88); opacity:1; } 65%{ transform:translateY(0) scale(1); } }
   @media (hover:hover) and (pointer:fine){
-    .swipe-hint .sw-arrows, .swipe-hint .sw-hand, .swipe-hint .sw-t-touch{ display:none; }
-    .swipe-hint .sw-click{ display:block; }
+    .swipe-hint .sw-arrows, .swipe-hint .sw-t-touch{ display:none; }
+    .swipe-hint .sw-hand svg{ animation-name:swTap; }
     .swipe-hint .sw-t-mouse{ display:inline; }
   }
   @keyframes swArrow{ 0%,100%{ transform:translateY(0); opacity:.4; } 50%{ transform:translateY(-4px); opacity:1; } }
@@ -1116,7 +1111,6 @@
       <button type="button" class="swipe-hint r" style="--d:2.35s" id="openBtn" aria-label="Vuốt lên để xem tiếp">
         <span class="sw-arrows" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M6 15l6-6 6 6"/></svg><svg viewBox="0 0 24 24"><path d="M6 15l6-6 6 6"/></svg></span>
         <span class="sw-hand" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M9 11V5.5a1.5 1.5 0 0 1 3 0V11m0-1.5a1.5 1.5 0 0 1 3 0V11m0-.5a1.5 1.5 0 0 1 3 0v4.5a6 6 0 0 1-6 6h-.6a6 6 0 0 1-4.9-2.6L4.3 15.2a1.5 1.5 0 0 1 2.4-1.8L9 15"/></svg></span>
-        <span class="sw-click" aria-hidden="true"><svg viewBox="0 0 32 32"><circle class="ring" cx="11" cy="9" r="6"/><path class="ptr" d="M11 9l2.2 15 3.3-5.3 6.1-.4L11 9z"/></svg></span>
         <span class="sw-txt sw-t-touch"><span data-vi>Vuốt lên để xem tiếp</span><span data-en>Swipe up to continue</span></span>
         <span class="sw-txt sw-t-mouse"><span data-vi>Chạm để xem tiếp</span><span data-en>Click to continue</span></span>
       </button>
@@ -2605,33 +2599,8 @@
     cover.addEventListener('touchmove', function(e){ if(sy === null) return; e.preventDefault(); move(e.touches[0].clientY); }, { passive:false });
     cover.addEventListener('touchend', end);
     cover.addEventListener('touchcancel', function(){ dy = 0; end(); });
-    // chuột (máy tính): kéo lên, lăn chuột xuống hoặc phím ↓ / Space cũng mở
-    cover.addEventListener('pointerdown', function(e){ if(e.pointerType !== 'mouse' || !canSwipe()) return; sy = e.clientY; dy = 0; t0 = performance.now(); primeMusic(); });
-    window.addEventListener('pointermove', function(e){ if(e.pointerType === 'mouse' && sy !== null) move(e.clientY); });
-    window.addEventListener('pointerup', function(e){ if(e.pointerType === 'mouse') end(); });
-    window.addEventListener('pointercancel', function(e){ if(e.pointerType === 'mouse' && sy !== null){ dy = 0; end(); } });
-    /* kéo chuột trên bìa: trình duyệt tưởng đang kéo-thả link (nút Chỉ đường) / bôi đen chữ nên huỷ thao tác kéo
-       → chặn kéo-thả và bôi đen ở bìa; kéo quá vài px thì cú thả không tính là bấm link */
-    cover.addEventListener('dragstart', function(e){ if(canSwipe()) e.preventDefault(); });
-    cover.addEventListener('mousedown', function(e){ if(canSwipe() && e.button === 0 && !e.target.closest('input,textarea,select')) e.preventDefault(); });
-    var dragMoved = false;
-    cover.addEventListener('pointerdown', function(e){ dragMoved = false; });
-    window.addEventListener('pointermove', function(e){ if(e.pointerType === 'mouse' && sy !== null && Math.abs(e.clientY - sy) > 6) dragMoved = true; });
-    cover.addEventListener('click', function(e){ if(dragMoved){ e.preventDefault(); e.stopPropagation(); dragMoved = false; } }, true);
-    /* trackpad laptop: một cú vuốt bắn ra hàng chục sự kiện wheel + đà quán tính kéo dài 1-2 giây. Sự kiện đầu mở thiệp,
-       phần đà còn lại sẽ cuộn luôn nội dung bên trong → giữ trang đứng yên cho tới khi rèm mở xong (1,3 giây) VÀ trackpad
-       đã im ≥ 0,2 giây (tối đa 3,5 giây). Không đoán theo lực vuốt vì trackpad thật gửi lực lởm chởm, dễ đoán nhầm. */
-    var wheelGuard = false, guardT0 = 0, lastWheel = 0;
-    cover.addEventListener('wheel', function(e){
-      if(canSwipe() && e.deltaY > 20){ openInvite(); wheelGuard = true; guardT0 = lastWheel = performance.now(); }
-    }, { passive:true });
-    window.addEventListener('wheel', function(e){
-      if(!wheelGuard) return;
-      var now = performance.now();
-      if(now - guardT0 > 3500 || (now - guardT0 > 1300 && now - lastWheel > 200)){ wheelGuard = false; return; }
-      lastWheel = now;
-      e.preventDefault();
-    }, { passive:false });
+    /* máy tính: không mở bằng lăn chuột / vuốt trackpad / kéo chuột — đà quán tính của trackpad cuộn lố luôn nội dung bên trong.
+       Chỉ mở bằng bấm nút (hoặc phím ↓ / Space / PageDown) */
     document.addEventListener('keydown', function(e){ if(canSwipe() && (e.key === 'ArrowDown' || e.key === ' ' || e.key === 'PageDown')) openInvite(); });
   })();
 
