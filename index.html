@@ -2593,7 +2593,26 @@
     cover.addEventListener('pointerdown', function(e){ if(e.pointerType !== 'mouse' || !canSwipe()) return; sy = e.clientY; dy = 0; t0 = performance.now(); primeMusic(); });
     window.addEventListener('pointermove', function(e){ if(e.pointerType === 'mouse' && sy !== null) move(e.clientY); });
     window.addEventListener('pointerup', function(e){ if(e.pointerType === 'mouse') end(); });
-    cover.addEventListener('wheel', function(e){ if(canSwipe() && e.deltaY > 20) openInvite(); }, { passive:true });
+    /* trackpad laptop: một cú vuốt bắn ra hàng chục sự kiện wheel + đà quán tính kéo dài ~1-2 giây. Sự kiện đầu mở thiệp,
+       phần đà còn lại sẽ cuộn luôn nội dung bên trong → nuốt phần ĐÀ đó (lực giảm dần). Cú vuốt mới có chủ ý (lực tăng
+       trở lại sau khi đà đã giảm) hoặc im ≥ 0,15 giây thì thôi chặn, cuộn bình thường; tối đa 3 giây cho chắc. */
+    var wheelGuard = false, guardT0 = 0, lastWheel = 0, gPeak = 0, gPrev = 0, gDecayed = false;
+    cover.addEventListener('wheel', function(e){
+      if(canSwipe() && e.deltaY > 20){
+        openInvite();
+        wheelGuard = true; guardT0 = lastWheel = performance.now(); gPeak = gPrev = Math.abs(e.deltaY); gDecayed = false;
+      }
+    }, { passive:true });
+    window.addEventListener('wheel', function(e){
+      if(!wheelGuard) return;
+      var now = performance.now(), d = Math.abs(e.deltaY);
+      if(now - guardT0 > 3000 || (now - guardT0 > 400 && now - lastWheel > 150)){ wheelGuard = false; return; }
+      if(d > gPeak) gPeak = d;
+      if(d < gPeak * 0.7) gDecayed = true;
+      if(gDecayed && d > 15 && d > gPrev * 1.6){ wheelGuard = false; return; }   // lực tăng lại → cú vuốt mới
+      gPrev = d; lastWheel = now;
+      e.preventDefault();
+    }, { passive:false });
     document.addEventListener('keydown', function(e){ if(canSwipe() && (e.key === 'ArrowDown' || e.key === ' ' || e.key === 'PageDown')) openInvite(); });
   })();
 
