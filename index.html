@@ -2593,6 +2593,15 @@
     cover.addEventListener('pointerdown', function(e){ if(e.pointerType !== 'mouse' || !canSwipe()) return; sy = e.clientY; dy = 0; t0 = performance.now(); primeMusic(); });
     window.addEventListener('pointermove', function(e){ if(e.pointerType === 'mouse' && sy !== null) move(e.clientY); });
     window.addEventListener('pointerup', function(e){ if(e.pointerType === 'mouse') end(); });
+    window.addEventListener('pointercancel', function(e){ if(e.pointerType === 'mouse' && sy !== null){ dy = 0; end(); } });
+    /* kéo chuột trên bìa: trình duyệt tưởng đang kéo-thả link (nút Chỉ đường) / bôi đen chữ nên huỷ thao tác kéo
+       → chặn kéo-thả và bôi đen ở bìa; kéo quá vài px thì cú thả không tính là bấm link */
+    cover.addEventListener('dragstart', function(e){ if(canSwipe()) e.preventDefault(); });
+    cover.addEventListener('mousedown', function(e){ if(canSwipe() && e.button === 0 && !e.target.closest('input,textarea,select')) e.preventDefault(); });
+    var dragMoved = false;
+    cover.addEventListener('pointerdown', function(e){ dragMoved = false; });
+    window.addEventListener('pointermove', function(e){ if(e.pointerType === 'mouse' && sy !== null && Math.abs(e.clientY - sy) > 6) dragMoved = true; });
+    cover.addEventListener('click', function(e){ if(dragMoved){ e.preventDefault(); e.stopPropagation(); dragMoved = false; } }, true);
     /* trackpad laptop: một cú vuốt bắn ra hàng chục sự kiện wheel + đà quán tính kéo dài 1-2 giây. Sự kiện đầu mở thiệp,
        phần đà còn lại sẽ cuộn luôn nội dung bên trong → giữ trang đứng yên cho tới khi rèm mở xong (1,3 giây) VÀ trackpad
        đã im ≥ 0,2 giây (tối đa 3,5 giây). Không đoán theo lực vuốt vì trackpad thật gửi lực lởm chởm, dễ đoán nhầm. */
