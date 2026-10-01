@@ -776,11 +776,13 @@
   .bk-full.rot .bk-cnt{ position:absolute; left:26px; top:calc(var(--mt) / 2); min-width:0; transform:translate(-50%,-50%) rotate(90deg); white-space:nowrap; }
   .bk-full.rot .bk-hint{ position:absolute; left:30px; top:50%; transform:translate(-50%,-50%) rotate(90deg); white-space:nowrap; padding:5px 14px; border-radius:14px; background:rgba(20,3,6,.72); opacity:1; pointer-events:none; }
   .bk-full.rot .bk-hint.fade{ opacity:0; }
-  /* laptop / điện thoại cầm ngang: ‹ › to hơn, nằm giữa hai khoảng trống hai bên sách; số trang (trái) + hướng dẫn (giữa)
-     lên hàng trên cùng, ngang nút × → nhường đáy màn hình cho sách to hơn */
+  /* laptop / điện thoại cầm ngang: ‹ › to hơn, nằm giữa hai khoảng trống hai bên sách; số trang to ở giữa hàng trên cùng
+     (ngang nút ×) → nhường đáy màn hình cho sách; dòng hướng dẫn nổi trên nền tối ngay dưới số trang rồi mờ dần */
   .bk-full.side .bk-ctl{ top:calc(var(--sp-4) + env(safe-area-inset-top)); bottom:auto; height:42px; flex-direction:row; justify-content:center; }
-  .bk-full.side .bk-cnt{ position:absolute; left:var(--sp-5); top:50%; transform:translateY(-50%); text-align:left; }
-  .bk-full.side .bk-hint{ max-width:calc(100% - 260px); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .bk-full.side .bk-cnt{ font-size:22px; }
+  .bk-full.side .bk-cnt span{ font-size:14px; }
+  .bk-full.side .bk-hint{ position:absolute; top:calc(100% + 10px); left:50%; transform:translateX(-50%); white-space:nowrap; padding:5px 14px; border-radius:14px; background:rgba(20,3,6,.72); opacity:1; pointer-events:none; }
+  .bk-full.side .bk-hint.fade{ opacity:0; }
   .bk-full.side .bk-row{ display:contents; }
   .bk-full.side #bkPrev, .bk-full.side #bkNext{ position:fixed; top:var(--by); width:52px; height:52px; margin:-26px 0 0 -26px; background:rgba(20,3,6,.35); }
   .bk-full.side #bkPrev{ left:var(--bx); }
