@@ -324,8 +324,8 @@
      nhanh không cần cuộn tới chân trang. Xoá khi deploy chính thức, cùng lúc với
      .footer .version-tag. */
   .cover-version{
-    position:absolute; left:50%; bottom:calc(env(safe-area-inset-bottom, 0px) + 10px);
-    transform:translateX(-50%); z-index:8; pointer-events:none;
+    position:absolute; right:50px; bottom:calc(env(safe-area-inset-bottom, 0px) + 10px);   /* lùi vào trong viền rèm, khỏi đè hạt tua vàng ở góc */
+    z-index:8; pointer-events:none;
   }
   /* chỉ hiện ở bìa — mở thiệp rồi (kể cả lúc xem lại thiệp) thì ẩn */
   #cover.open .cover-version{ display:none; }
@@ -1056,8 +1056,11 @@
   .footer .thanks{ font-weight:400; font-size:14.5px; margin-top:var(--sp-4); line-height:1.7; max-width:300px; margin-left:auto; margin-right:auto; color:var(--cream-dim); }
   .footer .review-link{ margin-top:var(--sp-5); padding:6px 2px; border:none; background:none; cursor:pointer; font-family:var(--script); font-style:italic; font-weight:500; font-size:18px; color:var(--gold); text-decoration:underline; text-decoration-color:rgba(207,159,63,.5); text-underline-offset:4px; }
   .footer .credit{ margin-top:var(--sp-6); font-size:10.5px; letter-spacing:.12em; color:rgba(239,226,201,.5); }
-  .footer .made-by{ margin-top:var(--sp-2); font-family:var(--script); font-style:italic; font-size:13px; letter-spacing:.02em; color:rgba(239,226,201,.42); }
-  .footer .mb-smile{ width:13px; height:13px; margin-left:5px; vertical-align:-2px; fill:none; stroke:currentColor; stroke-width:1.2; stroke-linecap:round; }
+  /* góc phải dưới cùng của footer: dòng ghi công + version, cùng kiểu chữ nhỏ mờ của nhãn version */
+  .footer{ padding-bottom:calc(var(--sp-7) + 34px); }
+  .footer .made-by{ position:absolute; right:var(--sp-4); bottom:calc(env(safe-area-inset-bottom, 0px) + 10px); display:flex; flex-direction:column; align-items:flex-end; gap:2px; text-align:right; line-height:1.4; }
+  .footer .made-by .version-tag{ margin:0; }
+  .footer .mb-smile{ width:10px; height:10px; margin-left:4px; vertical-align:-1px; fill:none; stroke:currentColor; stroke-width:1.4; stroke-linecap:round; }
   .footer .mb-smile .e{ fill:currentColor; stroke:none; }
   /* Đánh dấu bản deploy đang thử nghiệm — xoá khi deploy chính thức */
   .version-tag{ font-size:9px; letter-spacing:.08em; color:rgba(239,226,201,.28); }
@@ -1559,7 +1562,7 @@
     <p class="thanks" id="thanks"><span data-vi>Cảm ơn bạn đã dành thời gian đọc hết thiệp mời của Sơn và Thảo. Hẹn gặp bạn ngày 21.11.2026 tại Vũng Tàu!</span><span data-en>Thank you for taking the time to read through our invitation. See you on 11.21.2026 in Vung Tau!</span></p>
     <button type="button" class="review-link" id="reviewLink"><span data-vi>Xem lại thiệp mời</span><span data-en>View the invitation again</span></button>
     <div class="credit" id="credit"></div>
-    <div class="made-by"><span data-vi>Chú rể viết code · Cô dâu duyệt</span><span data-en>Coded by the groom · Approved by the bride</span><svg class="mb-smile" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.6"/><path d="M5.2 9.6c1.5 1.9 4.1 1.9 5.6 0"/><circle class="e" cx="5.9" cy="6.5" r=".75"/><circle class="e" cx="10.1" cy="6.5" r=".75"/></svg></div>
+    <div class="made-by"><span class="version-tag"><span data-vi>Chú rể viết code · Cô dâu duyệt</span><span data-en>Coded by the groom · Approved by the bride</span><svg class="mb-smile" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.6"/><path d="M5.2 9.6c1.5 1.9 4.1 1.9 5.6 0"/><circle class="e" cx="5.9" cy="6.5" r=".75"/><circle class="e" cx="10.1" cy="6.5" r=".75"/></svg></span><span class="version-tag" id="footVer"></span></div>
   </div>
 
 </div>
@@ -1754,6 +1757,9 @@
     // chỉ theo dõi SAU khi khách mở thiệp (trước đó nội dung còn ẩn, dễ bị tính là "đã hiện")
     document.addEventListener('inviteopen', function(){ setTimeout(function(){ size(); render(0); io.observe(stage); }, 600); }, { once:true });
   })();
+
+  /* version ở chân trang lấy từ nhãn trên bìa — trong file chỉ có 1 chuỗi vX, deploy sửa 1 chỗ */
+  (function(){ var a = document.querySelector('.cover-version'), b = document.getElementById('footVer'); if(a && b) b.textContent = a.textContent; })();
 
   /* dải lụa 囍 ở album: ẩn sẵn phía trên, khung album lên tới 3/4 màn hình thì thả rơi xuống */
   (function(){
