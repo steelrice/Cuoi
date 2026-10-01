@@ -3132,9 +3132,29 @@
   }
 
   var phoneInput = document.getElementById('rsvpPhone');
+  /* tự chia nhóm số khi gõ: 0912 123 123, +84 912 123 123 — giữ con trỏ đúng chỗ; ghi vào Sheet nguyên dạng có dấu cách */
+  function fmtPhone(v){
+    var plus = /^\s*\+/.test(v), d = v.replace(/\D/g,'');
+    var cut = plus ? [2,5,8] : [4,7];
+    var out = '', last = 0;
+    cut.forEach(function(c){ if(d.length > c){ out += d.slice(last, c) + ' '; last = c; } });
+    return (plus ? '+' : '') + out + d.slice(last);
+  }
   if(phoneInput){
-    phoneInput.addEventListener('input', function(){
+    var phonePrev = '';
+    phoneInput.addEventListener('input', function(e){
       document.getElementById('phoneErr').textContent = '';
+      var v = phoneInput.value, pos = phoneInput.selectionStart;
+      var nBefore = v.slice(0, pos).replace(/\D/g,'').length;
+      // xoá lùi đúng vào dấu cách thì xoá luôn chữ số đứng trước nó, không thì dấu cách mọc lại như chưa xoá
+      if(e.inputType === 'deleteContentBackward' && v.replace(/\D/g,'') === phonePrev.replace(/\D/g,'') && nBefore > 0){
+        var d = v.replace(/\D/g,''); nBefore--;
+        v = (/^\s*\+/.test(v) ? '+' : '') + d.slice(0, nBefore) + d.slice(nBefore + 1);
+      }
+      var f = fmtPhone(v), p = f.indexOf('+') === 0 ? 1 : 0, seen = 0;
+      while(p < f.length && seen < nBefore){ if(/\d/.test(f[p])) seen++; p++; }
+      phoneInput.value = phonePrev = f;
+      if(document.activeElement === phoneInput) phoneInput.setSelectionRange(p, p);
     });
   }
 
