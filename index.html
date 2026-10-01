@@ -1803,11 +1803,11 @@
     size(); render(reduce ? 1 : 0);
     window.addEventListener('resize', function(){ size(); render(reduce ? 1 : last); });
     if(reduce || !('IntersectionObserver' in window)){ render(1); return; }
-    /* chạy ngay khi khối nhẫn hiện ≥ 90% trên màn hình */
+    /* chạy ngay khi khối nhẫn hiện ≥ 75% trên màn hình */
     var io = new IntersectionObserver(function(es){
-      if(es[0].intersectionRatio < .9) return;
+      if(es[0].intersectionRatio < .75) return;
       io.disconnect(); play();
-    }, { threshold:[0, .9, 1] });
+    }, { threshold:[0, .75, 1] });
     // chỉ theo dõi SAU khi khách mở thiệp (trước đó nội dung còn ẩn, dễ bị tính là "đã hiện")
     document.addEventListener('inviteopen', function(){ setTimeout(function(){ size(); render(0); io.observe(stage); }, 600); }, { once:true });
   })();
