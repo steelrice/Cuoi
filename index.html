@@ -1794,7 +1794,7 @@
       if(p >= 1 && !glinted && !reduce){ glinted = true; box.classList.add('glint'); }
     }
     function play(){
-      var t0 = performance.now(), DUR = 5000;
+      var t0 = performance.now(), DUR = 3300;
       (function step(now){
         last = Math.min(1, (now - t0) / DUR); render(last);
         if(last < 1) requestAnimationFrame(step);
@@ -1803,13 +1803,11 @@
     size(); render(reduce ? 1 : 0);
     window.addEventListener('resize', function(){ size(); render(reduce ? 1 : last); });
     if(reduce || !('IntersectionObserver' in window)){ render(1); return; }
-    /* chạy khi khối nhẫn hiện ≥ 90% và khách đã ngừng cuộn ~0,35 giây (lướt nhanh qua thì chưa chạy) */
-    var waitT = 0;
+    /* chạy ngay khi khối nhẫn hiện ≥ 90% trên màn hình */
     var io = new IntersectionObserver(function(es){
-      clearTimeout(waitT);
       if(es[0].intersectionRatio < .9) return;
-      waitT = setTimeout(function(){ io.disconnect(); play(); }, 350);
-    }, { threshold:[0, .5, .8, .9, .95, 1] });
+      io.disconnect(); play();
+    }, { threshold:[0, .9, 1] });
     // chỉ theo dõi SAU khi khách mở thiệp (trước đó nội dung còn ẩn, dễ bị tính là "đã hiện")
     document.addEventListener('inviteopen', function(){ setTimeout(function(){ size(); render(0); io.observe(stage); }, 600); }, { once:true });
   })();
