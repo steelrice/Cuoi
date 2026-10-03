@@ -1881,7 +1881,7 @@
      tự dừng trước album và form hồi âm (chỗ cần thao tác) và ở cuối trang. Nút góc phải dưới để bật lại / dừng.
      Đoạn "Xin giới thiệu" (máy quay chạy ~10 giây theo thời gian): khi nó bắt đầu thì trượt êm cho khung vừa khít
      màn hình rồi đứng yên tới lúc chạy xong, chờ thêm 2 giây cho khách đọc lời tâm sự rồi mới cuộn tiếp.
-     Trang đầu (ảnh Save the date, cao 1 màn hình) không bò chậm: giữ yên ~2,5 giây cho khách ngắm rồi trượt êm thẳng tới
+     Trang đầu (ảnh Save the date, cao 1 màn hình) không bò chậm: giữ yên ~4 giây cho khách ngắm rồi trượt êm (2,5 giây) thẳng tới
      đoạn giới thiệu.
      Máy bật "giảm chuyển động" thì không tự chạy, chỉ chạy khi khách bấm nút */
   (function(){
@@ -1939,8 +1939,8 @@
       holdT = setTimeout(function(){
         if(!mode || !waiting) return;
         var to = intro ? window.scrollY + intro.getBoundingClientRect().top : window.scrollY;
-        glide(to, 1500, function(){ if(!introStarted){ waiting = false; run(); } });   // giới thiệu đã chạy thì introdone lo phần cuộn tiếp
-      }, 2000);
+        glide(to, 2500, function(){ if(!introStarted){ waiting = false; run(); } });   // giới thiệu đã chạy thì introdone lo phần cuộn tiếp
+      }, 3500);
     }
     /* chạy xong (khung co lại thành ảnh + lời tâm sự): chờ 2 giây rồi cuộn tiếp */
     document.addEventListener('introdone', function(){
