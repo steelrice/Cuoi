@@ -257,6 +257,21 @@
     100%{ box-shadow:0 0 0 0 rgba(207,159,63,0); }
   }
 
+  /* Nút tự cuộn: góc phải dưới (bám mép thiệp 520px trên máy tính). Đang cuộn → hiện 2 vạch dừng; đang dừng → mũi tên xuống */
+  #autoScroll{
+    position:fixed; bottom:calc(var(--sp-4) + env(safe-area-inset-bottom, 0px)); right:max(var(--sp-4), calc(50% - 260px + var(--sp-4))); z-index:1500;
+    width:42px; height:42px; padding:0; border-radius:50%; border:1px solid rgba(207,159,63,.6); background:rgba(60,8,16,.88); color:var(--gold);
+    display:flex; align-items:center; justify-content:center; cursor:pointer; box-shadow:0 6px 16px rgba(30,4,8,.25);
+    opacity:0; pointer-events:none; transform:translateY(8px); transition:opacity .4s ease, transform .4s ease;
+  }
+  #autoScroll.show{ opacity:1; pointer-events:auto; transform:none; }
+  #autoScroll svg{ width:20px; height:20px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+  #autoScroll .as-pause, #autoScroll.on .as-play{ display:none; }
+  #autoScroll.on .as-pause{ display:block; }
+  #autoScroll:not(.on) .as-play{ animation:asNudge 1.8s ease-in-out infinite; }
+  @keyframes asNudge{ 0%,100%{ transform:translateY(-1px); } 50%{ transform:translateY(2px); } }
+  @media (prefers-reduced-motion: reduce){ #autoScroll .as-play{ animation:none!important; } }
+
   /* Nút "Xem lại thiệp": cùng vị trí với nút đổi ngôn ngữ (góc phải trên) — nút đó ẩn sau khi
      mở thiệp nên chỗ này trống. Hình phong bì; đang xem lại thì đổi thành dấu ✕ để đóng. */
   #reviewToggle{
@@ -1223,6 +1238,12 @@
   </svg>
 </button>
 
+<!-- ============ TỰ CUỘN ============ -->
+<button type="button" id="autoScroll" aria-label="tự cuộn thiệp / auto-scroll" aria-pressed="false">
+  <svg class="as-play" viewBox="0 0 24 24" aria-hidden="true"><path d="M7 7l5 5 5-5M7 12.5l5 5 5-5"/></svg>
+  <svg class="as-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 7v10M14.5 7v10"/></svg>
+</button>
+
 <!-- ============ NHẠC NỀN ============ -->
 <audio id="bgMusic" preload="none"></audio>
 <button type="button" id="musicToggle" class="show" aria-label="bật/tắt nhạc nền" aria-pressed="false">
@@ -1826,6 +1847,54 @@
       io.disconnect(); tag.classList.remove('wait'); tag.classList.add('drop');
     }, { rootMargin:'0px 0px -25% 0px' });
     document.addEventListener('inviteopen', function(){ setTimeout(function(){ io.observe(box); }, 600); }, { once:true });
+  })();
+
+  /* tự cuộn chậm sau khi mở thiệp (~28px/giây, như đọc thiệp giấy). Khách chạm / cuộn / gõ phím là dừng ngay;
+     tự dừng trước album và form hồi âm (chỗ cần thao tác) và ở cuối trang. Nút góc phải dưới để bật lại / dừng.
+     Máy bật "giảm chuyển động" thì không tự chạy, chỉ chạy khi khách bấm nút */
+  (function(){
+    var btn = document.getElementById('autoScroll'); if(!btn) return;
+    var SPEED = 28, on = false, raf = 0, last = 0, acc = 0, setY = 0;
+    var stops = [].slice.call(document.querySelectorAll('.bk-sec, .rsvp-frame')), passed = [];
+    function atEnd(){ return window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 2; }
+    function blocked(){ return document.documentElement.classList.contains('no-scroll') || document.getElementById('cover').classList.contains('review') || document.hidden; }
+    function setOn(v){
+      on = v; btn.classList.toggle('on', v); btn.setAttribute('aria-pressed', v ? 'true' : 'false');
+      cancelAnimationFrame(raf);
+      if(v){ last = 0; acc = 0; setY = window.scrollY; raf = requestAnimationFrame(step); }
+    }
+    function step(now){
+      if(!on) return;
+      if(blocked()) return setOn(false);
+      if(Math.abs(window.scrollY - setY) > 4) return setOn(false);   // khách tự kéo (kể cả kéo thanh cuộn)
+      if(last){ acc += SPEED * Math.min(0.05, (now - last) / 1000); }
+      last = now;
+      for(var i = 0; i < stops.length; i++){
+        if(passed.indexOf(i) < 0 && stops[i].getBoundingClientRect().top <= window.innerHeight * 0.08){ passed.push(i); return setOn(false); }
+      }
+      if(acc >= 1){
+        var n = Math.floor(acc); acc -= n;
+        setY = window.scrollY + n;
+        window.scrollTo({ top:setY, behavior:'instant' });
+      }
+      if(atEnd()){ btn.classList.remove('show'); return setOn(false); }
+      raf = requestAnimationFrame(step);
+    }
+    function userStop(e){ if(on && !(e && e.target && e.target.closest && e.target.closest('#autoScroll'))) setOn(false); }
+    ['wheel', 'touchstart', 'pointerdown', 'keydown'].forEach(function(t){ window.addEventListener(t, userStop, { passive:true, capture:true }); });
+    btn.addEventListener('click', function(){
+      if(on) return setOn(false);
+      // đang dừng ở ngay mốc album / hồi âm thì bấm là đi tiếp qua mốc đó
+      stops.forEach(function(el, i){ if(passed.indexOf(i) < 0 && el.getBoundingClientRect().top <= window.innerHeight * 0.12) passed.push(i); });
+      if(!atEnd()) setOn(true);
+    });
+    window.addEventListener('scroll', function(){ if(!atEnd() && document.getElementById('cover').classList.contains('open')) btn.classList.add('show'); }, { passive:true });
+    document.addEventListener('inviteopen', function(){
+      setTimeout(function(){
+        btn.classList.add('show');
+        if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches && window.scrollY < 40) setOn(true);
+      }, 1800);
+    }, { once:true });
   })();
 
   /* monogram S·T cuối thiệp: viền chữ tự vẽ ra như nét bút, rồi mực vàng loang đầy chữ; chạy một lần */
