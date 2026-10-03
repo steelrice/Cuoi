@@ -1849,50 +1849,71 @@
     document.addEventListener('inviteopen', function(){ setTimeout(function(){ io.observe(box); }, 600); }, { once:true });
   })();
 
-  /* tự cuộn chậm sau khi mở thiệp (~28px/giây, như đọc thiệp giấy). Khách chạm / cuộn / gõ phím là dừng ngay;
+  /* tự cuộn chậm sau khi mở thiệp (~28px/giây, như đọc thiệp giấy). Khách chạm / cuộn / gõ phím là thoát chế độ tự cuộn;
      tự dừng trước album và form hồi âm (chỗ cần thao tác) và ở cuối trang. Nút góc phải dưới để bật lại / dừng.
+     Đoạn "Xin giới thiệu" (máy quay chạy ~10 giây theo thời gian): khi nó bắt đầu thì trượt êm cho khung vừa khít
+     màn hình rồi đứng yên tới lúc chạy xong, chờ thêm 2 giây cho khách đọc lời tâm sự rồi mới cuộn tiếp.
      Máy bật "giảm chuyển động" thì không tự chạy, chỉ chạy khi khách bấm nút */
   (function(){
     var btn = document.getElementById('autoScroll'); if(!btn) return;
-    var SPEED = 28, on = false, raf = 0, last = 0, acc = 0, setY = 0;
+    var SPEED = 28, mode = false, waiting = false, raf = 0, last = 0, acc = 0, setY = 0, resumeT = 0;
     var stops = [].slice.call(document.querySelectorAll('.bk-sec, .rsvp-frame')), passed = [];
     function atEnd(){ return window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 2; }
     function blocked(){ return document.documentElement.classList.contains('no-scroll') || document.getElementById('cover').classList.contains('review') || document.hidden; }
-    function setOn(v){
-      on = v; btn.classList.toggle('on', v); btn.setAttribute('aria-pressed', v ? 'true' : 'false');
+    function goTo(y){ setY = Math.round(y); window.scrollTo({ top:setY, behavior:'instant' }); }
+    function setMode(v){
+      mode = v; waiting = false; clearTimeout(resumeT);
+      btn.classList.toggle('on', v); btn.setAttribute('aria-pressed', v ? 'true' : 'false');
       cancelAnimationFrame(raf);
-      if(v){ last = 0; acc = 0; setY = window.scrollY; raf = requestAnimationFrame(step); }
+      if(v) run();
     }
+    function run(){ cancelAnimationFrame(raf); last = 0; acc = 0; setY = window.scrollY; raf = requestAnimationFrame(step); }
     function step(now){
-      if(!on) return;
-      if(blocked()) return setOn(false);
-      if(Math.abs(window.scrollY - setY) > 4) return setOn(false);   // khách tự kéo (kể cả kéo thanh cuộn)
+      if(!mode || waiting) return;
+      if(blocked()) return setMode(false);
+      if(Math.abs(window.scrollY - setY) > 4) return setMode(false);   // khách tự kéo (kể cả kéo thanh cuộn)
       if(last){ acc += SPEED * Math.min(0.05, (now - last) / 1000); }
       last = now;
       for(var i = 0; i < stops.length; i++){
-        if(passed.indexOf(i) < 0 && stops[i].getBoundingClientRect().top <= window.innerHeight * 0.08){ passed.push(i); return setOn(false); }
+        if(passed.indexOf(i) < 0 && stops[i].getBoundingClientRect().top <= window.innerHeight * 0.08){ passed.push(i); return setMode(false); }
       }
-      if(acc >= 1){
-        var n = Math.floor(acc); acc -= n;
-        setY = window.scrollY + n;
-        window.scrollTo({ top:setY, behavior:'instant' });
-      }
-      if(atEnd()){ btn.classList.remove('show'); return setOn(false); }
+      if(acc >= 1){ var n = Math.floor(acc); acc -= n; goTo(window.scrollY + n); }
+      if(atEnd()){ btn.classList.remove('show'); return setMode(false); }
       raf = requestAnimationFrame(step);
     }
-    function userStop(e){ if(on && !(e && e.target && e.target.closest && e.target.closest('#autoScroll'))) setOn(false); }
+    /* đoạn giới thiệu bắt đầu: trượt êm ~0,9 giây cho khung máy quay vừa khít màn hình, rồi đứng yên */
+    document.addEventListener('introstart', function(e){
+      if(!mode) return;
+      waiting = true; cancelAnimationFrame(raf);
+      var from = window.scrollY, to = from + e.detail.getBoundingClientRect().top, t0 = 0;
+      setY = from;
+      (function glide(now){
+        if(!mode || !waiting) return;
+        if(Math.abs(window.scrollY - setY) > 4) return setMode(false);
+        if(!t0) t0 = now;
+        var q = Math.min(1, (now - t0) / 900), k = q < .5 ? 2*q*q : 1 - Math.pow(-2*q + 2, 2) / 2;
+        goTo(from + (to - from) * k);
+        if(q < 1) raf = requestAnimationFrame(glide);
+      })(performance.now());
+    });
+    /* chạy xong (khung co lại thành ảnh + lời tâm sự): chờ 2 giây rồi cuộn tiếp */
+    document.addEventListener('introdone', function(){
+      if(!mode || !waiting) return;
+      resumeT = setTimeout(function(){ if(mode && waiting){ waiting = false; run(); } }, 2000);
+    });
+    function userStop(e){ if(mode && !(e && e.target && e.target.closest && e.target.closest('#autoScroll'))) setMode(false); }
     ['wheel', 'touchstart', 'pointerdown', 'keydown'].forEach(function(t){ window.addEventListener(t, userStop, { passive:true, capture:true }); });
     btn.addEventListener('click', function(){
-      if(on) return setOn(false);
+      if(mode) return setMode(false);
       // đang dừng ở ngay mốc album / hồi âm thì bấm là đi tiếp qua mốc đó
       stops.forEach(function(el, i){ if(passed.indexOf(i) < 0 && el.getBoundingClientRect().top <= window.innerHeight * 0.12) passed.push(i); });
-      if(!atEnd()) setOn(true);
+      if(!atEnd()) setMode(true);
     });
     window.addEventListener('scroll', function(){ if(!atEnd() && document.getElementById('cover').classList.contains('open')) btn.classList.add('show'); }, { passive:true });
     document.addEventListener('inviteopen', function(){
       setTimeout(function(){
         btn.classList.add('show');
-        if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches && window.scrollY < 40) setOn(true);
+        if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches && window.scrollY < 40) setMode(true);
       }, 1800);
     }, { once:true });
   })();
@@ -2152,7 +2173,7 @@
       var t = (now - t0) / 1000;
       render(t);
       if(t < T.end + 0.1) requestAnimationFrame(frame);
-      else { running = false; if(!collapsed) collapse(); }
+      else { running = false; if(!collapsed) collapse(); document.dispatchEvent(new Event('introdone')); }
     }
 
     /* chạy xong: khung 1 màn hình co lại vừa sát lời tâm sự (bỏ khoảng trống phía dưới).
@@ -2188,6 +2209,7 @@
       setTimeout(function(){ cursorEl.classList.add('hide'); }, K * 1000);
       running = true;
       requestAnimationFrame(function(now){ t0 = now; frame(now); });
+      document.dispatchEvent(new CustomEvent('introstart', { detail:view }));   // tự cuộn: căn khung + đứng chờ
     }
 
     /* đợi ảnh tải xong (tối đa 1,5s) để khỏi zoom vào khung trống */
