@@ -1927,7 +1927,11 @@
       stops.forEach(function(el, i){ if(passed.indexOf(i) < 0 && el.getBoundingClientRect().top <= window.innerHeight * 0.12) passed.push(i); });
       if(!atEnd()) setMode(true);
     });
-    window.addEventListener('scroll', function(){ if(!atEnd() && document.getElementById('cover').classList.contains('open')) btn.classList.add('show'); }, { passive:true });
+    window.addEventListener('scroll', function(){
+      if(!atEnd() && document.getElementById('cover').classList.contains('open')) btn.classList.add('show');
+      // đang đứng chờ (ngắm trang đầu / chờ đoạn giới thiệu) mà trang bị kéo đi — vd kéo thanh cuộn, không qua chạm/lăn/phím → thoát
+      if(mode && waiting && !gliding && Math.abs(window.scrollY - setY) > 4) setMode(false);
+    }, { passive:true });
     document.addEventListener('inviteopen', function(){
       setTimeout(function(){
         btn.classList.add('show');
@@ -2657,7 +2661,7 @@
   setTimeout(showNames, NAMES_MAX_WAIT);
   if(document.fonts && document.fonts.load){
     var FONT_SAMPLE = 'Aaệ';
-    Promise.all(['400 1em "Prata"', 'italic 400 1em "Cormorant Garamond"', '400 1em "Be Vietnam Pro"', '500 1em "Be Vietnam Pro"', '600 1em "Be Vietnam Pro"']
+    Promise.all(['400 1em "Prata"', 'italic 400 1em "Cormorant Garamond"', 'italic 500 1em "Cormorant Garamond"', '400 1em "Be Vietnam Pro"', '500 1em "Be Vietnam Pro"', '600 1em "Be Vietnam Pro"']
       .map(function(f){ return document.fonts.load(f, FONT_SAMPLE).catch(function(){}); }))
       .then(showNames, showNames);
   } else showNames();
