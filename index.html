@@ -1960,7 +1960,7 @@
       // đang đứng chờ (ngắm trang đầu / chờ đoạn giới thiệu) mà trang bị kéo đi — vd kéo thanh cuộn, không qua chạm/lăn/phím → thoát
       if(mode && waiting && !gliding && Math.abs(window.scrollY - setY) > 4) setMode(false);
     }, { passive:true });
-    /* gợi ý cuộn: trang đứng yên ~4 giây, tự cuộn đang tắt, chưa tới cuối trang (không tính lúc đang gõ form,
+    /* gợi ý cuộn: trang đứng yên ~3 giây, tự cuộn đang tắt, chưa tới cuối trang (không tính lúc đang gõ form,
        xem lớn album, xem lại thiệp) → hiện tay vuốt / con lăn chuột; cuộn / chạm là ẩn; tối đa 3 lần mỗi lần mở thiệp */
     var hintEl = document.getElementById('scrollHint'), hintT = 0, hintN = 0, opened = false;
     function hintOff(){ hintEl.classList.remove('show'); }
@@ -1971,7 +1971,7 @@
         var a = document.activeElement;
         if(mode || atEnd() || blocked() || (a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName))) return hintArm();
         hintEl.classList.add('show'); hintN++;
-      }, 4000);
+      }, 3000);
     }
     ['scroll', 'wheel', 'touchstart', 'pointerdown', 'keydown'].forEach(function(t){ window.addEventListener(t, hintArm, { passive:true }); });
     document.addEventListener('inviteopen', function(){
