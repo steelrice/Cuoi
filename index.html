@@ -1887,7 +1887,8 @@
   (function(){
     var btn = document.getElementById('autoScroll'); if(!btn) return;
     var SPEED = 35, mode = false, waiting = false, raf = 0, last = 0, acc = 0, setY = 0, resumeT = 0;
-    var gliding = false, introStarted = false, intro = document.querySelector('#introStage .sticky-view');
+    var gliding = false, introStarted = false, introRunning = false, intro = document.querySelector('#introStage .sticky-view');
+    var autoBack = false, paused = false, backT = 0;   // autoBack: khách tự cuộn/chạm → ngừng tay 6 giây thì tự cuộn lại; paused: khách bấm nút dừng
     var stops = [].slice.call(document.querySelectorAll('.bk-sec, .rsvp-frame')), passed = [];
     function atEnd(){ return window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 2; }
     function blocked(){ return document.documentElement.classList.contains('no-scroll') || document.getElementById('cover').classList.contains('review') || document.hidden; }
@@ -1902,7 +1903,7 @@
     function step(now){
       if(!mode || waiting) return;
       if(blocked()) return setMode(false);
-      if(Math.abs(window.scrollY - setY) > 4) return setMode(false);   // khách tự kéo (kể cả kéo thanh cuộn)
+      if(Math.abs(window.scrollY - setY) > 4) return userOff();   // khách tự kéo (kể cả kéo thanh cuộn)
       if(last){ acc += SPEED * Math.min(0.05, (now - last) / 1000); }
       last = now;
       for(var i = 0; i < stops.length; i++){
@@ -1918,7 +1919,7 @@
       var from = window.scrollY, t0 = 0; setY = from;
       (function g(now){
         if(!mode || !gliding) return;
-        if(Math.abs(window.scrollY - setY) > 4) return setMode(false);
+        if(Math.abs(window.scrollY - setY) > 4) return userOff();
         if(!t0) t0 = now;
         var q = Math.min(1, (now - t0) / ms), k = ez ? ez(q) : (q < .5 ? 2*q*q : 1 - Math.pow(-2*q + 2, 2) / 2);
         goTo(from + (to - from) * k);
@@ -1928,7 +1929,7 @@
     /* đoạn giới thiệu bắt đầu: trượt êm ~0,9 giây cho khung máy quay vừa khít màn hình, rồi đứng yên
        (đang trượt từ trang đầu tới đây thì cứ để cú trượt đó chạy hết, rồi đứng yên) */
     document.addEventListener('introstart', function(e){
-      introStarted = true;
+      introStarted = true; introRunning = true;
       if(!mode) return;
       waiting = true;
       if(!gliding) glide(window.scrollY + e.detail.getBoundingClientRect().top, 900);
@@ -1947,13 +1948,20 @@
     }
     /* chạy xong (khung co lại thành ảnh + lời tâm sự): chờ 2 giây rồi cuộn tiếp */
     document.addEventListener('introdone', function(){
+      introRunning = false;
       if(!mode || !waiting) return;
       resumeT = setTimeout(function(){ if(mode && waiting){ waiting = false; run(); } }, 2000);
     });
-    function userStop(e){ if(mode && !(e && e.target && e.target.closest && e.target.closest('#autoScroll'))) setMode(false); }
+    function userOff(){ setMode(false); autoBack = !paused; backArm(); }
+    function userStop(e){
+      if(e && e.target && e.target.closest && e.target.closest('#autoScroll')) return;
+      if(mode) setMode(false);
+      autoBack = !paused;   // kể cả khi tự cuộn đang dừng ở album / hồi âm: khách tự cuộn tiếp thì về sau cũng được tự cuộn lại
+    }
     ['wheel', 'touchstart', 'pointerdown', 'keydown'].forEach(function(t){ window.addEventListener(t, userStop, { passive:true, capture:true }); });
     btn.addEventListener('click', function(){
-      if(mode) return setMode(false);
+      if(mode){ paused = true; autoBack = false; return setMode(false); }   // khách chủ động dừng → không tự bật lại
+      paused = false;
       // đang dừng ở ngay mốc album / hồi âm thì bấm là đi tiếp qua mốc đó
       stops.forEach(function(el, i){ if(passed.indexOf(i) < 0 && el.getBoundingClientRect().top <= window.innerHeight * 0.12) passed.push(i); });
       if(!atEnd()) setMode(true);
@@ -1961,7 +1969,7 @@
     window.addEventListener('scroll', function(){
       if(!atEnd() && document.getElementById('cover').classList.contains('open')) btn.classList.add('show');
       // đang đứng chờ (ngắm trang đầu / chờ đoạn giới thiệu) mà trang bị kéo đi — vd kéo thanh cuộn, không qua chạm/lăn/phím → thoát
-      if(mode && waiting && !gliding && Math.abs(window.scrollY - setY) > 4) setMode(false);
+      if(mode && waiting && !gliding && Math.abs(window.scrollY - setY) > 4) userOff();
     }, { passive:true });
     /* gợi ý cuộn: trang đứng yên ~3 giây, tự cuộn đang tắt, chưa tới cuối trang (không tính lúc đang gõ form,
        xem lớn album, xem lại thiệp) → hiện tay vuốt / con lăn chuột; cuộn / chạm là ẩn; tối đa 3 lần mỗi lần mở thiệp */
@@ -1977,6 +1985,21 @@
       }, 3000);
     }
     ['scroll', 'wheel', 'touchstart', 'pointerdown', 'keydown'].forEach(function(t){ window.addEventListener(t, hintArm, { passive:true }); });
+    /* khách tự cuộn / chạm rồi ngừng tay 6 giây → tự cuộn lại. Không tự bật khi: khách đã bấm nút dừng, đang gõ form,
+       đang ở trong vùng album / form hồi âm, đoạn giới thiệu đang chạy, đã tới cuối trang, đang xem lớn album / xem lại thiệp */
+    function nearStop(){ return stops.some(function(el){ var r = el.getBoundingClientRect(); return r.top < window.innerHeight * 0.75 && r.bottom > window.innerHeight * 0.25; }); }
+    function backArm(){
+      clearTimeout(backT);
+      if(!autoBack || mode) return;
+      backT = setTimeout(function(){
+        if(mode || !autoBack) return;
+        var a = document.activeElement;
+        if(atEnd() || blocked() || introRunning || nearStop() || (a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName))) return backArm();
+        stops.forEach(function(el, i){ if(passed.indexOf(i) < 0 && el.getBoundingClientRect().top <= window.innerHeight * 0.12) passed.push(i); });
+        setMode(true);
+      }, 6000);
+    }
+    ['scroll', 'wheel', 'touchstart', 'pointerdown', 'keydown'].forEach(function(t){ window.addEventListener(t, backArm, { passive:true }); });
     document.addEventListener('inviteopen', function(){
       setTimeout(function(){
         btn.classList.add('show'); opened = true; hintArm();
