@@ -21,6 +21,10 @@
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preload" as="font" type="font/woff2" href="fonts/QdVPSTAyLFyeg_IDWvOJmVES_Hw4BXoKZA.woff2" crossorigin>
 <link rel="preload" as="font" type="font/woff2" href="fonts/QdVPSTAyLFyeg_IDWvOJmVES_Hw3BXo.woff2" crossorigin>
+<link rel="preload" as="font" type="font/woff2" href="fonts/QdVMSTAyLFyeg_IDWvOJmVES_HTEJm86Rb0bcw.woff2" crossorigin>
+<link rel="preload" as="font" type="font/woff2" href="fonts/QdVMSTAyLFyeg_IDWvOJmVES_HTEJm81Rb0.woff2" crossorigin>
+<link rel="preload" as="font" type="font/woff2" href="fonts/QdVMSTAyLFyeg_IDWvOJmVES_HToIW86Rb0bcw.woff2" crossorigin>
+<link rel="preload" as="font" type="font/woff2" href="fonts/QdVMSTAyLFyeg_IDWvOJmVES_HToIW81Rb0.woff2" crossorigin>
 <link rel="preload" as="font" type="font/woff2" href="fonts/co3ZmX5slCNuHLi8bLeY9MK7whWMhyjYrEtHmSq17w.woff2" crossorigin>
 <link rel="preload" as="font" type="font/woff2" href="fonts/co3ZmX5slCNuHLi8bLeY9MK7whWMhyjYrEtImSo.woff2" crossorigin>
 <link rel="preload" as="font" type="font/woff2" href="fonts/6xKhdSpbNNCT-sWACm7JLQ.woff2" crossorigin>
@@ -334,7 +338,7 @@
   .cover-names .cn-row{ display:block; }
   .cover-names .cn-amp{ font-family:var(--script); font-style:italic; font-weight:500; font-size:1.15em; line-height:.95; color:var(--gold); margin:2px 0 0; }
   /* chờ tải: từng chữ của tên hiện dần + nhô lên, rồi đường chỉ vàng kẻ ra từ giữa, cuối cùng là ngày.
-     Bắt đầu khi font bìa đã tải (class .names-in, xem waitCoverFonts) để chữ không đổi font giữa chừng */
+     Bắt đầu khi font bìa đã tải (class .names-in, xem showNames) để chữ không đổi font giữa chừng */
   .cover-names .cn-w{ display:inline-block; opacity:0; transform:translateY(12px); }
   #cover.names-in .cn-w{ animation:nameWord .6s cubic-bezier(.16,1,.3,1) calc(var(--i) * .12s) both; }
   @keyframes nameWord{ to{ opacity:1; transform:none; } }
@@ -2168,6 +2172,9 @@
       }
       // link tạo từ Sheet dùng "_" thay dấu cách cho gọn (gn=chị_Loan) → đổi lại thành dấu cách
       v = v.replace(/_/g, ' ');
+      // vài bàn phím/app lưu chữ có dấu dạng tách rời ("e" + dấu mũ + dấu hỏi) — vài dấu rời không có trong file font
+      // chữ Việt → gộp lại thành chữ có dấu liền khối (ể) cho font luôn đủ ký tự
+      if(v.normalize) v = v.normalize('NFC');
       var codes = PARAM_CODES[k], code = v.trim().toLowerCase();
       if(codes && Object.prototype.hasOwnProperty.call(codes, code)) v = codes[code];
       return /^-+$/.test(v.trim()) ? '' : v;
@@ -2520,27 +2527,18 @@
   }
   if(musicHint) musicHint.addEventListener('click', function(){ showMusicHint(false); revealMusic(); });
 
-  /* rèm tự kéo hé: chờ font của bìa (Prata + Cormorant Garamond) tải xong rồi mới cho tên hiện
-     dần (class .names-in) để chữ không đổi font giữa chừng; mạng chậm thì tối đa 1s là hiện luôn.
-     Hiệu ứng tên + chỉ vàng + ngày dài ~1.35s, giữ thêm ~0.45s cho khách đọc rồi mới kéo rèm
-     → rèm mở sau khoảng 2s (mạng tốt) đến tối đa 2.8s.
-     Kiểm tra thẳng trạng thái 2 font thật (Prata + Cormorant) thay vì document.fonts.ready. */
+  /* rèm tự kéo hé: chờ font tải xong rồi mới cho tên hiện dần (class .names-in) để chữ không đổi font giữa chừng.
+     Mỗi font chia 2 file (Latin + chữ có dấu tiếng Việt): phải chờ ĐỦ cả file chữ có dấu — trước đây chỉ cần 1 file
+     Latin tải xong là coi như xong, nên lần đầu mở bằng 4G (Android) tên khách có dấu hiện tạm bằng font của máy.
+     document.fonts.load với mẫu chữ có cả "A" lẫn "ệ" → trình duyệt tải đủ 2 file của từng độ đậm.
+     Mạng chậm thì tối đa 2,5 giây là hiện luôn. Hiệu ứng tên + chỉ vàng + ngày ~1.35s, giữ thêm ~0.45s rồi kéo rèm. */
   var curtainParted = false, namesShown = false;
   function partCurtain(){
     if(curtainParted) return;
     curtainParted = true;
     cover.classList.add('parted');
   }
-  function coverFontsLoaded(){
-    if(!document.fonts || !document.fonts.forEach) return true;
-    var ok = { 'Prata':false, 'Cormorant Garamond':false };
-    document.fonts.forEach(function(f){
-      var fam = f.family.replace(/["']/g, '');
-      if(fam in ok && f.status === 'loaded') ok[fam] = true;
-    });
-    return ok['Prata'] && ok['Cormorant Garamond'];
-  }
-  var NAMES_MAX_WAIT = 1000, NAMES_ANIM_HOLD = 1800;
+  var NAMES_MAX_WAIT = 2500, NAMES_ANIM_HOLD = 1800;
   function showNames(){
     if(namesShown) return;
     namesShown = true;
@@ -2548,11 +2546,12 @@
     setTimeout(partCurtain, NAMES_ANIM_HOLD);
   }
   setTimeout(showNames, NAMES_MAX_WAIT);
-  (function waitCoverFonts(){
-    if(namesShown) return;
-    if(coverFontsLoaded()) showNames();
-    else setTimeout(waitCoverFonts, 60);
-  })();
+  if(document.fonts && document.fonts.load){
+    var FONT_SAMPLE = 'Aaệ';
+    Promise.all(['400 1em "Prata"', 'italic 400 1em "Cormorant Garamond"', '400 1em "Be Vietnam Pro"', '500 1em "Be Vietnam Pro"', '600 1em "Be Vietnam Pro"']
+      .map(function(f){ return document.fonts.load(f, FONT_SAMPLE).catch(function(){}); }))
+      .then(showNames, showNames);
+  } else showNames();
 
   /* xem lại thiệp chính (khối trên bìa) sau khi đã mở: nút phong bì góc phải trên + link ở footer */
   var reviewToggle = document.getElementById('reviewToggle');
