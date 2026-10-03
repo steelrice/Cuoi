@@ -272,6 +272,28 @@
   @keyframes asNudge{ 0%,100%{ transform:translateY(-1px); } 50%{ transform:translateY(2px); } }
   @media (prefers-reduced-motion: reduce){ #autoScroll .as-play{ animation:none!important; } }
 
+  /* gợi ý cuộn khi trang đứng yên lâu: tròn tối viền vàng (cùng kiểu hình hướng dẫn trong album), giữa phía dưới */
+  #scrollHint{
+    position:fixed; left:50%; bottom:calc(var(--sp-7) + env(safe-area-inset-bottom, 0px)); z-index:1400; width:72px; height:72px; margin-left:-36px;
+    border-radius:50%; border:1px solid rgba(207,159,63,.5); background:rgba(20,3,6,.6); color:var(--gold); box-sizing:border-box;
+    display:flex; align-items:center; justify-content:center; pointer-events:none;
+    opacity:0; transform:translateY(10px) scale(.94); transition:opacity .45s ease, transform .45s ease;
+  }
+  #scrollHint.show{ opacity:1; transform:none; }
+  #scrollHint svg{ fill:none; stroke:currentColor; stroke-linecap:round; stroke-linejoin:round; overflow:visible; }
+  #scrollHint .sh-touch{ display:flex; flex-direction:column; align-items:center; line-height:0; }
+  #scrollHint .sh-arrows{ display:flex; flex-direction:column; align-items:center; }
+  #scrollHint .sh-arrows svg{ width:19px; height:12px; stroke-width:1.8; animation:swArrow 1.8s ease-in-out infinite; }
+  #scrollHint .sh-arrows svg:first-child{ animation-delay:.15s; }
+  #scrollHint .sh-arrows svg:last-child{ margin-top:-4px; opacity:.55; }
+  #scrollHint .sh-hand{ width:32px; height:32px; stroke-width:1.4; animation:swHand 1.8s ease-in-out infinite; }
+  #scrollHint .sh-mouse{ display:none; width:36px; height:36px; stroke-width:1.4; }
+  #scrollHint .sh-wl{ animation:shWheel 1.4s ease-in-out infinite; }
+  #scrollHint .sh-dn{ opacity:.7; animation:swArrow 1.4s ease-in-out infinite reverse; }
+  @keyframes shWheel{ 0%{ transform:translateY(-1px); opacity:0; } 30%{ opacity:1; } 80%{ transform:translateY(3px); opacity:1; } 100%{ transform:translateY(4px); opacity:0; } }
+  @media (hover:hover) and (pointer:fine){ #scrollHint .sh-touch{ display:none; } #scrollHint .sh-mouse{ display:block; } }
+  @media (prefers-reduced-motion: reduce){ #scrollHint svg, #scrollHint path{ animation:none!important; } }
+
   /* Nút "Xem lại thiệp": cùng vị trí với nút đổi ngôn ngữ (góc phải trên) — nút đó ẩn sau khi
      mở thiệp nên chỗ này trống. Hình phong bì; đang xem lại thì đổi thành dấu ✕ để đóng. */
   #reviewToggle{
@@ -1244,6 +1266,12 @@
   <svg class="as-pause" viewBox="0 0 24 24" aria-hidden="true"><path d="M9.5 7v10M14.5 7v10"/></svg>
 </button>
 
+<!-- gợi ý cuộn: hiện khi trang đứng yên lâu mà tự cuộn đang tắt (điện thoại: tay vuốt lên; máy tính: con lăn chuột) -->
+<div id="scrollHint" aria-hidden="true">
+  <span class="sh-touch"><span class="sh-arrows"><svg viewBox="0 0 24 24"><path d="M6 15l6-6 6 6"/></svg><svg viewBox="0 0 24 24"><path d="M6 15l6-6 6 6"/></svg></span><svg class="sh-hand" viewBox="0 0 24 24"><path d="M9 11V5.5a1.5 1.5 0 0 1 3 0V11m0-1.5a1.5 1.5 0 0 1 3 0V11m0-.5a1.5 1.5 0 0 1 3 0v4.5a6 6 0 0 1-6 6h-.6a6 6 0 0 1-4.9-2.6L4.3 15.2a1.5 1.5 0 0 1 2.4-1.8L9 15"/></svg></span>
+  <svg class="sh-mouse" viewBox="0 0 24 24"><rect x="7" y="3" width="10" height="16" rx="5"/><path class="sh-wl" d="M12 6.5v3"/><path class="sh-dn" d="M9.5 21.2l2.5 1.8 2.5-1.8"/></svg>
+</div>
+
 <!-- ============ NHẠC NỀN ============ -->
 <audio id="bgMusic" preload="none"></audio>
 <button type="button" id="musicToggle" class="show" aria-label="bật/tắt nhạc nền" aria-pressed="false">
@@ -1932,9 +1960,23 @@
       // đang đứng chờ (ngắm trang đầu / chờ đoạn giới thiệu) mà trang bị kéo đi — vd kéo thanh cuộn, không qua chạm/lăn/phím → thoát
       if(mode && waiting && !gliding && Math.abs(window.scrollY - setY) > 4) setMode(false);
     }, { passive:true });
+    /* gợi ý cuộn: trang đứng yên ~4 giây, tự cuộn đang tắt, chưa tới cuối trang (không tính lúc đang gõ form,
+       xem lớn album, xem lại thiệp) → hiện tay vuốt / con lăn chuột; cuộn / chạm là ẩn; tối đa 3 lần mỗi lần mở thiệp */
+    var hintEl = document.getElementById('scrollHint'), hintT = 0, hintN = 0, opened = false;
+    function hintOff(){ hintEl.classList.remove('show'); }
+    function hintArm(){
+      hintOff(); clearTimeout(hintT);
+      if(!opened || hintN >= 3) return;
+      hintT = setTimeout(function(){
+        var a = document.activeElement;
+        if(mode || atEnd() || blocked() || (a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName))) return hintArm();
+        hintEl.classList.add('show'); hintN++;
+      }, 4000);
+    }
+    ['scroll', 'wheel', 'touchstart', 'pointerdown', 'keydown'].forEach(function(t){ window.addEventListener(t, hintArm, { passive:true }); });
     document.addEventListener('inviteopen', function(){
       setTimeout(function(){
-        btn.classList.add('show');
+        btn.classList.add('show'); opened = true; hintArm();
         if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches && window.scrollY < 40) openingTour();
       }, 1800);
     }, { once:true });
