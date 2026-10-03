@@ -1881,19 +1881,19 @@
      tự dừng trước album và form hồi âm (chỗ cần thao tác) và ở cuối trang. Nút góc phải dưới để bật lại / dừng.
      Đoạn "Xin giới thiệu" (máy quay chạy ~10 giây theo thời gian): khi nó bắt đầu thì trượt êm cho khung vừa khít
      màn hình rồi đứng yên tới lúc chạy xong, chờ thêm 2 giây cho khách đọc lời tâm sự rồi mới cuộn tiếp.
-     Trang đầu (ảnh Save the date, cao 1 màn hình) không bò chậm: giữ yên ~4 giây cho khách ngắm rồi trượt êm (2,5 giây) thẳng tới
+     Trang đầu (ảnh Save the date, cao 1 màn hình): trôi êm nhanh dần tới nửa trang (5 giây) rồi trượt nhanh (1,2 giây) tới
      đoạn giới thiệu.
      Máy bật "giảm chuyển động" thì không tự chạy, chỉ chạy khi khách bấm nút */
   (function(){
     var btn = document.getElementById('autoScroll'); if(!btn) return;
-    var SPEED = 35, mode = false, waiting = false, raf = 0, last = 0, acc = 0, setY = 0, resumeT = 0, holdT = 0;
+    var SPEED = 35, mode = false, waiting = false, raf = 0, last = 0, acc = 0, setY = 0, resumeT = 0;
     var gliding = false, introStarted = false, intro = document.querySelector('#introStage .sticky-view');
     var stops = [].slice.call(document.querySelectorAll('.bk-sec, .rsvp-frame')), passed = [];
     function atEnd(){ return window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 2; }
     function blocked(){ return document.documentElement.classList.contains('no-scroll') || document.getElementById('cover').classList.contains('review') || document.hidden; }
     function goTo(y){ setY = Math.round(y); window.scrollTo({ top:setY, behavior:'instant' }); }
     function setMode(v){
-      mode = v; waiting = false; gliding = false; clearTimeout(resumeT); clearTimeout(holdT);
+      mode = v; waiting = false; gliding = false; clearTimeout(resumeT);
       btn.classList.toggle('on', v); btn.setAttribute('aria-pressed', v ? 'true' : 'false');
       cancelAnimationFrame(raf);
       if(v) run();
@@ -1912,15 +1912,15 @@
       if(atEnd()){ btn.classList.remove('show'); return setMode(false); }
       raf = requestAnimationFrame(step);
     }
-    /* trượt êm tới vị trí to (giây ms), khách chạm/kéo giữa chừng là thoát */
-    function glide(to, ms, done){
+    /* trượt êm tới vị trí to (giây ms), khách chạm/kéo giữa chừng là thoát; ez = đường cong tốc độ (mặc định chậm–nhanh–chậm) */
+    function glide(to, ms, done, ez){
       cancelAnimationFrame(raf); gliding = true;
       var from = window.scrollY, t0 = 0; setY = from;
       (function g(now){
         if(!mode || !gliding) return;
         if(Math.abs(window.scrollY - setY) > 4) return setMode(false);
         if(!t0) t0 = now;
-        var q = Math.min(1, (now - t0) / ms), k = q < .5 ? 2*q*q : 1 - Math.pow(-2*q + 2, 2) / 2;
+        var q = Math.min(1, (now - t0) / ms), k = ez ? ez(q) : (q < .5 ? 2*q*q : 1 - Math.pow(-2*q + 2, 2) / 2);
         goTo(from + (to - from) * k);
         if(q < 1) raf = requestAnimationFrame(g); else { gliding = false; if(done) done(); }
       })(performance.now());
@@ -1933,14 +1933,17 @@
       waiting = true;
       if(!gliding) glide(window.scrollY + e.detail.getBoundingClientRect().top, 900);
     });
-    /* trang đầu: giữ yên cho khách ngắm ảnh Save the date rồi trượt thẳng tới đoạn giới thiệu */
+    /* trang đầu (ảnh Save the date): trôi êm ngay từ đầu, tăng tốc từ từ tới nửa trang trong 5 giây, rồi từ 50%
+       trượt nhanh 1,2 giây tới đoạn giới thiệu và êm dần khi tới nơi. Hai đoạn nối liền tốc độ nên không bị giật */
+    var T1 = 5000, T2 = 1200;
     function openingTour(){
       setMode(true); waiting = true; cancelAnimationFrame(raf);
-      holdT = setTimeout(function(){
-        if(!mode || !waiting) return;
-        var to = intro ? window.scrollY + intro.getBoundingClientRect().top : window.scrollY;
-        glide(to, 2500, function(){ if(!introStarted){ waiting = false; run(); } });   // giới thiệu đã chạy thì introdone lo phần cuộn tiếp
-      }, 3500);
+      var from = window.scrollY, to = intro ? from + intro.getBoundingClientRect().top : from, half = from + (to - from) / 2;
+      var P = to - half, m0 = 2 * (half - from) / T1 * T2;   // tốc độ cuối đoạn 1 (đổi sang thang thời gian đoạn 2)
+      glide(half, T1, function(){
+        glide(to, T2, function(){ if(!introStarted){ waiting = false; run(); } },   // giới thiệu đã chạy thì introdone lo phần cuộn tiếp
+          function(q){ return P ? ((q*q*q - 2*q*q + q) * m0 + (-2*q*q*q + 3*q*q) * P) / P : 1; });   // Hermite: vào với tốc độ đoạn 1, dừng êm
+      }, function(q){ return q * q; });   // đoạn 1: bắt đầu từ đứng yên, nhanh dần
     }
     /* chạy xong (khung co lại thành ảnh + lời tâm sự): chờ 2 giây rồi cuộn tiếp */
     document.addEventListener('introdone', function(){
