@@ -528,7 +528,8 @@
     to{ transform:translateY(-112vh) translateX(10px) scale(.6); opacity:0; }
   }
 
-  #petalLayer{ position:fixed; inset:0; pointer-events:none; z-index:2; overflow:hidden; opacity:.5; }
+  #petalLayer{ position:fixed; inset:0; pointer-events:none; z-index:2; overflow:hidden; opacity:0; transition:opacity .85s ease .15s; }
+  #petalLayer.show{ opacity:.5; }   /* hiện cùng lúc thiệp hiện (#card.show) */
   #petalLayer .ember{
     position:absolute; bottom:-6vh; border-radius:50%;
     background:radial-gradient(circle at 50% 50%, #f6e0a8 0%, #cf9f3f 42%, rgba(207,159,63,0) 72%);
@@ -1297,10 +1298,12 @@
 <!-- trình duyệt chặn nhạc (vd máy tính mở thiệp bằng lăn chuột — lăn chuột không tính là cử chỉ thật): gợi ý bấm để bật -->
 <button type="button" id="musicHint" aria-label="Bấm để bật nhạc nền"><span aria-hidden="true">♪</span><span data-vi>Bấm để bật nhạc</span><span data-en>Tap for music</span></button>
 
+<!-- đốm sáng bay: nằm NGOÀI #app (lúc tự cuộn #app bị dịch bằng transform, position:fixed bên trong sẽ lệch) -->
+<div id="petalLayer" aria-hidden="true"></div>
+
 <div id="app">
 
 <div id="card">
-  <div id="petalLayer" aria-hidden="true"></div>
 
   <!-- ============ SAVE THE DATE (ảnh lớn đầu tiên sau khi mở thiệp) ============ -->
   <div class="std-hero" id="stdHero">
@@ -1889,7 +1892,7 @@
      Máy bật "giảm chuyển động" thì không tự chạy, chỉ chạy khi khách bấm nút */
   (function(){
     var btn = document.getElementById('autoScroll'); if(!btn) return;
-    var SPEED = 35, SPEED2 = 45, SPEED3 = 90, v = 35, mode = false, waiting = false, raf = 0, last = 0, acc = 0, setY = 0, resumeT = 0;
+    var SPEED = 35, SPEED2 = 45, SPEED3 = 90, v = 35, mode = false, waiting = false, raf = 0, last = 0, pos = 0, setY = 0, resumeT = 0;
     var gliding = false, introStarted = false, introRunning = false, intro = document.querySelector('#introStage .sticky-view');
     var stage = document.getElementById('introStage');
     var quick = document.querySelector('.cd-sec');   // "Chỉ còn" + lịch: ít chữ, lướt nhanh gấp đôi khi phần này chiếm giữa màn hình
@@ -1902,13 +1905,26 @@
     function atEnd(){ return window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 2; }
     function blocked(){ return document.documentElement.classList.contains('no-scroll') || document.getElementById('cover').classList.contains('review') || document.hidden; }
     function goTo(y){ setY = Math.round(y); window.scrollTo({ top:setY, behavior:'instant' }); }
+    /* trình duyệt chỉ cuộn được từng 1px chẵn → tốc độ chậm (~0,4–0,75px mỗi khung hình) thành nhịp 1-1-1-0 / 1-0-0-1, khựng nhẹ.
+       Nên cuộn phần chẵn, phần lẻ (0–1px) thì dịch cả thiệp (#app) bằng transform — vẽ tới điểm ảnh thật của màn hình, liền như video.
+       Chỉ bật trong lúc tự cuộn; dừng là gỡ ngay (lệch < 1px, không thấy) để position:fixed bên trong thiệp chạy bình thường */
+    var app = document.getElementById('app'), frac = 0, subOn = false;
+    function moveTo(y){
+      var n = Math.floor(y);
+      if(n !== window.scrollY) goTo(n); else setY = n;
+      frac = y - n;
+      if(!subOn){ subOn = true; app.style.willChange = 'transform'; }
+      app.style.transform = 'translate3d(0,' + (-frac).toFixed(3) + 'px,0)';
+    }
+    function subOff(){ frac = 0; if(subOn){ subOn = false; app.style.transform = app.style.willChange = ''; } }
     function setMode(v){
+      if(!v) subOff();
       mode = v; waiting = false; gliding = false; clearTimeout(resumeT);
       btn.classList.toggle('on', v); btn.setAttribute('aria-pressed', v ? 'true' : 'false');
       cancelAnimationFrame(raf);
       if(v) run();
     }
-    function run(){ cancelAnimationFrame(raf); last = 0; acc = 0; v = target(); setY = window.scrollY; raf = requestAnimationFrame(step); }
+    function run(){ cancelAnimationFrame(raf); last = 0; pos = window.scrollY + frac; v = target(); setY = window.scrollY; raf = requestAnimationFrame(step); }
     function step(now){
       if(!mode || waiting) return;
       if(blocked()) return setMode(false);
@@ -1916,26 +1932,26 @@
       if(last){
         var dt = Math.min(0.05, (now - last) / 1000), t = target();
         v = v < t ? Math.min(t, v + 30 * dt) : Math.max(t, v - 30 * dt);   // đổi tốc độ thì tăng/giảm dần (30px/s mỗi giây) cho êm
-        acc += v * dt;
+        pos += v * dt;
       }
       last = now;
       for(var i = 0; i < stops.length; i++){
         if(passed.indexOf(i) < 0 && stops[i].getBoundingClientRect().top <= window.innerHeight * 0.08){ passed.push(i); return setMode(false); }
       }
-      if(acc >= 1){ var n = Math.floor(acc); acc -= n; goTo(window.scrollY + n); }
+      moveTo(pos);
       if(atEnd()){ btn.classList.remove('show'); return setMode(false); }
       raf = requestAnimationFrame(step);
     }
     /* trượt êm tới vị trí to (giây ms), khách chạm/kéo giữa chừng là thoát; ez = đường cong tốc độ (mặc định chậm–nhanh–chậm) */
     function glide(to, ms, done, ez){
       cancelAnimationFrame(raf); gliding = true;
-      var from = window.scrollY, t0 = 0; setY = from;
+      var from = window.scrollY + frac, t0 = 0; setY = window.scrollY;
       (function g(now){
         if(!mode || !gliding) return;
         if(Math.abs(window.scrollY - setY) > 4) return userOff();
         if(!t0) t0 = now;
         var q = Math.min(1, (now - t0) / ms), k = ez ? ez(q) : (q < .5 ? 2*q*q : 1 - Math.pow(-2*q + 2, 2) / 2);
-        goTo(from + (to - from) * k);
+        moveTo(from + (to - from) * k);
         if(q < 1) raf = requestAnimationFrame(g); else { gliding = false; if(done) done(); }
       })(performance.now());
     }
@@ -1945,14 +1961,14 @@
       introStarted = true; introRunning = true;
       if(!mode) return;
       waiting = true;
-      if(!gliding) glide(window.scrollY + e.detail.getBoundingClientRect().top, 900);
+      if(!gliding) glide(window.scrollY + frac + e.detail.getBoundingClientRect().top, 900);
     });
     /* trang đầu (ảnh Save the date): trôi êm ngay từ đầu, tăng tốc từ từ tới nửa trang trong 5 giây, rồi từ 50%
        trượt nhanh 1,2 giây tới đoạn giới thiệu và êm dần khi tới nơi. Hai đoạn nối liền tốc độ nên không bị giật */
     var T1 = 5000, T2 = 1200;
     function openingTour(){
       setMode(true); waiting = true; cancelAnimationFrame(raf);
-      var from = window.scrollY, to = intro ? from + intro.getBoundingClientRect().top : from, half = from + (to - from) / 2;
+      var from = window.scrollY + frac, to = intro ? from + intro.getBoundingClientRect().top : from, half = from + (to - from) / 2;
       var P = to - half, m0 = 2 * (half - from) / T1 * T2;   // tốc độ cuối đoạn 1 (đổi sang thang thời gian đoạn 2)
       glide(half, T1, function(){
         glide(to, T2, function(){ if(!introStarted){ waiting = false; run(); } },   // giới thiệu đã chạy thì introdone lo phần cuộn tiếp
@@ -2822,6 +2838,7 @@
     // nội dung bắt đầu dâng lên khi rèm còn đang kéo, để hai lớp nối liền nhau
     setTimeout(function(){
       card.classList.add('show');
+      document.getElementById('petalLayer').classList.add('show');
     }, 520);
     // rèm dừng đúng vị trí hai dải bên trong rồi hạ lớp bìa xuống, giữ nguyên rèm
     setTimeout(function(){
