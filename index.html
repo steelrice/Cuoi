@@ -1880,7 +1880,7 @@
     document.addEventListener('inviteopen', function(){ setTimeout(function(){ io.observe(box); }, 600); }, { once:true });
   })();
 
-  /* tự cuộn chậm sau khi mở thiệp (~35px/giây, như đọc thiệp giấy; từ đoạn cô dâu chú rể trở đi ~45px/giây). Khách chạm / cuộn / gõ phím là thoát chế độ tự cuộn;
+  /* tự cuộn chậm sau khi mở thiệp (~35px/giây, như đọc thiệp giấy; từ đoạn cô dâu chú rể trở đi ~45px/giây; phần "Chỉ còn" + lịch ~90px/giây). Khách chạm / cuộn / gõ phím là thoát chế độ tự cuộn;
      tự dừng trước album và form hồi âm (chỗ cần thao tác) và ở cuối trang. Nút góc phải dưới để bật lại / dừng.
      Đoạn "Xin giới thiệu" (máy quay chạy ~10 giây theo thời gian): khi nó bắt đầu thì trượt êm cho khung vừa khít
      màn hình rồi đứng yên tới lúc chạy xong, chờ thêm 2 giây cho khách đọc lời tâm sự rồi mới cuộn tiếp.
@@ -1889,10 +1889,14 @@
      Máy bật "giảm chuyển động" thì không tự chạy, chỉ chạy khi khách bấm nút */
   (function(){
     var btn = document.getElementById('autoScroll'); if(!btn) return;
-    var SPEED = 35, SPEED2 = 45, v = 35, mode = false, waiting = false, raf = 0, last = 0, acc = 0, setY = 0, resumeT = 0;
+    var SPEED = 35, SPEED2 = 45, SPEED3 = 90, v = 35, mode = false, waiting = false, raf = 0, last = 0, acc = 0, setY = 0, resumeT = 0;
     var gliding = false, introStarted = false, introRunning = false, intro = document.querySelector('#introStage .sticky-view');
     var stage = document.getElementById('introStage');
-    function target(){ return stage && stage.getBoundingClientRect().top <= 1 ? SPEED2 : SPEED; }   // từ đoạn cô dâu chú rể trở đi cuộn nhanh hơn
+    var quick = document.querySelector('.cd-sec');   // "Chỉ còn" + lịch: ít chữ, lướt nhanh gấp đôi khi phần này chiếm giữa màn hình
+    function target(){
+      if(quick){ var q = quick.getBoundingClientRect(); if(q.top < window.innerHeight * 0.3 && q.bottom > window.innerHeight * 0.7) return SPEED3; }
+      return stage && stage.getBoundingClientRect().top <= 1 ? SPEED2 : SPEED;   // từ đoạn cô dâu chú rể trở đi cuộn nhanh hơn
+    }
     var autoBack = false, paused = false, backT = 0;   // autoBack: khách tự cuộn/chạm → ngừng tay 6 giây thì tự cuộn lại; paused: khách bấm nút dừng
     var stops = [].slice.call(document.querySelectorAll('.bk-sec, .rsvp-frame')), passed = [];
     function atEnd(){ return window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 2; }
@@ -1911,7 +1915,7 @@
       if(Math.abs(window.scrollY - setY) > 4) return userOff();   // khách tự kéo (kể cả kéo thanh cuộn)
       if(last){
         var dt = Math.min(0.05, (now - last) / 1000), t = target();
-        v = v < t ? Math.min(t, v + 10 * dt) : Math.max(t, v - 10 * dt);   // đổi tốc độ thì tăng/giảm dần trong ~1 giây
+        v = v < t ? Math.min(t, v + 30 * dt) : Math.max(t, v - 30 * dt);   // đổi tốc độ thì tăng/giảm dần (30px/s mỗi giây) cho êm
         acc += v * dt;
       }
       last = now;
