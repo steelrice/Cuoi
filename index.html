@@ -2275,11 +2275,22 @@
     /* chạy xong: khung 1 màn hình co lại vừa sát lời tâm sự (bỏ khoảng trống phía dưới).
        Ảnh + chữ giữ nguyên chỗ; nếu khách đã cuộn qua hẳn thì bù lại vị trí cuộn cho khỏi nhảy */
     var collapsed = false;
+    /* màn hình thấp (Android có thanh địa chỉ, ~640–700px): ảnh tự thu nhỏ để ảnh + cả lời tâm sự nằm gọn trong
+       1 màn hình (chừa 24px trên/dưới), không bị cắt chữ. Màn đủ cao thì giữ nguyên cỡ ảnh. Ảnh nhỏ nhất 55% */
+    function sizeFig(H){
+      frameWrap.style.width = '';
+      var over = finalStage.offsetHeight - (H - 48);
+      if(over <= 0) return;
+      var w = frameWrap.offsetWidth, fh = frameWrap.offsetHeight;
+      frameWrap.style.width = Math.floor(Math.max(w * 0.55, w * (fh - over) / fh)) + 'px';
+    }
     function fit(anim){
       view.style.transition = 'none'; view.style.height = ''; view.style.minHeight = '';
+      sizeFig(view.clientHeight);
       var H = view.clientHeight, h = finalStage.offsetHeight, top = Math.max(0, (H - h) / 2);
       finalStage.style.top = top + 'px'; finalStage.style.transform = 'translateX(-50%)';
-      var newH = Math.min(H, Math.ceil(top + h + 28));
+      var newH = Math.ceil(top + h + 28);
+      if(h <= H) newH = Math.min(H, newH);   // chữ hệ thống quá to, ảnh nhỏ nhất vẫn chưa vừa: khung giãn ra cho đủ chữ, không cắt
       if(anim){ view.style.height = H + 'px'; void view.offsetHeight; view.style.transition = 'height .6s ease'; }
       view.style.minHeight = '0'; view.style.height = newH + 'px';
       return H - newH;
@@ -2296,6 +2307,7 @@
       played = true;
       K = (document.body.classList.contains('lang-en') ? 1.7 : 1.15) + 0.2;
       T = times();
+      sizeFig(view.clientHeight);
       kicker.style.transition = 'none';
       kicker.classList.add('intro-in');
       kicker.classList.remove('play');
@@ -2327,7 +2339,7 @@
       }, 600);
     }, { once: true });
     camImg.addEventListener('load', function(){ if(!running) render(lastT < 0 ? 0 : lastT); });
-    window.addEventListener('resize', function(){ if(!running){ render(lastT < 0 ? 0 : lastT); if(collapsed) fit(false); } });
+    window.addEventListener('resize', function(){ if(!running){ if(!collapsed) sizeFig(view.clientHeight); render(lastT < 0 ? 0 : lastT); if(collapsed) fit(false); } });
     render(0);
   })();
 
