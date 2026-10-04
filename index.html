@@ -641,6 +641,10 @@
   #finalStage .story::before{ color:rgba(122,21,36,.16); }
   #finalStage .story-img{ box-shadow:0 18px 36px rgba(60,20,10,.22); }
   #finalStage .story-fig::after{ border-color:rgba(169,127,46,.6); }
+  /* màn hình thấp (JS gắn .compact khi ảnh + chữ không vừa 1 màn hình): chữ và khoảng cách gọn lại để ảnh khỏi phải thu nhỏ nhiều */
+  #finalStage.compact .story blockquote{ font-size:20px; line-height:1.5; }
+  #finalStage.compact .story-fig{ margin-bottom:28px; }
+  #finalStage.compact .story cite{ margin-top:var(--sp-3); }
 
   /* ================= SAVE THE DATE — ảnh lớn ngay sau khi mở thiệp, đáy ảnh chìm dần vào đỏ của "Xin giới thiệu" ================= */
   .std-hero{ position:relative; height:100vh; height:100svh; min-height:560px; overflow:hidden; background:#33060b; }
@@ -2275,11 +2279,15 @@
     /* chạy xong: khung 1 màn hình co lại vừa sát lời tâm sự (bỏ khoảng trống phía dưới).
        Ảnh + chữ giữ nguyên chỗ; nếu khách đã cuộn qua hẳn thì bù lại vị trí cuộn cho khỏi nhảy */
     var collapsed = false;
-    /* màn hình thấp (Android có thanh địa chỉ, ~640–700px): ảnh tự thu nhỏ để ảnh + cả lời tâm sự nằm gọn trong
-       1 màn hình (chừa 24px trên/dưới), không bị cắt chữ. Màn đủ cao thì giữ nguyên cỡ ảnh. Ảnh nhỏ nhất 55% */
+    /* màn hình thấp (Android có thanh địa chỉ, ~640–700px): ảnh + cả lời tâm sự phải nằm gọn trong 1 màn hình
+       (chừa 24px trên/dưới), không bị cắt chữ. Không vừa thì gọn chữ + khoảng cách trước (.compact), vẫn thiếu thì
+       ảnh thu nhỏ phần còn thiếu (nhỏ nhất 55%). Màn đủ cao thì giữ nguyên */
     function sizeFig(H){
-      frameWrap.style.width = '';
+      frameWrap.style.width = ''; finalStage.classList.remove('compact');
       var over = finalStage.offsetHeight - (H - 48);
+      if(over <= 0) return;
+      finalStage.classList.add('compact');
+      over = finalStage.offsetHeight - (H - 48);
       if(over <= 0) return;
       var w = frameWrap.offsetWidth, fh = frameWrap.offsetHeight;
       frameWrap.style.width = Math.floor(Math.max(w * 0.55, w * (fh - over) / fh)) + 'px';
