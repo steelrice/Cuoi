@@ -1883,16 +1883,16 @@
     document.addEventListener('inviteopen', function(){ setTimeout(function(){ io.observe(box); }, 600); }, { once:true });
   })();
 
-  /* tự cuộn chậm sau khi mở thiệp (~35px/giây, như đọc thiệp giấy; từ đoạn cô dâu chú rể trở đi ~45px/giây; phần "Chỉ còn" + lịch ~90px/giây; các phần sau lịch ~75px/giây). Khách chạm / cuộn / gõ phím là thoát chế độ tự cuộn;
+  /* tự cuộn chậm sau khi mở thiệp (trang đầu ~75px/giây; từ đoạn cô dâu chú rể trở đi ~45px/giây; phần "Chỉ còn" + lịch ~90px/giây; các phần sau lịch ~75px/giây). Khách chạm / cuộn / gõ phím là thoát chế độ tự cuộn;
      tự dừng trước album và form hồi âm (chỗ cần thao tác) và ở cuối trang. Nút góc phải dưới để bật lại / dừng.
      Đoạn "Xin giới thiệu" (máy quay chạy ~10 giây theo thời gian): khi nó bắt đầu thì trượt êm cho khung vừa khít
      màn hình rồi đứng yên tới lúc chạy xong, chờ thêm 2 giây cho khách đọc lời tâm sự rồi mới cuộn tiếp.
-     Trang đầu (ảnh Save the date, cao 1 màn hình): trôi êm nhanh dần tới nửa trang (5 giây) rồi trượt nhanh (1,2 giây) tới
-     đoạn giới thiệu.
+     Trang đầu (ảnh Save the date, cao 1 màn hình): trôi đều 75px/giây tới khi khung giới thiệu khít màn hình thì dừng,
+     đoạn giới thiệu bắt đầu chạy ngay lúc đó (không chạy sớm khi mới hiện 55% như lúc khách tự cuộn).
      Máy bật "giảm chuyển động" thì không tự chạy, chỉ chạy khi khách bấm nút */
   (function(){
     var btn = document.getElementById('autoScroll'); if(!btn) return;
-    var SPEED = 35, SPEED2 = 45, SPEED3 = 90, SPEED4 = 75, v = 35, mode = false, waiting = false, raf = 0, last = 0, pos = 0, setY = 0, resumeT = 0;
+    var SPEED = 75, SPEED2 = 45, SPEED3 = 90, SPEED4 = 75, v = 35, mode = false, waiting = false, raf = 0, last = 0, pos = 0, setY = 0, resumeT = 0;
     var gliding = false, introStarted = false, introRunning = false, intro = document.querySelector('#introStage .sticky-view');
     var stage = document.getElementById('introStage');
     var quick = document.querySelector('.cd-sec');   // "Chỉ còn" + lịch: ít chữ, lướt nhanh gấp đôi khi phần này chiếm giữa màn hình
@@ -1914,7 +1914,7 @@
        Chỉ bật trong lúc tự cuộn; dừng là gỡ ngay (lệch < 1px, không thấy) để position:fixed bên trong thiệp chạy bình thường */
     var app = document.getElementById('app'), frac = 0, subOn = false;
     function moveTo(y){
-      var n = Math.floor(y);
+      y = Math.round(y * 1000) / 1000; var n = Math.floor(y);
       if(n !== window.scrollY) goTo(n); else setY = n;
       frac = y - n;
       if(!subOn){ subOn = true; app.style.willChange = 'transform'; }
@@ -1924,6 +1924,8 @@
     function setMode(v){
       if(!v) subOff();
       mode = v; waiting = false; gliding = false; clearTimeout(resumeT);
+      document.documentElement.classList.toggle('as-on', v);
+      if(!v) document.dispatchEvent(new Event('autoscrolloff'));   // đoạn giới thiệu đang chờ tự cuộn tới khít khung thì giờ tự chạy theo cuộn tay
       btn.classList.toggle('on', v); btn.setAttribute('aria-pressed', v ? 'true' : 'false');
       cancelAnimationFrame(raf);
       if(v) run();
@@ -1941,6 +1943,15 @@
       last = now;
       for(var i = 0; i < stops.length; i++){
         if(passed.indexOf(i) < 0 && stops[i].getBoundingClientRect().top <= window.innerHeight * 0.08){ passed.push(i); return setMode(false); }
+      }
+      /* trôi tới đúng lúc khung "Xin giới thiệu" khít màn hình thì dừng ở đó và bảo nó chạy (introgo); chạy xong introdone lo cuộn tiếp */
+      if(intro && !introStarted && stage.dataset.live){
+        var it = intro.getBoundingClientRect().top;
+        if(it > -4 && it <= pos - window.scrollY - frac){   // chỉ khi đang trôi tới từ phía trên (đã qua hẳn thì thôi, không kéo ngược lên)
+          moveTo(window.scrollY + frac + it); waiting = true;
+          document.dispatchEvent(new Event('introgo'));
+          return;
+        }
       }
       moveTo(pos);
       if(atEnd()){ btn.classList.remove('show'); return setMode(false); }
@@ -1967,18 +1978,8 @@
       waiting = true;
       if(!gliding) glide(window.scrollY + frac + e.detail.getBoundingClientRect().top, 900);
     });
-    /* trang đầu (ảnh Save the date): trôi êm ngay từ đầu, tăng tốc từ từ tới nửa trang trong 5 giây, rồi từ 50%
-       trượt nhanh 1,2 giây tới đoạn giới thiệu và êm dần khi tới nơi. Hai đoạn nối liền tốc độ nên không bị giật */
-    var T1 = 5000, T2 = 1200;
-    function openingTour(){
-      setMode(true); waiting = true; cancelAnimationFrame(raf);
-      var from = window.scrollY + frac, to = intro ? from + intro.getBoundingClientRect().top : from, half = from + (to - from) / 2;
-      var P = to - half, m0 = 2 * (half - from) / T1 * T2;   // tốc độ cuối đoạn 1 (đổi sang thang thời gian đoạn 2)
-      glide(half, T1, function(){
-        glide(to, T2, function(){ if(!introStarted){ waiting = false; run(); } },   // giới thiệu đã chạy thì introdone lo phần cuộn tiếp
-          function(q){ return P ? ((q*q*q - 2*q*q + q) * m0 + (-2*q*q*q + 3*q*q) * P) / P : 1; });   // Hermite: vào với tốc độ đoạn 1, dừng êm
-      }, function(q){ return q * q; });   // đoạn 1: bắt đầu từ đứng yên, nhanh dần
-    }
+    /* trang đầu (ảnh Save the date): trôi đều 75px/giây như các phần khác, khởi động êm từ đứng yên (~2,5 giây mới đủ tốc độ) */
+    function openingTour(){ setMode(true); v = 0; }
     /* chạy xong (khung co lại thành ảnh + lời tâm sự): chờ 2 giây rồi cuộn tiếp */
     document.addEventListener('introdone', function(){
       introRunning = false;
@@ -2184,6 +2185,7 @@
       finalStage.style.opacity = '1';
       return;
     }
+    stage.dataset.live = '1';   // có chạy hiệu ứng → tự cuộn sẽ dừng khít khung và chờ nó chạy xong
 
     /* mốc thời gian (giây, tính từ lúc bắt đầu gõ chữ); K = lúc gõ xong, dời theo ngôn ngữ */
     var K = 1.3, T = null;
@@ -2377,10 +2379,20 @@
     /* chỉ bắt đầu theo dõi SAU khi khách mở thiệp; chạy khi phần giới thiệu chiếm quá nửa màn hình */
     document.addEventListener('inviteopen', function(){
       setTimeout(function(){
+        var go = function(){ if(!played){ played = true; iio.disconnect(); whenReady(playIntro); } };
         var iio = new IntersectionObserver(function(es){
-          if(es[0].intersectionRatio >= 0.55 && !played){ iio.disconnect(); whenReady(playIntro); }
+          if(es[0].intersectionRatio < 0.55 || played) return;
+          if(document.documentElement.classList.contains('as-on')) return;   // đang tự cuộn: chờ trôi tới khít khung (introgo) rồi mới chạy
+          go();
         }, { threshold:[0, 0.55, 1] });
         iio.observe(view);
+        document.addEventListener('introgo', go);
+        /* khách tắt tự cuộn khi khung đã hiện quá nửa → chạy luôn như lúc tự cuộn tay */
+        document.addEventListener('autoscrolloff', function(){
+          if(played) return;
+          var r = view.getBoundingClientRect(), vis = Math.min(r.bottom, window.innerHeight) - Math.max(r.top, 0);
+          if(vis / r.height >= 0.55) go();
+        });
       }, 600);
     }, { once: true });
     camImg.addEventListener('load', function(){ if(!running) render(lastT < 0 ? 0 : lastT); });
