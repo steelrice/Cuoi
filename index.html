@@ -2021,8 +2021,8 @@
     ['scroll', 'wheel', 'touchstart', 'pointerdown', 'keydown'].forEach(function(t){ window.addEventListener(t, hintArm, { passive:true }); });
     /* khách tự cuộn / chạm rồi ngừng tay 6 giây → tự cuộn lại. Không tự bật khi: khách đã bấm nút dừng, đang gõ form,
        đang ở trong vùng album / form hồi âm, đoạn giới thiệu đang chạy, đã tới cuối trang, đang xem lớn album / xem lại thiệp */
-    /* lật tới trang cuối album ("Còn tiếp…"), ngừng tay 3 giây → tự cuộn tiếp qua album (trừ khi khách đã bấm nút dừng,
-       đang xem lớn album thì chờ đóng lại rồi mới đếm, đã cuộn đi chỗ khác thì thôi) */
+    /* lật tới trang cuối album ("Còn tiếp…"), ngừng tay 3 giây → tự cuộn tiếp qua album (trừ khi khách đã bấm nút dừng
+       hoặc đã cuộn đi chỗ khác). Đang xem lớn album thì không đếm; đóng lại (albumclose) thì đếm 3 giây từ lúc đóng */
     var albumEnd = false, albT = 0, albumSec = document.querySelector('.bk-sec');
     function albArm(){
       clearTimeout(albT);
@@ -2030,6 +2030,7 @@
       albT = setTimeout(function(){
         if(!albumEnd || mode || paused || !albumSec) return;
         var a = document.activeElement, r = albumSec.getBoundingClientRect();
+        if(document.documentElement.classList.contains('no-scroll')) return;   // đang xem lớn: chờ albumclose
         if(blocked() || (a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName))) return albArm();
         if(r.bottom < 0 || r.top > window.innerHeight) return;
         albumEnd = false;
@@ -2038,6 +2039,7 @@
       }, 3000);
     }
     document.addEventListener('albumpage', function(e){ albumEnd = e.detail.end; albArm(); });
+    document.addEventListener('albumclose', albArm);
     ['wheel', 'touchstart', 'pointerdown', 'keydown'].forEach(function(t){ window.addEventListener(t, function(){ if(albumEnd) albArm(); }, { passive:true }); });
     function nearStop(){ return stops.some(function(el){ var r = el.getBoundingClientRect(); return r.top < window.innerHeight * 0.75 && r.bottom > window.innerHeight * 0.25; }); }
     function backArm(){
@@ -3279,6 +3281,7 @@
       inlineStage.appendChild(book); sticky.appendChild(ctl);
       full.classList.remove('show', 'rot', 'side'); document.documentElement.classList.remove('no-scroll');
       layout(); rotNow = 0; place(1, 0); hintMode(); hdSpin(); sharpen();
+      document.dispatchEvent(new Event('albumclose'));   // tự cuộn: đã lật hết album thì đếm lại 3 giây từ lúc đóng
     }
     full.querySelector('.bk-close').addEventListener('click', closeFull);
     document.addEventListener('keydown', function(e){
