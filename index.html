@@ -1906,7 +1906,7 @@
     }
     var autoBack = false, paused = false, backT = 0;   // autoBack: khách tự cuộn/chạm → ngừng tay 6 giây thì tự cuộn lại; paused: khách bấm nút dừng
     var stops = [].slice.call(document.querySelectorAll('.bk-sec, .rsvp-frame')), passed = [];
-    function atEnd(){ return window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 2; }
+    function atEnd(){ return window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 6; }   // dư vài px cho Safari iPhone
     function blocked(){ return document.documentElement.classList.contains('no-scroll') || document.getElementById('cover').classList.contains('review') || document.hidden; }
     function goTo(y){ setY = Math.round(y); window.scrollTo({ top:setY, behavior:'instant' }); }
     /* trình duyệt chỉ cuộn được từng 1px chẵn → tốc độ chậm (~0,4–0,75px mỗi khung hình) thành nhịp 1-1-1-0 / 1-0-0-1, khựng nhẹ.
@@ -2001,7 +2001,7 @@
       if(!atEnd()) setMode(true);
     });
     window.addEventListener('scroll', function(){
-      if(!atEnd() && document.getElementById('cover').classList.contains('open')) btn.classList.add('show');
+      btn.classList.toggle('show', !atEnd() && document.getElementById('cover').classList.contains('open'));   // tới cuối trang (kể cả cuộn tay) thì ẩn nút
       // đang đứng chờ (ngắm trang đầu / chờ đoạn giới thiệu) mà trang bị kéo đi — vd kéo thanh cuộn, không qua chạm/lăn/phím → thoát
       if(mode && waiting && !gliding && Math.abs(window.scrollY - setY) > 4) userOff();
     }, { passive:true });
@@ -2021,6 +2021,24 @@
     ['scroll', 'wheel', 'touchstart', 'pointerdown', 'keydown'].forEach(function(t){ window.addEventListener(t, hintArm, { passive:true }); });
     /* khách tự cuộn / chạm rồi ngừng tay 6 giây → tự cuộn lại. Không tự bật khi: khách đã bấm nút dừng, đang gõ form,
        đang ở trong vùng album / form hồi âm, đoạn giới thiệu đang chạy, đã tới cuối trang, đang xem lớn album / xem lại thiệp */
+    /* lật tới trang cuối album ("Còn tiếp…"), ngừng tay 3 giây → tự cuộn tiếp qua album (trừ khi khách đã bấm nút dừng,
+       đang xem lớn album thì chờ đóng lại rồi mới đếm, đã cuộn đi chỗ khác thì thôi) */
+    var albumEnd = false, albT = 0, albumSec = document.querySelector('.bk-sec');
+    function albArm(){
+      clearTimeout(albT);
+      if(!albumEnd) return;
+      albT = setTimeout(function(){
+        if(!albumEnd || mode || paused || !albumSec) return;
+        var a = document.activeElement, r = albumSec.getBoundingClientRect();
+        if(blocked() || (a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName))) return albArm();
+        if(r.bottom < 0 || r.top > window.innerHeight) return;
+        albumEnd = false;
+        stops.forEach(function(el, i){ if(el === albumSec && passed.indexOf(i) < 0) passed.push(i); });
+        setMode(true);
+      }, 3000);
+    }
+    document.addEventListener('albumpage', function(e){ albumEnd = e.detail.end; albArm(); });
+    ['wheel', 'touchstart', 'pointerdown', 'keydown'].forEach(function(t){ window.addEventListener(t, function(){ if(albumEnd) albArm(); }, { passive:true }); });
     function nearStop(){ return stops.some(function(el){ var r = el.getBoundingClientRect(); return r.top < window.innerHeight * 0.75 && r.bottom > window.innerHeight * 0.25; }); }
     function backArm(){
       clearTimeout(backT);
@@ -3159,6 +3177,7 @@
         : String(cur).padStart(2,'0') + ' <span>/ ' + String(P).padStart(2,'0') + '</span>';
       btnPrev.disabled = cur <= 1; btnNext.disabled = cur >= N;
       hdPump(); hdSpin();
+      document.dispatchEvent(new CustomEvent('albumpage', { detail:{ end: cur >= N } }));   // tự cuộn: lật hết album → chờ 3 giây rồi cuộn tiếp
     }
 
     /* ---- mở album: tự chạy liền mạch khi album vào khung nhìn (không phụ thuộc cuộn) ----
