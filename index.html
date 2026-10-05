@@ -1942,7 +1942,7 @@
       }
       last = now;
       for(var i = 0; i < stops.length; i++){
-        if(passed.indexOf(i) < 0 && stops[i].getBoundingClientRect().top <= window.innerHeight * 0.08){ passed.push(i); return setMode(false); }
+        if(passed.indexOf(i) < 0 && stops[i].getBoundingClientRect().top <= window.innerHeight * 0.08){ passed.push(i); setMode(false); if(stops[i] === rsvpSec){ rsvpWait = true; rsvpArm(); } return; }
       }
       /* trôi tới đúng lúc khung "Xin giới thiệu" khít màn hình thì dừng ở đó và bảo nó chạy (introgo); chạy xong introdone lo cuộn tiếp */
       if(intro && !introStarted && stage.dataset.live){
@@ -2041,6 +2041,27 @@
     document.addEventListener('albumpage', function(e){ albumEnd = e.detail.end; albArm(); });
     document.addEventListener('albumclose', albArm);
     ['wheel', 'touchstart', 'pointerdown', 'keydown'].forEach(function(t){ window.addEventListener(t, function(){ if(albumEnd) albArm(); }, { passive:true }); });
+    /* dừng ở hồi âm: khách không chạm gì 3 giây thì tự cuộn tiếp (giống album; chạm/lướt thì đếm lại từ đầu).
+       Khách bắt đầu điền (chạm vào ô, nút trong form) thì thôi hẳn, để yên cho khách điền */
+    var rsvpSec = document.querySelector('.rsvp-frame'), rsvpWait = false, rsvpT = 0;
+    function rsvpArm(){
+      clearTimeout(rsvpT);
+      if(!rsvpWait) return;
+      rsvpT = setTimeout(function(){
+        if(!rsvpWait || mode || paused){ rsvpWait = false; return; }
+        var a = document.activeElement, r = rsvpSec.getBoundingClientRect();
+        if(blocked() || (a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName))) return rsvpArm();
+        rsvpWait = false;
+        if(r.bottom < 0 || r.top > window.innerHeight) return;
+        setMode(true);
+      }, 3000);
+    }
+    function rsvpTouch(e){
+      if(!rsvpWait) return;
+      if(e.target && e.target.closest && e.target.closest('.rsvp-form input, .rsvp-form textarea, .rsvp-form select, .rsvp-form button, .rsvp-form label')){ rsvpWait = false; return clearTimeout(rsvpT); }
+      rsvpArm();
+    }
+    ['wheel', 'touchstart', 'pointerdown', 'keydown', 'focusin'].forEach(function(t){ window.addEventListener(t, rsvpTouch, { passive:true }); });
     function nearStop(){ return stops.some(function(el){ var r = el.getBoundingClientRect(); return r.top < window.innerHeight * 0.75 && r.bottom > window.innerHeight * 0.25; }); }
     function backArm(){
       clearTimeout(backT);
