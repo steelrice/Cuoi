@@ -477,16 +477,14 @@
   }
   @keyframes swArrow{ 0%,100%{ transform:translateY(0); opacity:.4; } 50%{ transform:translateY(-4px); opacity:1; } }
   @media (prefers-reduced-motion: reduce){ .swipe-hint svg{ animation:none!important; } .swipe-hint .sw-hand .tap-ring{ display:none!important; } }
-  /* bìa (sân khấu sau rèm) dùng nền giấy ngà giống bên trong thiệp: chữ đổi sang tông đỏ/vàng đậm cho đọc rõ trên nền sáng.
-     Sau ngày cưới (RSVP_CLOSED) chữ bìa thành lời cảm ơn và ẩn nút chỉ đường */
-  .cover-back{ background:var(--cream) url(images/paper.webp) 0 0 / 300px 300px; }
-  .s-hy, .s-kicker, .s-event, .s-venue, .s-date .cap, .swipe-hint{ color:var(--gold-line); }
-  .s-guest, .s-guest .companion, .s-date .day, .s-time b{ color:var(--red-deep); }
-  .s-join, .s-time, .s-date .sub, .s-addr, .swipe-hint .sw-txt{ color:var(--ink-soft); }
-  .s-rule, .s-date .hr{ background:rgba(169,127,46,.45); }
-  .s-cta{ color:var(--gold-line); border-color:rgba(169,127,46,.6); }
-  .s-cta:hover{ background:rgba(169,127,46,.08); border-color:var(--gold-line); }
-  #cover.parted .cover-version{ color:rgba(92,63,58,.45); }   /* rèm đóng thì nhãn nằm trên rèm đỏ, giữ màu sáng */
+  /* sau ngày cưới (RSVP_CLOSED): bìa thành lời cảm ơn trên nền giấy ngà giống bên trong thiệp, chữ đổi sang tông đỏ/vàng đậm,
+     ẩn nút chỉ đường. Trước đó bìa lời mời giữ nền đỏ sẫm */
+  html.rsvp-closed .cover-back{ background:var(--cream) url(images/paper.webp) 0 0 / 300px 300px; }
+  html.rsvp-closed .s-hy, html.rsvp-closed .s-kicker, html.rsvp-closed .s-event, html.rsvp-closed .s-venue, html.rsvp-closed .s-date .cap, html.rsvp-closed .swipe-hint{ color:var(--gold-line); }
+  html.rsvp-closed .s-guest, html.rsvp-closed .s-guest .companion, html.rsvp-closed .s-date .day, html.rsvp-closed .s-time b{ color:var(--red-deep); }
+  html.rsvp-closed .s-join, html.rsvp-closed .s-time, html.rsvp-closed .s-date .sub, html.rsvp-closed .s-addr, html.rsvp-closed .swipe-hint .sw-txt{ color:var(--ink-soft); }
+  html.rsvp-closed .s-rule, html.rsvp-closed .s-date .hr{ background:rgba(169,127,46,.45); }
+  html.rsvp-closed #cover.parted .cover-version{ color:rgba(92,63,58,.45); }   /* rèm đóng thì nhãn nằm trên rèm đỏ, giữ màu sáng */
   html.rsvp-closed .s-cta{ display:none; }
   #cover.parted:not(.open):not(.review){ touch-action:none; }
   #cover.review .swipe-hint{ display:none; }
