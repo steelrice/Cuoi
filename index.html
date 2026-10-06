@@ -934,6 +934,7 @@
   .note-box{ display:flex; gap:var(--sp-3); align-items:flex-start; text-align:left; padding:var(--sp-4) var(--sp-5); border-top:1px dashed rgba(169,127,46,.5); background:rgba(207,159,63,.07); }
   .note-box svg{ width:20px; height:20px; flex:none; margin-top:1px; color:var(--gold-line); }
   .note-box p{ font-size:13.5px; line-height:1.6; color:var(--ink-soft); }
+  html.rsvp-closed #rsvpSec, html.rsvp-closed #noteLink{ display:none; }   /* hết hạn hồi âm (xem RSVP_CLOSED) */
   .note-link{ display:inline-block; font-weight:500; color:var(--red-mid); text-decoration:underline; text-underline-offset:3px; text-decoration-color:rgba(122,21,36,.35); }
   .loc-head{ display:flex; flex-direction:column; align-items:center; gap:var(--sp-3); }
   .loc-kicker{ font-family:var(--script); font-style:italic; font-weight:500; font-size:25px; color:var(--gold-line); }
@@ -1543,7 +1544,7 @@
   </section>
 
   <!-- ============ RSVP (chuyển lên đây, dùng chung nền kem với GIFT, khung góc bo) ============ -->
-  <section>
+  <section id="rsvpSec">
     <div class="wrap wrap-wide">
       <div class="rsvp-frame">
         <div class="center">
@@ -1686,6 +1687,9 @@
   // Quay lại tab/app hay bấm Back (bfcache) không chạy lại script này nên vẫn giữ chỗ đang xem.
   if('scrollRestoration' in history) history.scrollRestoration = 'manual';
   window.scrollTo(0, 0);
+  // hết hạn hồi âm: từ 0 giờ ngày 29.11.2026 (giờ VN) ẩn cả khung hồi âm và dòng "Đăng ký trong hồi âm ↓" (mọi link, cả 21 và 28)
+  var RSVP_CLOSED = Date.now() >= new Date('2026-11-29T00:00:00+07:00').getTime();
+  if(RSVP_CLOSED) document.documentElement.classList.add('rsvp-closed');
 (function(){
   var cover = document.getElementById('cover');
   for(var i=0;i<14;i++){
@@ -1905,7 +1909,7 @@
       return stage && stage.getBoundingClientRect().top <= 1 ? SPEED2 : SPEED;   // từ đoạn cô dâu chú rể trở đi cuộn nhanh hơn
     }
     var autoBack = false, paused = false, backT = 0;   // autoBack: khách tự cuộn/chạm → ngừng tay 6 giây thì tự cuộn lại; paused: khách bấm nút dừng
-    var stops = [].slice.call(document.querySelectorAll('.bk-sec, .rsvp-frame')), passed = [];
+    var stops = [].slice.call(document.querySelectorAll(RSVP_CLOSED ? '.bk-sec' : '.bk-sec, .rsvp-frame')), passed = [];   // hồi âm đã ẩn thì không dừng ở đó
     function atEnd(){ return window.scrollY + window.innerHeight >= document.documentElement.scrollHeight - 6; }   // dư vài px cho Safari iPhone
     function blocked(){ return document.documentElement.classList.contains('no-scroll') || document.getElementById('cover').classList.contains('review') || document.hidden; }
     function goTo(y){ setY = Math.round(y); window.scrollTo({ top:setY, behavior:'instant' }); }
