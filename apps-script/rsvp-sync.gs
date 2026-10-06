@@ -93,21 +93,28 @@ function handleRsvp(data) {
       sheet.getRange(rowIndex, COL.move).setValue('');
     }
     if (phoneText) sheet.getRange(rowIndex, COL.phone).setValue(phoneText);
-    if (notesText) sheet.getRange(rowIndex, COL.notes).setValue(notesText);
+    if (notesText) sheet.getRange(rowIndex, COL.notes).setValue(asText(notesText));
   } else {
     var row = [];
     for (var c = 0; c < COL.notes; c++) row[c] = '';
-    row[COL.pronounGuest - 1] = pronounGuest;
-    row[COL.guestName - 1] = guestName || formName;
+    row[COL.pronounGuest - 1] = asText(pronounGuest);
+    row[COL.guestName - 1] = asText(guestName || formName);
     row[COL.date - 1] = normDate(date);
-    row[COL.companion - 1] = companion;
+    row[COL.companion - 1] = asText(companion);
     row[COL.rsvp - 1] = statusText;
     row[COL.guestsCount - 1] = guestsCount;
     row[COL.phone - 1] = phoneText;
     row[COL.move - 1] = yes ? moveText : '';
-    row[COL.notes - 1] = notesText;
+    row[COL.notes - 1] = asText(notesText);
     sheet.appendRow(row);
   }
+}
+
+// chữ khách gõ / trên link mà bắt đầu bằng = + - @ thì Sheets hiểu là công thức (vd =IMPORTXML(...) có thể
+// gửi dữ liệu trong Sheet ra ngoài) → thêm dấu ' ở đầu để Sheets giữ nguyên là chữ (dấu ' không hiện trong ô)
+function asText(v) {
+  v = String(v || '');
+  return /^[=+\-@]/.test(v) ? "'" + v : v;
 }
 
 function json(obj) {

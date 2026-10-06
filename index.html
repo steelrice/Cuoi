@@ -404,7 +404,7 @@
     display:flex; flex-direction:column; align-items:center; justify-content:center;
     text-align:center; padding:var(--sp-7) 15%;
   }
-  .stage-in{ width:100%; max-width:380px; display:flex; flex-direction:column; align-items:center; }
+  .stage-in{ width:100%; max-width:380px; display:flex; flex-direction:column; align-items:center; transform:scale(var(--fit-scale,1)); }   /* --fit-scale: màn quá thấp, xem fitCoverStage */
   .stage .r{ opacity:0; }
   #cover.parted .stage .r{
     animation:elegantReveal .8s cubic-bezier(.16,1,.3,1) calc(1.15s + var(--d,0s)) both;
@@ -2501,6 +2501,9 @@
       // vài bàn phím/app lưu chữ có dấu dạng tách rời ("e" + dấu mũ + dấu hỏi) — vài dấu rời không có trong file font
       // chữ Việt → gộp lại thành chữ có dấu liền khối (ể) cho font luôn đủ ký tự
       if(v.normalize) v = v.normalize('NFC');
+      // tên/xưng hô trên link được ghép thẳng vào trang (innerHTML): bỏ dấu < > để link soạn cố ý không chèn được thẻ/mã
+      // vào thiệp (vd đổi mã QR mừng cưới). Tên thật không bao giờ có 2 dấu này
+      v = v.replace(/[<>]/g, '');
       var codes = PARAM_CODES[k], code = v.trim().toLowerCase();
       if(codes && Object.prototype.hasOwnProperty.call(codes, code)) v = codes[code];
       return /^-+$/.test(v.trim()) ? '' : v;
@@ -2666,6 +2669,10 @@
     var slack = avail - stageIn.scrollHeight;
     if(stageIn.scrollHeight > avail) stageEl.classList.add('compact');
     if(stageIn.scrollHeight > avail) stageEl.classList.add('compact-more');
+    /* màn rất thấp (Android nhỏ, mở trong Zalo/Messenger có thanh tiêu đề): siết hết khoảng cách vẫn tràn → thu nhỏ cả khối
+       cho vừa màn (chừa 12px trên/dưới, được lấn vào lề trên/dưới vì 2 nút tròn nằm ở 2 góc, không đè chữ giữa) */
+    var fitH = window.innerHeight - 24;
+    stageIn.style.setProperty('--fit-scale', stageIn.scrollHeight > fitH ? (fitH / stageIn.scrollHeight).toFixed(3) : 1);
     if(!stageEl.classList.contains('compact') && slack > 100) stageEl.classList.add('roomy');
   }
 
