@@ -943,7 +943,7 @@
   .note-box{ display:flex; gap:var(--sp-3); align-items:flex-start; text-align:left; padding:var(--sp-4) var(--sp-5); border-top:1px dashed rgba(169,127,46,.5); background:rgba(207,159,63,.07); }
   .note-box svg{ width:20px; height:20px; flex:none; margin-top:1px; color:var(--gold-line); }
   .note-box p{ font-size:13.5px; line-height:1.6; color:var(--ink-soft); }
-  html.rsvp-closed #noteLink{ display:none; }   /* hết hạn hồi âm (xem RSVP_CLOSED) */
+  html.rsvp-closed #noteLink, html.rsvp-closed .cal-add-wrap{ display:none; }   /* hết hạn hồi âm (xem RSVP_CLOSED) */
   .note-link{ display:inline-block; font-weight:500; color:var(--red-mid); text-decoration:underline; text-underline-offset:3px; text-decoration-color:rgba(122,21,36,.35); }
   .loc-head{ display:flex; flex-direction:column; align-items:center; gap:var(--sp-3); }
   .loc-kicker{ font-family:var(--script); font-style:italic; font-weight:500; font-size:25px; color:var(--gold-line); }
@@ -1384,7 +1384,7 @@
   <!-- ============ COUNTDOWN + CALENDAR (gộp chung 1 card) ============ -->
   <section class="cd-sec">
     <div class="wrap center">
-      <div class="cd-kicker"><span data-vi>Chỉ còn</span><span data-en>Counting down</span></div>
+      <div class="cd-kicker" id="cdKicker"><span data-vi>Chỉ còn</span><span data-en>Counting down</span></div>
       <div class="cal-card">
         <div class="countdown">
           <div class="cd-box"><div class="cd-num" id="cd-d">00</div><div class="cd-label"><span data-vi>ngày</span><span data-en>days</span></div></div>
@@ -2586,12 +2586,16 @@
     ev.vi.coverDate = d + ' · 11 · 2026 · ' + pl.vi;
     ev.vi.heroDate  = 'Thứ Bảy · ' + d + ' Tháng 11, 2026 · ' + pl.vi;
     ev.vi.when      = d + '.11.2026 tại ' + pl.vi;
-    ev.vi.thanks    = 'Cảm ơn ' + rsvpGuestFullLower + ' đã dành thời gian đọc hết thiệp mời của Sơn và Thảo. Hẹn gặp ' + rsvpGuestPronounOnlyLower + ' ngày ' + ev.vi.when + '!';
+    ev.vi.thanks    = RSVP_CLOSED   // sau ngày cưới: cảm ơn đã tới, thôi hẹn gặp
+      ? 'Cảm ơn ' + rsvpGuestFullLower + ' đã dành thời gian đọc hết thiệp của Sơn và Thảo, và đã cùng chung vui ngày ' + ev.vi.when + '!'
+      : 'Cảm ơn ' + rsvpGuestFullLower + ' đã dành thời gian đọc hết thiệp mời của Sơn và Thảo. Hẹn gặp ' + rsvpGuestPronounOnlyLower + ' ngày ' + ev.vi.when + '!';
     ev.vi.credit    = d + ' · 11 · 2026 — ' + pl.vi.toUpperCase();
     ev.en.coverDate = 'Nov ' + d + ', 2026 · ' + pl.en;
     ev.en.heroDate  = 'Saturday · November ' + d + ', 2026 · ' + pl.en;
     ev.en.when      = 'November ' + d + ', 2026 in ' + pl.en;
-    ev.en.thanks    = 'Thank you for taking the time to read through our invitation. See you on ' + ev.en.when + '!';
+    ev.en.thanks    = RSVP_CLOSED
+      ? 'Thank you for taking the time to read through our invitation, and for celebrating with us on ' + ev.en.when + '!'
+      : 'Thank you for taking the time to read through our invitation. See you on ' + ev.en.when + '!';
     ev.en.credit    = 'NOV ' + d + ', 2026 — ' + pl.en.toUpperCase();
   });
 
@@ -2755,7 +2759,6 @@
   }
 
   // Thay "bạn" bằng guestName ở các chỗ đang viết cứng
-  bi('countdownLead', 'đến giây phút cô dâu chú rể chính thức về chung một nhà', 'until we officially become family');
   bi('noteBoxText', 'Khách từ TP.HCM đã có xe đưa đón về Vũng Tàu.', "Coming from HCMC? We've arranged a shuttle to Vung Tau.");
   if(EV.day === '28'){
     bi('tlDesc1', 'Cùng lưu lại vài khoảnh khắc kỷ niệm và gửi lời chúc đến cô dâu chú rể nhé', 'Capture a few memories with us and share your wishes for the couple');
@@ -2776,8 +2779,10 @@
   bi('attendNoBtn', 'Không đến được', "I can't make it");
   bi('moveSelfBtn', 'Tự di chuyển', "I'll make my own way");
   bi('moveShuttleBtn', 'Đi xe chung', "I'll ride along");
-  bi('storyQuote', 'Từ những buổi hẹn đầu còn ngại ngùng đến hôm nay, hai đứa đã đi cùng nhau một quãng đường đủ dài để tin rằng đây chính là người mình muốn nắm tay đi hết phần đời còn lại. Mong rằng ' + rsvpGuestFullLower + ' sẽ đến chung vui trong ngày trọng đại và hạnh phúc này.',
-     "From a shy first date to today, we've come far enough together to know this is the hand we want to hold for the rest of the way. And we hope to have you beside us on the day.");
+  bi('storyQuote', 'Từ những buổi hẹn đầu còn ngại ngùng đến hôm nay, hai đứa đã đi cùng nhau một quãng đường đủ dài để tin rằng đây chính là người mình muốn nắm tay đi hết phần đời còn lại. ' +
+     (RSVP_CLOSED ? 'Cảm ơn ' + rsvpGuestFullLower + ' đã đến chung vui trong ngày trọng đại và hạnh phúc ấy.' : 'Mong rằng ' + rsvpGuestFullLower + ' sẽ đến chung vui trong ngày trọng đại và hạnh phúc này.'),
+     "From a shy first date to today, we've come far enough together to know this is the hand we want to hold for the rest of the way. " +
+     (RSVP_CLOSED ? 'And thank you for being beside us on the day.' : 'And we hope to have you beside us on the day.'));
   bi('giftNote', 'Nếu muốn gửi quà mừng từ xa, <span class="nowrap">' + rsvpGuestFullLower + '</span> có thể bấm vào nút bên dưới nhé.', "If you'd like to send a gift from afar, just tap the button below.");
   bi('giftLead', 'Sự hiện diện của ' + rsvpGuestFullLower + ' là món quà ý nghĩa nhất', 'Your presence is the greatest gift of all');
 
@@ -3030,9 +3035,18 @@
   }catch(_){}
   if(startLang === 'en') langSwitch.click();
 
-  var target = new Date(EV.target).getTime();
+  /* đếm ngược tới giờ làm lễ của link (21: tiệc Vũng Tàu 11:30, 28: lễ thành hôn 9:00). Link 21 qua giờ tiệc thì đếm tiếp
+     tới lễ thành hôn; từ 9 giờ 28.11 (chính thức về chung một nhà) mọi link chuyển sang ĐẾM LÊN: "Đã được … kể từ giây phút…" */
+  var target = new Date(EV.target).getTime(), UNION = new Date(EVENTS['28'].target).getTime(), cdUp = null;
   function tick(){
-    var diff = Math.max(0, target-Date.now());
+    var now = Date.now(), up = now >= UNION;
+    var diff = up ? now - UNION : Math.max(0, (now >= target ? UNION : target) - now);
+    if(up !== cdUp){
+      cdUp = up;
+      bi('cdKicker', up ? 'Đã được' : 'Chỉ còn', up ? 'Together for' : 'Counting down');
+      bi('countdownLead', up ? 'kể từ giây phút cô dâu chú rể chính thức về chung một nhà' : 'đến giây phút cô dâu chú rể chính thức về chung một nhà',
+         up ? 'since we officially became family' : 'until we officially become family');
+    }
     var d = Math.floor(diff/86400000);
     var h = Math.floor(diff%86400000/3600000);
     var m = Math.floor(diff%3600000/60000);
