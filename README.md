@@ -115,6 +115,11 @@ Hồi âm không tạo dòng mới lung tung — thiệp gửi kèm xưng hô + 
 - Máy cô dâu chú rể: mở thiệp 1 lần với `?me=1` (vd `https://sonthao.io.vn/?me=1`) thì máy đó không bị tính nữa — mở link khách để kiểm tra thoải mái; `?me=0` để tính lại.
 - Nhiều người mở cùng lúc thì lượt theo dõi chờ tối đa 5 giây rồi bỏ qua, hồi âm luôn được ưu tiên (chờ tới 20 giây).
 
+**Tab "Lỗi"** (Apps Script tự tạo khi cần): `Thời gian | Loại | Khách | Lỗi | Dữ liệu gửi lên`.
+
+- **Hồi âm / Theo dõi** — Apps Script gặp lỗi khi ghi (vd đổi tên tab, Sheet trục trặc). Cột cuối giữ nguyên toàn bộ dữ liệu khách gửi → chép tay vào đúng hàng, hồi âm không bị mất (khách vẫn thấy "Đã nhận hồi âm" vì thiệp gửi "mù").
+- **Link lệch tên** — link có tên mà lúc mở thiệp không khớp hàng nào (thường do sửa tên trong Sheet sau khi đã gửi link); mỗi link ghi 1 lần. Link không tên thì không ghi.
+
 **Link mời (cột G)** do công thức tạo, dùng 2 hàm tự đặt tên (Dữ liệu → Hàm được đặt tên):
 
 - `ENCODE_PARAM(TEXT_VALUE)` — đổi `%`, `&`, `#`, `+` thành mã, dấu cách thành `_`

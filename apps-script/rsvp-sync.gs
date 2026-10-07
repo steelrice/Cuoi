@@ -6,6 +6,8 @@
  *
  * Cột I "SĐT + Notes": mỗi loại 1 dòng — "SĐT: 0912 123 123" rồi "Note: …" (ghi chú khách gõ trong hồi âm).
  * Cột K "Logs": dòng theo dõi khách mở thiệp / dùng hộp quà mừng (action=track) "▸ …". Không tìm thấy hàng thì bỏ qua.
+ * Tab "Lỗi" (tự tạo): Apps Script gặp lỗi thì ghi lại kèm toàn bộ dữ liệu khách gửi (hồi âm không bị mất);
+ * link có tên mà mở thiệp không khớp hàng nào cũng ghi 1 lần ("Link lệch tên").
  *
  * Cài đặt: xem README.md, mục "Nối hồi âm vào Google Sheet".
  */
@@ -59,6 +61,7 @@ function doPost(e) {
     return json({ ok: true });
   } catch (err) {
     console.error(err);
+    logIssue(data.action === 'track' ? 'Theo dõi' : 'Hồi âm', data, String(err && err.message || err));
     return json({ ok: false, error: String(err) });
   } finally {
     lock.releaseLock();
@@ -141,7 +144,10 @@ function handleTrack(data) {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var sheet = ss.getSheetByName(SIDE_SHEETS[norm(data.side)] || SHEET_NAME) || ss.getSheetByName(SHEET_NAME);
   var rowIndex = findGuestRow(sheet, (data.pronounGuest || '').trim(), (data.guestName || '').trim(), data.date || '');
-  if (rowIndex < 0) return;   // link không tên / khách lạ: không tạo hàng mới chỉ vì mở thiệp
+  if (rowIndex < 0) {   // khách lạ: không tạo hàng mới chỉ vì mở thiệp; link có tên mà lệch thì ghi tab Lỗi để sửa
+    if (data.ev === 'open' && norm(data.guestName)) logIssue('Link lệch tên', data, 'Không có hàng nào khớp xưng hô + tên + ngày mời trong tab ' + sheet.getName(), true);
+    return;
+  }
   var ev = String(data.ev || ''), who = String(data.who || '');
   var now = Utilities.formatDate(new Date(), 'Asia/Ho_Chi_Minh', 'dd.MM HH:mm');
 
@@ -185,6 +191,25 @@ function splitNotes(v) {
   var lines = String(v || '').split('\n'), track = '';
   lines = lines.filter(function (l) { if (l.indexOf(TRACK_MARK) === 0) { track = l; return false; } return true; });
   return { rsvp: lines.join('\n').trim(), track: track };
+}
+
+/* ---- tab "Lỗi": Thời gian | Loại | Khách | Lỗi | Dữ liệu gửi lên ----
+   once = true: cùng loại + cùng khách đã có thì thôi không ghi thêm. Tự bọc try: ghi lỗi hỏng cũng không làm hỏng việc chính */
+var ISSUE_SHEET = 'Lỗi';
+function logIssue(kind, data, msg, once) {
+  try {
+    var ss = SpreadsheetApp.getActiveSpreadsheet(), sh = ss.getSheetByName(ISSUE_SHEET);
+    if (!sh) { sh = ss.insertSheet(ISSUE_SHEET); sh.appendRow(['Thời gian', 'Loại', 'Khách', 'Lỗi', 'Dữ liệu gửi lên']); }
+    var who = [norm(data.pronounGuest), norm(data.guestName) || norm(data.formName) || '(không tên)'].filter(String).join(' ') +
+              ' · ' + normDate(data.date) + ' · ' + (norm(data.side) === '2' ? 'Thảo' : 'Sơn');
+    if (once && sh.getLastRow() > 1) {
+      var seen = sh.getRange(2, 2, sh.getLastRow() - 1, 2).getValues();
+      for (var i = 0; i < seen.length; i++) if (seen[i][0] === kind && seen[i][1] === who) return;
+    }
+    var sent = Object.keys(data).filter(function (k) { return k !== 'action'; })
+      .map(function (k) { return k + '=' + data[k]; }).join(', ');
+    sh.appendRow([Utilities.formatDate(new Date(), 'Asia/Ho_Chi_Minh', 'dd.MM.yyyy HH:mm:ss'), kind, asText(who), asText(msg), asText(sent)]);
+  } catch (e) { console.error('logIssue', e); }
 }
 
 function json(obj) {
