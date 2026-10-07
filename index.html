@@ -2850,11 +2850,11 @@
   }
   if(bgMusic){
     bgMusic.volume = 0;
-    // không autoplay tắt tiếng lúc vào trang: file nhạc ~1.5–1.9MB sẽ giành băng thông với font/ảnh.
+    // không autoplay tắt tiếng lúc vào trang: file nhạc ~1.5–2.6MB sẽ giành băng thông với font/ảnh.
     // preload="none" → chỉ bắt đầu tải (vừa tải vừa phát) khi khách chạm lần đầu, xem revealMusic()
-    /* 2 bài: mỗi lần mở thiệp bốc ngẫu nhiên bài đầu, hết bài thì nối sang bài kia, cứ thế luân phiên.
+    /* 3 bài: mỗi lần mở thiệp bốc ngẫu nhiên bài đầu, hết bài thì nối sang bài kế theo thứ tự dưới đây, cứ thế xoay vòng.
        Còn ~20s là hết bài thì tải trước bài kế (1 lần) để lúc chuyển bài không bị khựng */
-    var TRACKS = ['audio/dam-cuoi-nhu-mo.mp3', 'audio/trai-tai-gai-sac.mp3'];
+    var TRACKS = ['audio/dam-cuoi-nhu-mo.mp3', 'audio/trai-tai-gai-sac.mp3', 'audio/dam-cuoi-tren-duong-que.mp3'];
     var trackIdx = Math.floor(Math.random() * TRACKS.length), warmed = {};
     bgMusic.src = TRACKS[trackIdx];
     bgMusic.addEventListener('timeupdate', function(){
