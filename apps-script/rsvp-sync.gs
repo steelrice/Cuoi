@@ -144,7 +144,7 @@ function handleTrack(data) {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var sheet = ss.getSheetByName(SIDE_SHEETS[norm(data.side)] || SHEET_NAME) || ss.getSheetByName(SHEET_NAME);
   var rowIndex = findGuestRow(sheet, (data.pronounGuest || '').trim(), (data.guestName || '').trim(), data.date || '');
-  if (rowIndex < 0) {   // khách lạ: không tạo hàng mới chỉ vì mở thiệp; link có tên mà lệch thì ghi tab Lỗi để sửa
+  if (rowIndex < 0) {   // link không tên: bỏ qua; link có tên mà lệch: logIssue thêm 1 dòng ⚠ để sửa
     if (data.ev === 'open' && norm(data.guestName)) logIssue('Link lệch tên', data, 'link mở thiệp không khớp hàng nào (xưng hô + tên + ngày mời), dòng này tự thêm');
     return;
   }
