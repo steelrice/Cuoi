@@ -100,11 +100,11 @@ Mỗi bên một tab, cùng thứ tự cột: **Sơn** (link có `s=1` hoặc kh
 
 | Cột | A | B | C | D | E | F | G | H | I | J | K |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| | Xưng hô | Tên khách | Nhóm | Ngày mời | Đi cùng | RSVP status | Link mời | Số người đi cùng | SĐT + Notes | Di chuyển | Notes |
+| | Xưng hô | Tên khách | Nhóm | Ngày mời | Đi cùng | RSVP status | Link mời | Số người đi cùng | SĐT + Notes | Di chuyển | Logs |
 
 Hồi âm không tạo dòng mới lung tung — thiệp gửi kèm xưng hô + tên + ngày mời lấy từ link, Apps Script dò đúng dòng của khách đó trong tab của bên đó để **cập nhật đè** (F, H, I, J, K). Ô "--" được coi như ô trống. Khách gửi lại nhiều lần vẫn ghi vào đúng 1 dòng; đổi ý sang "Không đến được" thì xoá số người và cách đi cũ. Không khớp được dòng nào (link không tên — form hỏi thêm tên, hoặc đã sửa tên sau khi gửi link) thì thêm dòng mới ở cuối tab. Cột I **SĐT + Notes** ghi mỗi loại 1 dòng: `SĐT: 0912 123 123` rồi `Note: …` (ghi chú đưa đón khách gõ, tên khách tự gõ nếu khác link). Khách gửi lại thì chỉ thay phần vừa gửi; ô cũ chỉ có số trần vẫn đọc được.
 
-**Theo dõi khách mở thiệp và hộp quà mừng** — cột K **Notes**, 1 dòng bắt đầu bằng `▸`, ví dụ:
+**Theo dõi khách mở thiệp và hộp quà mừng** — cột K **Logs**, 1 dòng bắt đầu bằng `▸`, ví dụ:
 
 ```
 ▸ Mở thiệp 3 lần (gần nhất 12.11 20:15) · Mở hộp quà 12.11 20:16 · Chép STK Chú rể · Tải QR Cô dâu

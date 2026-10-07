@@ -5,7 +5,7 @@
  * (link không tham số, hoặc khách lạ) thì thêm hàng mới ở cuối.
  *
  * Cột I "SĐT + Notes": mỗi loại 1 dòng — "SĐT: 0912 123 123" rồi "Note: …" (ghi chú khách gõ trong hồi âm).
- * Cột K "Notes": dòng theo dõi khách mở thiệp / dùng hộp quà mừng (action=track) "▸ …". Không tìm thấy hàng thì bỏ qua.
+ * Cột K "Logs": dòng theo dõi khách mở thiệp / dùng hộp quà mừng (action=track) "▸ …". Không tìm thấy hàng thì bỏ qua.
  *
  * Cài đặt: xem README.md, mục "Nối hồi âm vào Google Sheet".
  */
@@ -31,7 +31,7 @@ var COL = {
   guestsCount:  8,  // H - Số người đi cùng
   phone:        9,  // I - SĐT + Notes (dòng "SĐT: …" + dòng "Note: …")
   move:         10, // J - Cách di chuyển (dropdown Tự di chuyển / Đi xe chung)
-  notes:        11  // K - Notes (dòng theo dõi "▸ …")
+  notes:        11  // K - Logs (dòng theo dõi "▸ …"; Apps Script tìm theo số cột, tên tiêu đề đặt gì cũng được)
 };
 
 // Chỉnh 2 dòng này cho khớp CHÍNH XÁC chữ trong dropdown "RSVP status" của bạn
@@ -184,7 +184,7 @@ function splitContact(v) {
   return { phone: m ? m[1].trim() : '', note: n ? n[2].trim() : '' };
 }
 
-// tách ô Notes: chữ cũ đã có trong ô (giữ nguyên ở trên) và dòng theo dõi "▸ …" (dưới cùng)
+// tách ô Logs: chữ cũ đã có trong ô (giữ nguyên ở trên) và dòng theo dõi "▸ …" (dưới cùng)
 function splitNotes(v) {
   var lines = String(v || '').split('\n'), track = '';
   lines = lines.filter(function (l) { if (l.indexOf(TRACK_MARK) === 0) { track = l; return false; } return true; });
