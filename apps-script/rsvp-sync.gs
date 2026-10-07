@@ -2,12 +2,12 @@
  * Nhận hồi âm (RSVP) từ index.html và ghi thẳng vào tab của từng bên (Sơn / Thảo).
  * Dò đúng hàng của khách (khớp Xưng hô + Tên khách + Ngày mời) để cập nhật đè — khách gửi
  * lại nhiều lần vẫn ghi vào đúng 1 hàng, không tạo dòng trùng. Không tìm thấy
- * (link không tham số, hoặc khách lạ) thì thêm hàng mới ở cuối.
+ * (link không tham số, hoặc khách lạ) thì thêm hàng mới ở cuối (ngay trên dòng "Tổng số" nếu có).
  *
  * Cột I "SĐT + Notes": mỗi loại 1 dòng — "SĐT: 0912 123 123" rồi "Note: …" (ghi chú khách gõ trong hồi âm).
  * Cột K "Logs": dòng theo dõi khách mở thiệp / dùng hộp quà mừng (action=track) "▸ …". Không tìm thấy hàng thì bỏ qua.
- * Tab "Lỗi" (tự tạo): Apps Script gặp lỗi thì ghi lại kèm toàn bộ dữ liệu khách gửi (hồi âm không bị mất);
- * link có tên mà mở thiệp không khớp hàng nào cũng ghi 1 lần ("Link lệch tên").
+ * Lỗi: dòng "⚠ …" trong ô Logs của đúng khách, kèm toàn bộ dữ liệu khách gửi (hồi âm không bị mất). Không tìm được
+ * hàng khách (vd link có tên mà lệch với Sheet) thì thêm 1 dòng mới cuối tab — lần mở sau khớp dòng đó nên không lặp.
  *
  * Cài đặt: xem README.md, mục "Nối hồi âm vào Google Sheet".
  */
@@ -119,7 +119,7 @@ function handleRsvp(data) {
     row[COL.guestsCount - 1] = guestsCount;
     row[COL.phone - 1] = asText(contactText(phone, notesText));
     row[COL.move - 1] = yes ? moveText : '';
-    sheet.appendRow(row);
+    addGuestRow(sheet, row);
   }
 }
 
@@ -145,7 +145,7 @@ function handleTrack(data) {
   var sheet = ss.getSheetByName(SIDE_SHEETS[norm(data.side)] || SHEET_NAME) || ss.getSheetByName(SHEET_NAME);
   var rowIndex = findGuestRow(sheet, (data.pronounGuest || '').trim(), (data.guestName || '').trim(), data.date || '');
   if (rowIndex < 0) {   // khách lạ: không tạo hàng mới chỉ vì mở thiệp; link có tên mà lệch thì ghi tab Lỗi để sửa
-    if (data.ev === 'open' && norm(data.guestName)) logIssue('Link lệch tên', data, 'Không có hàng nào khớp xưng hô + tên + ngày mời trong tab ' + sheet.getName(), true);
+    if (data.ev === 'open' && norm(data.guestName)) logIssue('Link lệch tên', data, 'link mở thiệp không khớp hàng nào (xưng hô + tên + ngày mời), dòng này tự thêm');
     return;
   }
   var ev = String(data.ev || ''), who = String(data.who || '');
@@ -193,22 +193,41 @@ function splitNotes(v) {
   return { rsvp: lines.join('\n').trim(), track: track };
 }
 
-/* ---- tab "Lỗi": Thời gian | Loại | Khách | Lỗi | Dữ liệu gửi lên ----
-   once = true: cùng loại + cùng khách đã có thì thôi không ghi thêm. Tự bọc try: ghi lỗi hỏng cũng không làm hỏng việc chính */
-var ISSUE_SHEET = 'Lỗi';
-function logIssue(kind, data, msg, once) {
+/* thêm 1 dòng khách mới: dòng cuối là "Tổng số…" thì chèn ngay phía trên nó (dòng mới lấy định dạng + dropdown của dòng
+   khách phía trên), không thì thêm ở cuối. Không ghi vào cột G (Link mời — công thức ARRAYFORMULA, ghi vào là vỡ) */
+function addGuestRow(sheet, row) {
+  var last = sheet.getLastRow(), at = last + 1;
+  var first = String(sheet.getRange(last, 1).getValue()).trim().toLowerCase();
+  if (last > HEADER_ROW + 1 && first.indexOf('tổng') === 0) { sheet.insertRowAfter(last - 1); at = last; }
+  sheet.getRange(at, 1, 1, COL.link - 1).setValues([row.slice(0, COL.link - 1)]);
+  sheet.getRange(at, COL.link + 1, 1, COL.notes - COL.link).setValues([row.slice(COL.link, COL.notes)]);
+}
+
+/* ---- ghi lỗi: dòng "⚠ dd.MM HH:mm Loại: lỗi · Dữ liệu: …" trong ô Logs của đúng khách (trên dòng ▸).
+   Không tìm được hàng thì thêm 1 dòng mới cuối tab (xưng hô, tên, ngày, đi cùng theo link + dòng ⚠ ở Logs).
+   Tự bọc try: ghi lỗi hỏng cũng không làm hỏng việc chính */
+function logIssue(kind, data, msg) {
   try {
-    var ss = SpreadsheetApp.getActiveSpreadsheet(), sh = ss.getSheetByName(ISSUE_SHEET);
-    if (!sh) { sh = ss.insertSheet(ISSUE_SHEET); sh.appendRow(['Thời gian', 'Loại', 'Khách', 'Lỗi', 'Dữ liệu gửi lên']); }
-    var who = [norm(data.pronounGuest), norm(data.guestName) || norm(data.formName) || '(không tên)'].filter(String).join(' ') +
-              ' · ' + normDate(data.date) + ' · ' + (norm(data.side) === '2' ? 'Thảo' : 'Sơn');
-    if (once && sh.getLastRow() > 1) {
-      var seen = sh.getRange(2, 2, sh.getLastRow() - 1, 2).getValues();
-      for (var i = 0; i < seen.length; i++) if (seen[i][0] === kind && seen[i][1] === who) return;
-    }
+    var ss = SpreadsheetApp.getActiveSpreadsheet();
+    var sheet = ss.getSheetByName(SIDE_SHEETS[norm(data.side)] || SHEET_NAME) || ss.getSheetByName(SHEET_NAME) || ss.getSheets()[0];
     var sent = Object.keys(data).filter(function (k) { return k !== 'action'; })
       .map(function (k) { return k + '=' + data[k]; }).join(', ');
-    sh.appendRow([Utilities.formatDate(new Date(), 'Asia/Ho_Chi_Minh', 'dd.MM.yyyy HH:mm:ss'), kind, asText(who), asText(msg), asText(sent)]);
+    var warn = '⚠ ' + Utilities.formatDate(new Date(), 'Asia/Ho_Chi_Minh', 'dd.MM HH:mm') + ' ' + kind + ': ' + msg + (sent ? ' · Dữ liệu: ' + sent : '');
+    var rowIndex = findGuestRow(sheet, (data.pronounGuest || '').trim(), (data.guestName || '').trim(), data.date || '');
+    if (rowIndex > -1) {
+      var cell = sheet.getRange(rowIndex, COL.notes), parts = splitNotes(cell.getValue());
+      var top = parts.rsvp ? parts.rsvp + '\n' + warn : warn;
+      cell.setValue(asText(parts.track ? top + '\n' + parts.track : top));
+    } else {
+      var row = [];
+      for (var c = 0; c < COL.notes; c++) row[c] = '';
+      row[COL.pronounGuest - 1] = asText(norm(data.pronounGuest));
+      row[COL.guestName - 1] = asText(norm(data.guestName) || norm(data.formName));
+      row[COL.date - 1] = normDate(data.date);
+      row[COL.companion - 1] = asText(norm(data.companionName));
+      row[COL.notes - 1] = asText(warn);
+      addGuestRow(sheet, row);
+    }
   } catch (e) { console.error('logIssue', e); }
 }
 
