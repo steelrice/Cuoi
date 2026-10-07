@@ -3591,7 +3591,7 @@
     return fetch(APPS_SCRIPT_URL, { method:'POST', mode:'no-cors', body: fd });
   }
 
-  /* theo dõi: khách mở thiệp (vuốt/bấm vào bên trong) và dùng hộp quà mừng (mở hộp, chép STK, tải QR) → Apps Script
+  /* theo dõi: khách mở thiệp (vuốt/bấm vào bên trong) và dùng hộp quà mừng (chép STK, tải QR; chỉ mở hộp xem thì không tính) → Apps Script
      ghi 1 dòng "▸ …" ở cuối ô Notes của đúng hàng khách (chỉ link có tên khách, không tạo hàng mới).
      Mở thiệp: lần nào mở cũng cộng; mỗi thao tác hộp quà chỉ gửi 1 lần mỗi máy. Máy cô dâu chú rể mở thiệp 1 lần với ?me=1
      thì từ đó không bị tính (?me=0 để tính lại). Gửi "mù" như hồi âm, lỗi mạng thì thôi */
@@ -3611,8 +3611,6 @@
   }
   document.addEventListener('inviteopen', function(){ track('open'); }, { once:true });
   (function(){
-    var go = document.getElementById('giftOpen'), box = document.getElementById('giftBox');
-    if(go && box) go.addEventListener('click', function(){ if(box.classList.contains('open')) track('gift'); });   // chạy sau nút mở/đóng
     function who(el){ var c = el.closest('.gift-inner'), q = c && c.querySelector('.gift-qr'); return q && /co-dau/.test(q.getAttribute('src')) ? 'bride' : 'groom'; }
     document.querySelectorAll('.gq-copy').forEach(function(b){ b.addEventListener('click', function(){ track('copy', who(b)); }); });
     document.querySelectorAll('.gift-dl').forEach(function(b){ b.addEventListener('click', function(){ track('qr', who(b)); }); });

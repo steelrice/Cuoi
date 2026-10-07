@@ -128,9 +128,9 @@ function asText(v) {
 }
 
 /* ---- theo dõi mở thiệp + hộp quà mừng ----
-   Thiệp gửi action=track, ev = open | gift | copy | qr, who = groom | bride (với copy, qr).
-   Dòng theo dõi luôn viết lại theo đúng 1 mẫu:
-   ▸ Mở thiệp 3 lần (gần nhất 12.11 20:15) · Mở hộp quà 12.11 20:16 · Chép STK Chú rể · Tải QR Cô dâu */
+   Thiệp gửi action=track, ev = open | copy | qr, who = groom | bride (với copy, qr). Chỉ mở hộp quà xem thì không ghi
+   (khách tò mò mở xem là chuyện thường). Dòng theo dõi luôn viết lại theo đúng 1 mẫu:
+   ▸ Mở thiệp 3 lần (gần nhất 12.11 20:15) · Chép STK Chú rể · Tải QR Cô dâu */
 var TRACK_MARK = '▸';
 var TRACK_ITEMS = [
   ['copy', 'groom', 'Chép STK Chú rể'], ['copy', 'bride', 'Chép STK Cô dâu'],
@@ -149,21 +149,17 @@ function handleTrack(data) {
   var parts = splitNotes(cell.getValue()), t = parts.track;
   var m, opens = (m = t.match(/Mở thiệp (\d+) lần/)) ? Number(m[1]) : 0;
   var lastOpen = (m = t.match(/\(gần nhất ([^)]+)\)/)) ? m[1] : '';
-  var gift = (m = t.match(/Mở hộp quà (\d\d\.\d\d \d\d:\d\d)/)) ? m[1] : '';
   var done = TRACK_ITEMS.map(function (it) { return t.indexOf(it[2]) >= 0; });
 
   if (ev === 'open') { opens++; lastOpen = now; }
-  else if (ev === 'gift') { if (!gift) gift = now; }
   else {
     var hit = false;
     TRACK_ITEMS.forEach(function (it, i) { if (it[0] === ev && it[1] === who) { done[i] = true; hit = true; } });
     if (!hit) return;
-    if (!gift) gift = now;   // chép / tải được thì hộp quà chắc chắn đã mở
   }
 
   var out = [];
   if (opens) out.push('Mở thiệp ' + opens + ' lần' + (lastOpen ? ' (gần nhất ' + lastOpen + ')' : ''));
-  if (gift) out.push('Mở hộp quà ' + gift);
   TRACK_ITEMS.forEach(function (it, i) { if (done[i]) out.push(it[2]); });
   var line = TRACK_MARK + ' ' + out.join(' · ');
   cell.setValue(asText(parts.rsvp ? parts.rsvp + '\n' + line : line));
