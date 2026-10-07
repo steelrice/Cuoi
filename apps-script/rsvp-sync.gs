@@ -61,7 +61,7 @@ function doPost(e) {
     return json({ ok: true });
   } catch (err) {
     console.error(err);
-    logIssue(data.action === 'track' ? 'Theo dõi' : 'Hồi âm', data, String(err && err.message || err));
+    logIssue(data.action === 'track' ? 'Track error' : 'RSVP error', data, String(err && err.message || err));
     return json({ ok: false, error: String(err) });
   } finally {
     lock.releaseLock();
@@ -132,41 +132,46 @@ function asText(v) {
 
 /* ---- theo dõi mở thiệp + hộp quà mừng ----
    Thiệp gửi action=track, ev = open | copy | qr, who = groom | bride (với copy, qr). Chỉ mở hộp quà xem thì không ghi
-   (khách tò mò mở xem là chuyện thường). Dòng theo dõi luôn viết lại theo đúng 1 mẫu:
-   ▸ Mở thiệp 3 lần (gần nhất 12.11 20:15) · Chép STK Chú rể · Tải QR Cô dâu */
+   (khách tò mò mở xem là chuyện thường). Dòng theo dõi viết bằng tiếng Anh cho gọn, luôn viết lại theo đúng 1 mẫu:
+   ▸ Opens: 3 (last 12.11 20:15) · Copy: Groom · QR: Bride, Groom
+   (vẫn đọc được dòng tiếng Việt cũ "Mở thiệp 3 lần (gần nhất …) · Chép STK Chú rể · Tải QR Cô dâu" để cộng tiếp) */
 var TRACK_MARK = '▸';
-var TRACK_ITEMS = [
-  ['copy', 'groom', 'Chép STK Chú rể'], ['copy', 'bride', 'Chép STK Cô dâu'],
-  ['qr', 'groom', 'Tải QR Chú rể'],     ['qr', 'bride', 'Tải QR Cô dâu']
-];
+var TRACK_KINDS = { copy: ['Copy', 'Chép STK'], qr: ['QR', 'Tải QR'] };
+var TRACK_WHO = { groom: ['Groom', 'Chú rể'], bride: ['Bride', 'Cô dâu'] };
 
 function handleTrack(data) {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
   var sheet = ss.getSheetByName(SIDE_SHEETS[norm(data.side)] || SHEET_NAME) || ss.getSheetByName(SHEET_NAME);
   var rowIndex = findGuestRow(sheet, (data.pronounGuest || '').trim(), (data.guestName || '').trim(), data.date || '');
   if (rowIndex < 0) {   // link không tên: bỏ qua; link có tên mà lệch: logIssue thêm 1 dòng ⚠ để sửa
-    if (data.ev === 'open' && norm(data.guestName)) logIssue('Link lệch tên', data, 'link mở thiệp không khớp hàng nào (xưng hô + tên + ngày mời), dòng này tự thêm');
+    if (data.ev === 'open' && norm(data.guestName)) logIssue('Name mismatch', data, 'no matching row, row auto-added');
     return;
   }
   var ev = String(data.ev || ''), who = String(data.who || '');
+  if (ev !== 'open' && !(TRACK_KINDS[ev] && TRACK_WHO[who])) return;
   var now = Utilities.formatDate(new Date(), 'Asia/Ho_Chi_Minh', 'dd.MM HH:mm');
 
   var cell = sheet.getRange(rowIndex, COL.notes);
   var parts = splitNotes(cell.getValue()), t = parts.track;
-  var m, opens = (m = t.match(/Mở thiệp (\d+) lần/)) ? Number(m[1]) : 0;
-  var lastOpen = (m = t.match(/\(gần nhất ([^)]+)\)/)) ? m[1] : '';
-  var done = TRACK_ITEMS.map(function (it) { return t.indexOf(it[2]) >= 0; });
+  var m, opens = (m = t.match(/Opens: (\d+)|Mở thiệp (\d+) lần/)) ? Number(m[1] || m[2]) : 0;
+  var lastOpen = (m = t.match(/\((?:last|gần nhất) ([^)]+)\)/)) ? m[1] : '';
+  var done = {};
+  Object.keys(TRACK_KINDS).forEach(function (k) {
+    var en = t.match(new RegExp('(?:^|· )' + TRACK_KINDS[k][0] + ': ([^·]*)'));
+    done[k] = {};
+    Object.keys(TRACK_WHO).forEach(function (w) {
+      done[k][w] = !!(en && en[1].indexOf(TRACK_WHO[w][0]) >= 0) || t.indexOf(TRACK_KINDS[k][1] + ' ' + TRACK_WHO[w][1]) >= 0;
+    });
+  });
 
-  if (ev === 'open') { opens++; lastOpen = now; }
-  else {
-    var hit = false;
-    TRACK_ITEMS.forEach(function (it, i) { if (it[0] === ev && it[1] === who) { done[i] = true; hit = true; } });
-    if (!hit) return;
-  }
+  if (ev === 'open') { opens++; lastOpen = now; } else done[ev][who] = true;
 
   var out = [];
-  if (opens) out.push('Mở thiệp ' + opens + ' lần' + (lastOpen ? ' (gần nhất ' + lastOpen + ')' : ''));
-  TRACK_ITEMS.forEach(function (it, i) { if (done[i]) out.push(it[2]); });
+  if (opens) out.push('Opens: ' + opens + (lastOpen ? ' (last ' + lastOpen + ')' : ''));
+  Object.keys(TRACK_KINDS).forEach(function (k) {
+    var ws = Object.keys(TRACK_WHO).filter(function (w) { return done[k][w]; }).map(function (w) { return TRACK_WHO[w][0]; });
+    if (ws.length) out.push(TRACK_KINDS[k][0] + ': ' + ws.join(', '));
+  });
   var line = TRACK_MARK + ' ' + out.join(' · ');
   cell.setValue(asText(parts.rsvp ? parts.rsvp + '\n' + line : line));
 }
@@ -203,7 +208,7 @@ function addGuestRow(sheet, row) {
   sheet.getRange(at, COL.link + 1, 1, COL.notes - COL.link).setValues([row.slice(COL.link, COL.notes)]);
 }
 
-/* ---- ghi lỗi: dòng "⚠ dd.MM HH:mm Loại: lỗi · Dữ liệu: …" trong ô Logs của đúng khách (trên dòng ▸).
+/* ---- ghi lỗi: dòng "⚠ dd.MM HH:mm Loại: lỗi · Data: …" (tiếng Anh như dòng ▸) trong ô Logs của đúng khách (trên dòng ▸).
    Không tìm được hàng thì thêm 1 dòng mới cuối tab (xưng hô, tên, ngày, đi cùng theo link + dòng ⚠ ở Logs).
    Tự bọc try: ghi lỗi hỏng cũng không làm hỏng việc chính */
 function logIssue(kind, data, msg) {
@@ -212,7 +217,7 @@ function logIssue(kind, data, msg) {
     var sheet = ss.getSheetByName(SIDE_SHEETS[norm(data.side)] || SHEET_NAME) || ss.getSheetByName(SHEET_NAME) || ss.getSheets()[0];
     var sent = Object.keys(data).filter(function (k) { return k !== 'action'; })
       .map(function (k) { return k + '=' + data[k]; }).join(', ');
-    var warn = '⚠ ' + Utilities.formatDate(new Date(), 'Asia/Ho_Chi_Minh', 'dd.MM HH:mm') + ' ' + kind + ': ' + msg + (sent ? ' · Dữ liệu: ' + sent : '');
+    var warn = '⚠ ' + Utilities.formatDate(new Date(), 'Asia/Ho_Chi_Minh', 'dd.MM HH:mm') + ' ' + kind + ': ' + msg + (sent ? ' · Data: ' + sent : '');
     var rowIndex = findGuestRow(sheet, (data.pronounGuest || '').trim(), (data.guestName || '').trim(), data.date || '');
     if (rowIndex > -1) {
       var cell = sheet.getRange(rowIndex, COL.notes), parts = splitNotes(cell.getValue());

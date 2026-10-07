@@ -104,10 +104,10 @@ Mỗi bên một tab, cùng thứ tự cột: **Sơn** (link có `s=1` hoặc kh
 
 Hồi âm không tạo dòng mới lung tung — thiệp gửi kèm xưng hô + tên + ngày mời lấy từ link, Apps Script dò đúng dòng của khách đó trong tab của bên đó để **cập nhật đè** (F, H, I, J, K). Ô "--" được coi như ô trống. Khách gửi lại nhiều lần vẫn ghi vào đúng 1 dòng; đổi ý sang "Không đến được" thì xoá số người và cách đi cũ. Không khớp được dòng nào (link không tên — form hỏi thêm tên, hoặc đã sửa tên sau khi gửi link) thì thêm dòng mới ở cuối tab — ngay trên dòng "Tổng số…" nếu dòng cuối là dòng tổng (không ghi vào cột G). Công thức ở dòng Tổng số nên dùng vùng mở (vd `B2:B` thay vì `B2:B63`) để tự đếm cả dòng mới chèn. Cột I **SĐT + Notes** ghi mỗi loại 1 dòng: `SĐT: 0912 123 123` rồi `Note: …` (ghi chú đưa đón khách gõ, tên khách tự gõ nếu khác link). Khách gửi lại thì chỉ thay phần vừa gửi; ô cũ chỉ có số trần vẫn đọc được.
 
-**Theo dõi khách mở thiệp và hộp quà mừng** — cột K **Logs**, 1 dòng bắt đầu bằng `▸`, ví dụ:
+**Theo dõi khách mở thiệp và hộp quà mừng** — cột K **Logs**, 1 dòng tiếng Anh cho gọn, bắt đầu bằng `▸` (Opens = số lần mở thiệp, Copy = đã chép số tài khoản, QR = đã tải mã QR; Groom = chú rể, Bride = cô dâu), ví dụ:
 
 ```
-▸ Mở thiệp 3 lần (gần nhất 12.11 20:15) · Chép STK Chú rể · Tải QR Cô dâu
+▸ Opens: 3 (last 12.11 20:15) · Copy: Groom · QR: Bride
 ```
 
 - Mở thiệp = khách vuốt lên / bấm vào bên trong thiệp; lần nào mở cũng cộng. Chép số tài khoản, tải mã QR (của Chú rể / Cô dâu) chỉ ghi đã làm hay chưa; chỉ mở hộp quà xem thì không ghi.
@@ -118,11 +118,11 @@ Hồi âm không tạo dòng mới lung tung — thiệp gửi kèm xưng hô + 
 **Lỗi** — ghi thành dòng `⚠ …` trong ô Logs của đúng khách (phía trên dòng `▸`), kèm toàn bộ dữ liệu khách gửi:
 
 ```
-⚠ 12.11 20:15 Hồi âm: Service Spreadsheets failed · Dữ liệu: attend=yes, phone=0912 345 678, pickup=…
+⚠ 12.11 20:15 RSVP error: Service Spreadsheets failed · Data: attend=yes, phone=0912 345 678, pickup=…
 ```
 
-- **Hồi âm / Theo dõi** — Apps Script gặp lỗi khi ghi; khách vẫn thấy "Đã nhận hồi âm" (thiệp gửi "mù") nên đọc dòng ⚠ rồi chép tay vào đúng cột. Xử lý xong thì xoá dòng ⚠ đi.
-- **Link lệch tên** — link có tên mà lúc mở thiệp không khớp hàng nào (thường do sửa tên trong Sheet sau khi đã gửi link) → thêm 1 dòng mới cuối tab theo đúng tên trên link, ô Logs ghi ⚠. Lần mở / hồi âm sau khớp dòng đó nên không lặp. Gộp tay vào dòng gốc rồi xoá dòng thừa. Link không tên thì không ghi.
+- **RSVP error / Track error** — Apps Script gặp lỗi khi ghi; khách vẫn thấy "Đã nhận hồi âm" (thiệp gửi "mù") nên đọc dòng ⚠ rồi chép tay vào đúng cột. Xử lý xong thì xoá dòng ⚠ đi.
+- **Name mismatch** (link lệch tên) — link có tên mà lúc mở thiệp không khớp hàng nào (thường do sửa tên trong Sheet sau khi đã gửi link) → thêm 1 dòng mới cuối tab theo đúng tên trên link, ô Logs ghi ⚠. Lần mở / hồi âm sau khớp dòng đó nên không lặp. Gộp tay vào dòng gốc rồi xoá dòng thừa. Link không tên thì không ghi.
 
 **Link mời (cột G)** do công thức tạo, dùng 2 hàm tự đặt tên (Dữ liệu → Hàm được đặt tên):
 
