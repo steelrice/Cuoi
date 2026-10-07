@@ -2087,10 +2087,16 @@
     }
     function rsvpTouch(e){
       if(!rsvpWait) return;
-      if(e.target && e.target.closest && e.target.closest('.rsvp-form input, .rsvp-form textarea, .rsvp-form select, .rsvp-form button, .rsvp-form label')){ rsvpWait = false; return clearTimeout(rsvpT); }
+      if(e.target && e.target.closest && e.target.closest('.rsvp-form input, .rsvp-form textarea, .rsvp-form select, .rsvp-form button, .rsvp-form label, .rd-edit')){ rsvpWait = false; return clearTimeout(rsvpT); }
       rsvpArm();
     }
     ['wheel', 'touchstart', 'pointerdown', 'keydown', 'focusin'].forEach(function(t){ window.addEventListener(t, rsvpTouch, { passive:true }); });
+    /* gửi hồi âm xong (hiện lời cảm ơn): chờ 3 giây như trên rồi tự cuộn tiếp; khách bấm "Sửa hồi âm" thì thôi */
+    document.addEventListener('rsvpdone', function(){
+      if(paused) return;
+      stops.forEach(function(el, i){ if(el === rsvpSec && passed.indexOf(i) < 0) passed.push(i); });
+      rsvpWait = true; rsvpArm();
+    });
     function nearStop(){ return stops.some(function(el){ var r = el.getBoundingClientRect(); return r.top < window.innerHeight * 0.75 && r.bottom > window.innerHeight * 0.25; }); }
     function backArm(){
       clearTimeout(backT);
@@ -3780,6 +3786,7 @@
       frame.classList.remove('done'); void frame.offsetWidth; frame.classList.add('done');
       var top = frame.getBoundingClientRect().top;
       if(top < 0 || top > innerHeight * .4) window.scrollTo({ top:scrollY + top - 80, behavior:'smooth' });
+      document.dispatchEvent(new Event('rsvpdone'));
     }
     var wasAttending = attendVal === 'yes';
     if(rsvpCal) rsvpCal.hidden = true;
