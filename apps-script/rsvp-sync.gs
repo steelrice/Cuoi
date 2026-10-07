@@ -4,6 +4,9 @@
  * lại nhiều lần vẫn ghi vào đúng 1 hàng, không tạo dòng trùng. Không tìm thấy
  * (link không tham số, hoặc khách lạ) thì thêm hàng mới ở cuối.
  *
+ * Cột I "SĐT + Notes": mỗi loại 1 dòng — "SĐT: 0912 123 123" rồi "Note: …" (ghi chú khách gõ trong hồi âm).
+ * Cột K "Notes": dòng theo dõi khách mở thiệp / dùng hộp quà mừng (action=track) "▸ …". Không tìm thấy hàng thì bỏ qua.
+ *
  * Cài đặt: xem README.md, mục "Nối hồi âm vào Google Sheet".
  */
 
@@ -26,9 +29,9 @@ var COL = {
   rsvp:         6,  // F - RSVP status
   link:         7,  // G - Link mời (công thức, không đụng vào)
   guestsCount:  8,  // H - Số người đi cùng
-  phone:        9,  // I - Số điện thoại
+  phone:        9,  // I - SĐT + Notes (dòng "SĐT: …" + dòng "Note: …")
   move:         10, // J - Cách di chuyển (dropdown Tự di chuyển / Đi xe chung)
-  notes:        11  // K - Notes
+  notes:        11  // K - Notes (dòng theo dõi "▸ …")
 };
 
 // Chỉnh 2 dòng này cho khớp CHÍNH XÁC chữ trong dropdown "RSVP status" của bạn
@@ -43,9 +46,16 @@ function doPost(e) {
   // thiệp gửi "mù" (no-cors) nên không biết Apps Script có lỗi hay không → ở đây phải tự chống lỗi:
   // khoá để 2 hồi âm cùng lúc không ghi chồng / tạo dòng trùng, lỗi thì vẫn trả về JSON
   var lock = LockService.getScriptLock();
+  var data = (e && e.parameter) || {};
   try {
-    lock.waitLock(20000);
-    handleRsvp((e && e.parameter) || {});
+    if (data.action === 'track') {
+      // theo dõi chỉ chờ tối đa 5 giây, quá thì bỏ — không bắt hồi âm phải xếp hàng chờ sau cả loạt lượt mở thiệp
+      if (!lock.tryLock(5000)) return json({ ok: false, error: 'busy' });
+      handleTrack(data);
+    } else {
+      lock.waitLock(20000);
+      handleRsvp(data);
+    }
     return json({ ok: true });
   } catch (err) {
     console.error(err);
@@ -77,8 +87,6 @@ function handleRsvp(data) {
   var notesText = buildNotes(pickup, formName, guestName);
   // số người đi cùng: ghi cả 0; khách từ chối thì để trống
   var guestsCount = yes && data.guests !== undefined && data.guests !== '' ? Number(data.guests) : '';
-  // dấu ' ở đầu để Sheets giữ nguyên số 0 đầu của số điện thoại (0901… không thành 901…)
-  var phoneText = phone ? "'" + phone : '';
 
   var rowIndex = findGuestRow(sheet, pronounGuest, guestName, date);
 
@@ -92,8 +100,11 @@ function handleRsvp(data) {
       sheet.getRange(rowIndex, COL.guestsCount).setValue('');
       sheet.getRange(rowIndex, COL.move).setValue('');
     }
-    if (phoneText) sheet.getRange(rowIndex, COL.phone).setValue(phoneText);
-    if (notesText) sheet.getRange(rowIndex, COL.notes).setValue(asText(notesText));
+    if (phone || notesText) {
+      // chỉ thay phần khách vừa gửi (SĐT hoặc Note), phần còn lại giữ như cũ
+      var cell = sheet.getRange(rowIndex, COL.phone), old = splitContact(cell.getValue());
+      cell.setValue(asText(contactText(phone || old.phone, notesText || old.note)));
+    }
   } else {
     var row = [];
     for (var c = 0; c < COL.notes; c++) row[c] = '';
@@ -103,9 +114,8 @@ function handleRsvp(data) {
     row[COL.companion - 1] = asText(companion);
     row[COL.rsvp - 1] = statusText;
     row[COL.guestsCount - 1] = guestsCount;
-    row[COL.phone - 1] = phoneText;
+    row[COL.phone - 1] = asText(contactText(phone, notesText));
     row[COL.move - 1] = yes ? moveText : '';
-    row[COL.notes - 1] = asText(notesText);
     sheet.appendRow(row);
   }
 }
@@ -115,6 +125,70 @@ function handleRsvp(data) {
 function asText(v) {
   v = String(v || '');
   return /^[=+\-@]/.test(v) ? "'" + v : v;
+}
+
+/* ---- theo dõi mở thiệp + hộp quà mừng ----
+   Thiệp gửi action=track, ev = open | gift | copy | qr, who = groom | bride (với copy, qr).
+   Dòng theo dõi luôn viết lại theo đúng 1 mẫu:
+   ▸ Mở thiệp 3 lần (gần nhất 12.11 20:15) · Mở hộp quà 12.11 20:16 · Chép STK Chú rể · Tải QR Cô dâu */
+var TRACK_MARK = '▸';
+var TRACK_ITEMS = [
+  ['copy', 'groom', 'Chép STK Chú rể'], ['copy', 'bride', 'Chép STK Cô dâu'],
+  ['qr', 'groom', 'Tải QR Chú rể'],     ['qr', 'bride', 'Tải QR Cô dâu']
+];
+
+function handleTrack(data) {
+  var ss = SpreadsheetApp.getActiveSpreadsheet();
+  var sheet = ss.getSheetByName(SIDE_SHEETS[norm(data.side)] || SHEET_NAME) || ss.getSheetByName(SHEET_NAME);
+  var rowIndex = findGuestRow(sheet, (data.pronounGuest || '').trim(), (data.guestName || '').trim(), data.date || '');
+  if (rowIndex < 0) return;   // link không tên / khách lạ: không tạo hàng mới chỉ vì mở thiệp
+  var ev = String(data.ev || ''), who = String(data.who || '');
+  var now = Utilities.formatDate(new Date(), 'Asia/Ho_Chi_Minh', 'dd.MM HH:mm');
+
+  var cell = sheet.getRange(rowIndex, COL.notes);
+  var parts = splitNotes(cell.getValue()), t = parts.track;
+  var m, opens = (m = t.match(/Mở thiệp (\d+) lần/)) ? Number(m[1]) : 0;
+  var lastOpen = (m = t.match(/\(gần nhất ([^)]+)\)/)) ? m[1] : '';
+  var gift = (m = t.match(/Mở hộp quà (\d\d\.\d\d \d\d:\d\d)/)) ? m[1] : '';
+  var done = TRACK_ITEMS.map(function (it) { return t.indexOf(it[2]) >= 0; });
+
+  if (ev === 'open') { opens++; lastOpen = now; }
+  else if (ev === 'gift') { if (!gift) gift = now; }
+  else {
+    var hit = false;
+    TRACK_ITEMS.forEach(function (it, i) { if (it[0] === ev && it[1] === who) { done[i] = true; hit = true; } });
+    if (!hit) return;
+    if (!gift) gift = now;   // chép / tải được thì hộp quà chắc chắn đã mở
+  }
+
+  var out = [];
+  if (opens) out.push('Mở thiệp ' + opens + ' lần' + (lastOpen ? ' (gần nhất ' + lastOpen + ')' : ''));
+  if (gift) out.push('Mở hộp quà ' + gift);
+  TRACK_ITEMS.forEach(function (it, i) { if (done[i]) out.push(it[2]); });
+  var line = TRACK_MARK + ' ' + out.join(' · ');
+  cell.setValue(asText(parts.rsvp ? parts.rsvp + '\n' + line : line));
+}
+
+/* ô "SĐT + Notes": "SĐT: …" dòng đầu, "Note: …" ngay dưới (ghi chú nhiều dòng thì giữ nguyên các dòng) */
+function contactText(phone, note) {
+  var out = [];
+  if (phone) out.push('SĐT: ' + phone);
+  if (note) out.push('Note: ' + note);
+  return out.join('\n');
+}
+// đọc lại ô cũ; ô cũ chỉ có số điện thoại trần (hồi âm gửi trước khi đổi mẫu) thì coi là SĐT
+function splitContact(v) {
+  v = String(v || '').trim();
+  var m = v.match(/^SĐT:\s*([^\n]*)/m), n = v.match(/(^|\n)Note:\s*([\s\S]*)$/);
+  if (!m && !n) return /^[+0-9 .()-]+$/.test(v) ? { phone: v, note: '' } : { phone: '', note: v };
+  return { phone: m ? m[1].trim() : '', note: n ? n[2].trim() : '' };
+}
+
+// tách ô Notes: chữ cũ đã có trong ô (giữ nguyên ở trên) và dòng theo dõi "▸ …" (dưới cùng)
+function splitNotes(v) {
+  var lines = String(v || '').split('\n'), track = '';
+  lines = lines.filter(function (l) { if (l.indexOf(TRACK_MARK) === 0) { track = l; return false; } return true; });
+  return { rsvp: lines.join('\n').trim(), track: track };
 }
 
 function json(obj) {

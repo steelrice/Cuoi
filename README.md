@@ -100,9 +100,20 @@ Mỗi bên một tab, cùng thứ tự cột: **Sơn** (link có `s=1` hoặc kh
 
 | Cột | A | B | C | D | E | F | G | H | I | J | K |
 |---|---|---|---|---|---|---|---|---|---|---|---|
-| | Xưng hô | Tên khách | Nhóm | Ngày mời | Đi cùng | RSVP status | Link mời | Số người đi cùng | SĐT | Di chuyển | Notes |
+| | Xưng hô | Tên khách | Nhóm | Ngày mời | Đi cùng | RSVP status | Link mời | Số người đi cùng | SĐT + Notes | Di chuyển | Notes |
 
-Hồi âm không tạo dòng mới lung tung — thiệp gửi kèm xưng hô + tên + ngày mời lấy từ link, Apps Script dò đúng dòng của khách đó trong tab của bên đó để **cập nhật đè** (F, H, I, J, K). Ô "--" được coi như ô trống. Khách gửi lại nhiều lần vẫn ghi vào đúng 1 dòng; đổi ý sang "Không đến được" thì xoá số người và cách đi cũ. Không khớp được dòng nào (link không tên — form hỏi thêm tên, hoặc đã sửa tên sau khi gửi link) thì thêm dòng mới ở cuối tab. Số điện thoại được giữ số 0 ở đầu; cột Notes ghi nguyên ghi chú đưa đón khách gõ.
+Hồi âm không tạo dòng mới lung tung — thiệp gửi kèm xưng hô + tên + ngày mời lấy từ link, Apps Script dò đúng dòng của khách đó trong tab của bên đó để **cập nhật đè** (F, H, I, J, K). Ô "--" được coi như ô trống. Khách gửi lại nhiều lần vẫn ghi vào đúng 1 dòng; đổi ý sang "Không đến được" thì xoá số người và cách đi cũ. Không khớp được dòng nào (link không tên — form hỏi thêm tên, hoặc đã sửa tên sau khi gửi link) thì thêm dòng mới ở cuối tab. Cột I **SĐT + Notes** ghi mỗi loại 1 dòng: `SĐT: 0912 123 123` rồi `Note: …` (ghi chú đưa đón khách gõ, tên khách tự gõ nếu khác link). Khách gửi lại thì chỉ thay phần vừa gửi; ô cũ chỉ có số trần vẫn đọc được.
+
+**Theo dõi khách mở thiệp và hộp quà mừng** — cột K **Notes**, 1 dòng bắt đầu bằng `▸`, ví dụ:
+
+```
+▸ Mở thiệp 3 lần (gần nhất 12.11 20:15) · Mở hộp quà 12.11 20:16 · Chép STK Chú rể · Tải QR Cô dâu
+```
+
+- Mở thiệp = khách vuốt lên / bấm vào bên trong thiệp; lần nào mở cũng cộng. Mở hộp quà, chép số tài khoản, tải mã QR (của Chú rể / Cô dâu) chỉ ghi đã làm hay chưa.
+- Chỉ ghi cho link **có tên khách** và khớp đúng 1 dòng; không tạo dòng mới. Chữ cũ đã có trong ô K được giữ ở trên dòng `▸`.
+- Máy cô dâu chú rể: mở thiệp 1 lần với `?me=1` (vd `https://sonthao.io.vn/?me=1`) thì máy đó không bị tính nữa — mở link khách để kiểm tra thoải mái; `?me=0` để tính lại.
+- Nhiều người mở cùng lúc thì lượt theo dõi chờ tối đa 5 giây rồi bỏ qua, hồi âm luôn được ưu tiên (chờ tới 20 giây).
 
 **Link mời (cột G)** do công thức tạo, dùng 2 hàm tự đặt tên (Dữ liệu → Hàm được đặt tên):
 
