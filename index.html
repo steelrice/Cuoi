@@ -1971,7 +1971,7 @@
       }
       last = now;
       for(var i = 0; i < stops.length; i++){
-        if(passed.indexOf(i) < 0 && stops[i].getBoundingClientRect().top <= window.innerHeight * 0.08){ passed.push(i); setMode(false); if(stops[i] === rsvpSec){ rsvpWait = true; rsvpArm(); } return; }
+        if(passed.indexOf(i) < 0 && stops[i].getBoundingClientRect().top <= window.innerHeight * 0.08){ passed.push(i); setMode(false); if(stops[i] === rsvpSec){ rsvpWait = true; rsvpArm(); } else if(stops[i] === albumSec){ albWait = true; albArm(); } return; }
       }
       /* trôi tới đúng lúc khung "Xin giới thiệu" khít màn hình thì dừng ở đó và bảo nó chạy (introgo); chạy xong introdone lo cuộn tiếp */
       if(intro && !introStarted && stage.dataset.live){
@@ -2051,25 +2051,26 @@
     /* khách tự cuộn / chạm rồi ngừng tay 6 giây → tự cuộn lại. Không tự bật khi: khách đã bấm nút dừng, đang gõ form,
        đang ở trong vùng album / form hồi âm, đoạn giới thiệu đang chạy, đã tới cuối trang, đang xem lớn album / xem lại thiệp */
     /* lật tới trang cuối album ("Còn tiếp…"), ngừng tay 3 giây → tự cuộn tiếp qua album (trừ khi khách đã bấm nút dừng
-       hoặc đã cuộn đi chỗ khác). Đang xem lớn album thì không đếm; đóng lại (albumclose) thì đếm 3 giây từ lúc đóng */
-    var albumEnd = false, albT = 0, albumSec = document.querySelector('.bk-sec');
+       hoặc đã cuộn đi chỗ khác). Tự cuộn dừng ở album mà khách không đụng vào, hoặc lật dở rồi ngừng tay → 5 giây.
+       Chạm / lật trang là đếm lại. Đang xem lớn album thì không đếm; đóng lại (albumclose) thì đếm lại từ lúc đóng */
+    var albumEnd = false, albWait = false, albT = 0, albumSec = document.querySelector('.bk-sec');
     function albArm(){
       clearTimeout(albT);
-      if(!albumEnd) return;
+      if(!albumEnd && !albWait) return;
       albT = setTimeout(function(){
-        if(!albumEnd || mode || paused || !albumSec) return;
+        if((!albumEnd && !albWait) || mode || paused || !albumSec) return;
         var a = document.activeElement, r = albumSec.getBoundingClientRect();
         if(document.documentElement.classList.contains('no-scroll')) return;   // đang xem lớn: chờ albumclose
         if(blocked() || (a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName))) return albArm();
-        if(r.bottom < 0 || r.top > window.innerHeight) return;
-        albumEnd = false;
+        if(r.bottom < 0 || r.top > window.innerHeight){ albumEnd = albWait = false; return; }
+        albumEnd = albWait = false;
         stops.forEach(function(el, i){ if(el === albumSec && passed.indexOf(i) < 0) passed.push(i); });
         setMode(true);
-      }, 3000);
+      }, albumEnd ? 3000 : 5000);
     }
-    document.addEventListener('albumpage', function(e){ albumEnd = e.detail.end; albArm(); });
+    document.addEventListener('albumpage', function(e){ albumEnd = e.detail.end; albWait = true; albArm(); });
     document.addEventListener('albumclose', albArm);
-    ['wheel', 'touchstart', 'pointerdown', 'keydown'].forEach(function(t){ window.addEventListener(t, function(){ if(albumEnd) albArm(); }, { passive:true }); });
+    ['wheel', 'touchstart', 'pointerdown', 'keydown'].forEach(function(t){ window.addEventListener(t, function(){ if(albumEnd || albWait) albArm(); }, { passive:true }); });
     /* dừng ở hồi âm: khách không chạm gì 3 giây thì tự cuộn tiếp (giống album; chạm/lướt thì đếm lại từ đầu).
        Khách bắt đầu điền (chạm vào ô, nút trong form) thì thôi hẳn, để yên cho khách điền */
     var rsvpSec = document.querySelector('.rsvp-frame'), rsvpWait = false, rsvpT = 0;
