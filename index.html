@@ -1500,8 +1500,8 @@
             <div class="parents-divider" aria-hidden="true"><span></span><i></i><span></span></div>
           </div>
           <div class="loc-addr" id="locAddr">
-            <span data-vi><b>Địa chỉ</b>Sảnh Diamond (Lầu 4) · 356 - 358 Trương Công Định<br>TP. Vũng Tàu</span>
-            <span data-en><b>Address</b>Diamond Hall (4th Floor) · 356 - 358 Truong Cong Dinh St.<br>Vung Tau City</span>
+            <span data-vi><b>Địa chỉ</b>Sảnh Diamond (Lầu 4)<br>356 - 358 Trương Công Định<br>TP. Vũng Tàu</span>
+            <span data-en><b>Address</b>Diamond Hall (4th Floor)<br>356 - 358 Truong Cong Dinh St.<br>Vung Tau City</span>
           </div>
           <a class="loc-map" id="locMapLink" href="#" target="_blank" rel="noopener">
             <img id="mapVT" src="images/map-vungtau.webp" alt="Bản đồ vị trí Nhà hàng Merastis, Vũng Tàu" loading="lazy">
@@ -2050,10 +2050,10 @@
     ['scroll', 'wheel', 'touchstart', 'pointerdown', 'keydown'].forEach(function(t){ window.addEventListener(t, hintArm, { passive:true }); });
     /* khách tự cuộn / chạm rồi ngừng tay 6 giây → tự cuộn lại. Không tự bật khi: khách đã bấm nút dừng, đang gõ form,
        đang ở trong vùng album / form hồi âm, đoạn giới thiệu đang chạy, đã tới cuối trang, đang xem lớn album / xem lại thiệp */
-    /* lật tới trang cuối album ("Còn tiếp…"), ngừng tay 3 giây → tự cuộn tiếp qua album (trừ khi khách đã bấm nút dừng
-       hoặc đã cuộn đi chỗ khác). Tự cuộn dừng ở album mà khách không đụng vào, hoặc lật dở rồi ngừng tay → 5 giây.
+    /* tự cuộn dừng ở album: khách không đụng vào 3 giây, lật dở rồi ngừng tay 3,9 giây, lật tới trang cuối ("Còn tiếp…")
+       rồi ngừng tay 3 giây → tự cuộn tiếp qua album (trừ khi khách đã bấm nút dừng hoặc đã cuộn đi chỗ khác).
        Chạm / lật trang là đếm lại. Đang xem lớn album thì không đếm; đóng lại (albumclose) thì đếm lại từ lúc đóng */
-    var albumEnd = false, albWait = false, albT = 0, albumSec = document.querySelector('.bk-sec');
+    var albumEnd = false, albWait = false, albFlip = false, albPg = 0, albT = 0, albumSec = document.querySelector('.bk-sec');
     function albArm(){
       clearTimeout(albT);
       if(!albumEnd && !albWait) return;
@@ -2062,13 +2062,13 @@
         var a = document.activeElement, r = albumSec.getBoundingClientRect();
         if(document.documentElement.classList.contains('no-scroll')) return;   // đang xem lớn: chờ albumclose
         if(blocked() || (a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName))) return albArm();
-        if(r.bottom < 0 || r.top > window.innerHeight){ albumEnd = albWait = false; return; }
-        albumEnd = albWait = false;
+        if(r.bottom < 0 || r.top > window.innerHeight){ albumEnd = albWait = albFlip = false; return; }
+        albumEnd = albWait = albFlip = false;
         stops.forEach(function(el, i){ if(el === albumSec && passed.indexOf(i) < 0) passed.push(i); });
         setMode(true);
-      }, albumEnd ? 3000 : 5000);
+      }, albFlip && !albumEnd ? 3900 : 3000);
     }
-    document.addEventListener('albumpage', function(e){ albumEnd = e.detail.end; albWait = true; albArm(); });
+    document.addEventListener('albumpage', function(e){ albumEnd = e.detail.end; albWait = true; if(albPg && e.detail.page !== albPg) albFlip = true; albPg = e.detail.page; albArm(); });   // đổi trang = khách đã lật
     document.addEventListener('albumclose', albArm);
     ['wheel', 'touchstart', 'pointerdown', 'keydown'].forEach(function(t){ window.addEventListener(t, function(){ if(albumEnd || albWait) albArm(); }, { passive:true }); });
     /* dừng ở hồi âm: khách không chạm gì 3 giây thì tự cuộn tiếp (giống album; chạm/lướt thì đếm lại từ đầu).
@@ -2566,11 +2566,11 @@
       vi:{ title:'TIỆC CHUNG VUI', time:'Được tổ chức vào lúc ', hi:'11 giờ 30 trưa, Thứ Bảy',
            lunar:'Tức ngày 13 tháng 10', yearLunar:'Năm Bính Ngọ',
            venue:'TẠI SẢNH 2 MERASTIS TOWER', addr:'356 - 358 Trương Công Định, Tam Thắng, TP. Vũng Tàu',
-           locKicker:'Nhà hàng', locBig:'Merastis', locAddr:'Sảnh Diamond (Lầu 4) · <span class="nowrap">356 - 358</span> Trương Công Định<br>TP. Vũng Tàu' },
+           locKicker:'Nhà hàng', locBig:'Merastis', locAddr:'Sảnh Diamond (Lầu 4)<br><span class="nowrap">356 - 358</span> Trương Công Định<br>TP. Vũng Tàu' },
       en:{ title:'OUR CELEBRATION PARTY', time:'To be held at ', hi:'11:30 AM, Saturday',
            lunar:'(Lunar Calendar: October 13th)', yearLunar:'Year of the Fire Horse',
            venue:'AT DIAMOND HALL (4TH FLOOR), MERASTIS TOWER', addr:'356 - 358 Truong Cong Dinh Street, Tam Thang Ward, Vung Tau City',
-           locKicker:'Restaurant', locBig:'Merastis', locAddr:'Diamond Hall (4th Floor) · <span class="nowrap">356 - 358</span> Truong Cong Dinh St.<br>Vung Tau City' }
+           locKicker:'Restaurant', locBig:'Merastis', locAddr:'Diamond Hall (4th Floor)<br><span class="nowrap">356 - 358</span> Truong Cong Dinh St.<br>Vung Tau City' }
     },
     '28': {
       day:'28', place:{ vi:'Hưng Yên', en:'Hung Yen City' }, maps:'https://maps.app.goo.gl/GCHuv1PDPoEEhdEt7', shuttle:false,
@@ -3271,7 +3271,7 @@
         : String(cur).padStart(2,'0') + ' <span>/ ' + String(P).padStart(2,'0') + '</span>';
       btnPrev.disabled = cur <= 1; btnNext.disabled = cur >= N;
       hdPump(); hdSpin();
-      document.dispatchEvent(new CustomEvent('albumpage', { detail:{ end: cur >= N } }));   // tự cuộn: lật hết album → chờ 3 giây rồi cuộn tiếp
+      document.dispatchEvent(new CustomEvent('albumpage', { detail:{ end: cur >= N, page: cur } }));   // tự cuộn: lật hết album → chờ 3 giây rồi cuộn tiếp
     }
 
     /* ---- mở album: tự chạy liền mạch khi album vào khung nhìn (không phụ thuộc cuộn) ----
