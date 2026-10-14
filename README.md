@@ -66,7 +66,7 @@ Bảng nằm ở `PARAM_CODES` trong `index.html`; trong Sheet là tab **"Code"*
 |---|---|---|
 | Sự kiện | Buổi tiệc chung vui | Lễ thành hôn |
 | Giờ | 11 giờ 30 trưa (đón khách 10:30, khai tiệc 11:50) | 9 giờ sáng |
-| Địa điểm | Sảnh 2 Merastis Tower | Tư gia nhà trai, QL39A |
+| Địa điểm | Sảnh Diamond (Lầu 4), Merastis Tower | Tư gia nhà trai, QL39A |
 | Xe đưa đón | Có | Không |
 
 Phần hỏi cách di chuyển, ghi chú đưa đón và số điện thoại chỉ hiện với `date=21`.
