@@ -1465,7 +1465,7 @@
               <div class="tl-row">
                 <div class="tl-name" id="tlTitle2"><span data-vi>Lễ thành hôn</span><span data-en>Wedding ceremony</span></div>
                 <div class="tl-dots"></div>
-                <div class="tl-time" id="tlTime2">11:30</div>
+                <div class="tl-time" id="tlTime2">11:00</div>
               </div>
               <div class="tl-desc" id="tlDesc2"><span data-vi>Nghi lễ chính của ngày hôm ấy, cũng là lúc hai đứa nên duyên vợ chồng</span><span data-en>The heart of the day — the moment we become husband and wife</span></div>
             </div>
@@ -1473,7 +1473,7 @@
               <div class="tl-row">
                 <div class="tl-name"><span data-vi>Khai tiệc</span><span data-en>Reception begins</span></div>
                 <div class="tl-dots"></div>
-                <div class="tl-time" id="tlTime3">11:50</div>
+                <div class="tl-time" id="tlTime3">11:30</div>
               </div>
               <div class="tl-desc" id="tlDesc3"><span data-vi>Cùng nâng ly và ở lại dùng bữa trưa thân mật với hai bên gia đình</span><span data-en>Raise a glass and stay for lunch with both families</span></div>
             </div>
@@ -2570,13 +2570,13 @@
   var EVENTS = {
     '21': {
       day:'21', place:{ vi:'Vũng Tàu', en:'Vung Tau City' }, maps:'https://maps.app.goo.gl/tdT1LGaSET7pAMx68', shuttle:true,
-      target:'2026-11-21T11:30:00+07:00',
-      tl:[-60, 0, 20],   // đón khách sớm 1 tiếng (350 khách chụp hình) · 11:30 làm lễ · 11:50 khai tiệc
-      vi:{ title:'TIỆC CHUNG VUI', time:'Được tổ chức vào lúc ', hi:'11 giờ 30 trưa, Thứ Bảy',
+      target:'2026-11-21T11:00:00+07:00',
+      tl:[-30, 0, 30],   // 10:30 đón khách · 11:00 làm lễ · 11:30 khai tiệc
+      vi:{ title:'TIỆC CHUNG VUI', time:'Được tổ chức vào lúc ', hi:'11 giờ trưa, Thứ Bảy',
            lunar:'Tức ngày 13 tháng 10', yearLunar:'Năm Bính Ngọ',
            venue:'<span class="s-vkick">Nhà hàng tiệc cưới</span>MERASTIS', addr:'356 - 358 Trương Công Định, Tam Thắng, <span class="nowrap">TP. Vũng Tàu</span><span class="s-hall">Sảnh Diamond · Lầu 4</span>',
            locKicker:'Nhà hàng', locBig:'Merastis', locAddr:'Sảnh Diamond (Lầu 4)<br><span class="nowrap">356 - 358</span> Trương Công Định<br>TP. Vũng Tàu' },
-      en:{ title:'OUR CELEBRATION PARTY', time:'To be held at ', hi:'11:30 AM, Saturday',
+      en:{ title:'OUR CELEBRATION PARTY', time:'To be held at ', hi:'11:00 AM, Saturday',
            lunar:'(Lunar Calendar: October 13th)', yearLunar:'Year of the Fire Horse',
            venue:'<span class="s-vkick">Wedding Restaurant</span>MERASTIS', addr:'356 - 358 Truong Cong Dinh Street, Tam Thang Ward, <span class="nowrap">Vung Tau City</span><span class="s-hall">Diamond Hall · 4th Floor</span>',
            locKicker:'Restaurant', locBig:'Merastis', locAddr:'Diamond Hall (4th Floor)<br><span class="nowrap">356 - 358</span> Truong Cong Dinh St.<br>Vung Tau City' }
@@ -3057,7 +3057,7 @@
   }catch(_){}
   if(startLang === 'en') langSwitch.click();
 
-  /* đếm ngược tới giờ làm lễ của link (21: tiệc Vũng Tàu 11:30, 28: lễ thành hôn 9:00). Link 21 qua giờ tiệc thì đếm tiếp
+  /* đếm ngược tới giờ làm lễ của link (21: tiệc Vũng Tàu 11:00, 28: lễ thành hôn 9:00). Link 21 qua giờ tiệc thì đếm tiếp
      tới lễ thành hôn; từ 9 giờ 28.11 (chính thức về chung một nhà) mọi link chuyển sang ĐẾM LÊN: "Đã được … kể từ giây phút…" */
   var target = new Date(EV.target).getTime(), UNION = new Date(EVENTS['28'].target).getTime(), cdUp = null;
   function tick(){
@@ -3720,8 +3720,8 @@
      máy khác mở Google Calendar điền sẵn. Giờ theo UTC (VN = UTC+7), kéo dài 3 tiếng, nhắc trước 1 ngày. */
   var CAL = {
     '21': { dates:'20261121T033000Z/20261121T073000Z', maps:EVENTS['21'].maps,
-      vi:{ t:'Tiệc chung vui · Hoàng Sơn & Phương Thảo', loc:'Sảnh Diamond (Lầu 4), Merastis Tower, 356 - 358 Trương Công Định, Tam Thắng, TP. Vũng Tàu', d:'Đón khách từ 10:30, làm lễ 11:30, khai tiệc 11:50.\nChỉ đường: ' },
-      en:{ t:'Hoàng Sơn & Phương Thảo · Celebration Party', loc:'Diamond Hall (4th Floor), Merastis Tower, 356 - 358 Truong Cong Dinh Street, Tam Thang Ward, Vung Tau City', d:'Welcome from 10:30 AM, ceremony at 11:30 AM, lunch at 11:50 AM.\nDirections: ' } },
+      vi:{ t:'Tiệc chung vui · Hoàng Sơn & Phương Thảo', loc:'Sảnh Diamond (Lầu 4), Merastis Tower, 356 - 358 Trương Công Định, Tam Thắng, TP. Vũng Tàu', d:'Đón khách từ 10:30, làm lễ 11:00, khai tiệc 11:30.\nChỉ đường: ' },
+      en:{ t:'Hoàng Sơn & Phương Thảo · Celebration Party', loc:'Diamond Hall (4th Floor), Merastis Tower, 356 - 358 Truong Cong Dinh Street, Tam Thang Ward, Vung Tau City', d:'Welcome from 10:30 AM, ceremony at 11:00 AM, lunch at 11:30 AM.\nDirections: ' } },
     '28': { dates:'20261128T020000Z/20261128T050000Z', maps:EVENTS['28'].maps,
       vi:{ t:'Lễ thành hôn · Hoàng Sơn & Phương Thảo', loc:'Tư gia nhà trai, QL39A, xã Tân Hưng, TP. Hưng Yên', d:'Chỉ đường: ' },
       en:{ t:'Hoàng Sơn & Phương Thảo · Wedding Ceremony', loc:"Groom's family residence, National Highway 39A, Tan Hung Commune, Hung Yen City", d:'Directions: ' } }
