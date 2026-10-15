@@ -442,6 +442,8 @@
 
   .s-venue{ font-family:var(--serif); font-weight:400; font-size:17px; color:var(--gold); margin-top:var(--sp-6); text-wrap:balance; }
   .s-addr{ font-size:13px; color:var(--cream-dim); margin-top:var(--sp-2); line-height:1.5; }
+  .s-addr .s-hall{ display:block; font-size:14px; font-weight:600; color:var(--cream); margin-bottom:2px; }
+  html.rsvp-closed .s-addr .s-hall{ color:var(--ink); }
 
   .s-cta{
     display:inline-flex; align-items:center; justify-content:center;
@@ -2566,11 +2568,11 @@
       tl:[-60, 0, 20],   // đón khách sớm 1 tiếng (350 khách chụp hình) · 11:30 làm lễ · 11:50 khai tiệc
       vi:{ title:'TIỆC CHUNG VUI', time:'Được tổ chức vào lúc ', hi:'11 giờ 30 trưa, Thứ Bảy',
            lunar:'Tức ngày 13 tháng 10', yearLunar:'Năm Bính Ngọ',
-           venue:'TẠI SẢNH DIAMOND <span class="nowrap">(LẦU 4)</span><br>MERASTIS TOWER', addr:'356 - 358 Trương Công Định, Tam Thắng, TP. Vũng Tàu',
+           venue:'TẠI MERASTIS TOWER', addr:'<span class="s-hall">Sảnh Diamond (Lầu 4)</span>356 - 358 Trương Công Định, Tam Thắng, TP. Vũng Tàu',
            locKicker:'Nhà hàng', locBig:'Merastis', locAddr:'Sảnh Diamond (Lầu 4)<br><span class="nowrap">356 - 358</span> Trương Công Định<br>TP. Vũng Tàu' },
       en:{ title:'OUR CELEBRATION PARTY', time:'To be held at ', hi:'11:30 AM, Saturday',
            lunar:'(Lunar Calendar: October 13th)', yearLunar:'Year of the Fire Horse',
-           venue:'<span class="nowrap">AT DIAMOND HALL (4TH FLOOR)</span><br>MERASTIS TOWER', addr:'356 - 358 Truong Cong Dinh Street, Tam Thang Ward, Vung Tau City',
+           venue:'AT MERASTIS TOWER', addr:'<span class="s-hall">Diamond Hall (4th Floor)</span>356 - 358 Truong Cong Dinh Street, Tam Thang Ward, Vung Tau City',
            locKicker:'Restaurant', locBig:'Merastis', locAddr:'Diamond Hall (4th Floor)<br><span class="nowrap">356 - 358</span> Truong Cong Dinh St.<br>Vung Tau City' }
     },
     '28': {
