@@ -443,7 +443,7 @@
   .s-venue{ font-family:var(--serif); font-weight:400; font-size:17px; color:var(--gold); margin-top:var(--sp-6); text-wrap:balance; }
   .s-addr{ font-size:13px; color:var(--cream-dim); margin-top:var(--sp-2); line-height:1.5; text-wrap:balance; }
   .s-addr .s-hall{ display:block; font-size:14px; font-weight:600; color:var(--cream); margin:2px 0 4px; }
-  .s-venue .s-vkick{ display:block; font-family:var(--sans); font-size:11px; font-weight:500; letter-spacing:.22em; text-transform:uppercase; color:var(--cream-dim); margin-bottom:12px; }
+  .s-venue .s-vkick{ display:block; font-family:var(--sans); font-size:12px; font-weight:500; letter-spacing:.2em; text-transform:uppercase; color:var(--cream-dim); margin-bottom:12px; }
   .s-venue:has(.s-vkick){ font-size:30px; letter-spacing:.08em; line-height:1.1; }
   html.rsvp-closed .s-addr .s-hall{ color:var(--ink); }
 
@@ -451,10 +451,10 @@
     display:inline-flex; align-items:center; justify-content:center;
     gap:6px; margin-top:var(--sp-4); padding:8px 12px;   /* chỉ đường: dòng chữ phụ (không khung) để mắt khách đi thẳng xuống "Vuốt lên" */
     background:transparent; color:var(--gold); text-decoration:underline; text-decoration-color:rgba(207,159,63,.45); text-underline-offset:4px;
-    font-family:var(--sans); font-size:12.5px; font-weight:500; letter-spacing:.06em;
+    font-family:var(--sans); font-size:14px; font-weight:500; letter-spacing:.06em;
     transition:color .25s ease;
   }
-  .s-cta svg{ width:14px; height:14px; flex:none; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
+  .s-cta svg{ width:16px; height:16px; flex:none; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }
   .s-cta:hover{ color:var(--cream); }
 
   /* hướng dẫn vuốt lên (thay nút "Chạm để mở thiệp") — vuốt thiệp lên để mở; chạm vào đây vẫn mở được */
@@ -466,7 +466,7 @@
   .swipe-hint .sw-hand{ display:flex; line-height:0; }
   .swipe-hint .sw-hand svg{ width:20px; height:20px; fill:none; stroke:currentColor; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; animation:swHand 1.8s ease-in-out infinite; }
   .swipe-hint .sw-pill{ display:inline-flex; align-items:center; gap:8px; color:#3a0810; background:var(--gold); padding:12px 22px 12px 18px; border-radius:999px; margin-top:6px; box-shadow:0 6px 18px rgba(0,0,0,.28), 0 0 0 0 rgba(207,159,63,.5); animation:swGlow 2.4s ease-out infinite; }
-  .swipe-hint .sw-txt{ font-family:var(--sans); font-size:12px; font-weight:700; letter-spacing:.12em; text-transform:uppercase; white-space:nowrap; }
+  .swipe-hint .sw-txt{ font-family:var(--sans); font-size:12.5px; font-weight:600; letter-spacing:.12em; text-transform:uppercase; white-space:nowrap; }
   @keyframes swGlow{ 0%{ box-shadow:0 6px 18px rgba(0,0,0,.28), 0 0 0 0 rgba(207,159,63,.5); } 70%,100%{ box-shadow:0 6px 18px rgba(0,0,0,.28), 0 0 0 12px rgba(207,159,63,0); } }
   @keyframes swHand{ 0%,100%{ transform:translateY(2px); } 50%{ transform:translateY(-3px); } }   /* bàn tay trong nút: nhún nhẹ, luôn hiện */
   /* laptop (chuột / trackpad, không cảm ứng): không vuốt được → bỏ mũi tên đi lên, tay "chạm" tại chỗ, chữ "Chạm để xem tiếp" */
@@ -521,6 +521,20 @@
   .stage.compact-more .s-date{ margin-top:var(--sp-3); }
   .stage.compact-more .s-venue{ margin-top:var(--sp-3); }
   .stage.compact-more .s-cta{ margin-top:var(--sp-3); }
+  /* màn rất thấp (iPhone SE cũ 320×568, Zalo/Messenger): siết khoảng cách vẫn tràn → thu nhỏ chữ tiêu đề lớn trước
+     (囍, lời mời, tên khách, ngày, MERASTIS), giữ nguyên chữ thông tin nhỏ để không bị dưới 12px khi phải thu cả khối */
+  .stage.tiny .s-hy{ font-size:28px; margin-bottom:var(--sp-2); }
+  .stage.tiny .s-kicker{ font-size:23px; }
+  .stage.tiny .s-guest{ font-size:24px; margin-top:var(--sp-3); }
+  .stage.tiny .s-join{ font-size:17px; margin-top:var(--sp-2); }
+  .stage.tiny .s-event{ font-size:20px; margin-top:var(--sp-3); }
+  .stage.tiny .s-date{ margin-top:var(--sp-2); }
+  .stage.tiny .s-date .day{ font-size:42px; }
+  .stage.tiny .s-venue{ margin-top:var(--sp-3); }
+  .stage.tiny .s-venue:has(.s-vkick){ font-size:24px; }
+  .stage.tiny .s-venue .s-vkick{ margin-bottom:6px; }
+  .stage.tiny .s-cta{ margin-top:var(--sp-2); padding-block:4px; }
+  .stage.tiny .swipe-hint{ margin-top:var(--sp-3); }
   /* Còn dư nhiều khoảng trống — giãn thêm các dòng thông tin chính (tên khách, tên lễ,
      ngày, địa điểm) chứ không giãn đều mọi thứ, giữ đúng trọng tâm nội dung quan trọng */
   .stage.roomy .s-guest{ margin-top:var(--sp-6); }
@@ -2683,12 +2697,13 @@
     var stageEl = document.querySelector('.stage');
     var stageIn = document.querySelector('.stage-in');
     if(!stageEl || !stageIn) return;
-    stageEl.classList.remove('compact', 'compact-more', 'roomy');
+    stageEl.classList.remove('compact', 'compact-more', 'tiny', 'roomy');
     var padY = parseFloat(getComputedStyle(stageEl).paddingTop) || 0;
     var avail = window.innerHeight - padY * 2;
     var slack = avail - stageIn.scrollHeight;
     if(stageIn.scrollHeight > avail) stageEl.classList.add('compact');
     if(stageIn.scrollHeight > avail) stageEl.classList.add('compact-more');
+    if(stageIn.scrollHeight > avail) stageEl.classList.add('tiny');
     /* màn rất thấp (Android nhỏ, mở trong Zalo/Messenger có thanh tiêu đề): siết hết khoảng cách vẫn tràn → thu nhỏ cả khối
        cho vừa màn (chừa 12px trên/dưới, được lấn vào lề trên/dưới vì 2 nút tròn nằm ở 2 góc, không đè chữ giữa) */
     var fitH = window.innerHeight - 24;
