@@ -1956,14 +1956,14 @@
      Máy bật "giảm chuyển động" thì không tự chạy, chỉ chạy khi khách bấm nút */
   (function(){
     var btn = document.getElementById('autoScroll'); if(!btn) return;
-    var SPEED = 95, SPEED2 = 56, SPEED3 = 112, SPEED4 = 95, v = 35, mode = false, waiting = false, raf = 0, last = 0, pos = 0, setY = 0, resumeT = 0;
+    var SPEED = 86, SPEED2 = 52, SPEED3 = 104, SPEED4 = 86, v = 35, mode = false, waiting = false, raf = 0, last = 0, pos = 0, setY = 0, resumeT = 0;
     var gliding = false, introStarted = false, introRunning = false, intro = document.querySelector('#introStage .sticky-view');
     var stage = document.getElementById('introStage');
     var quick = document.querySelector('.cd-sec');   // "Chỉ còn" + lịch: ít chữ, lướt nhanh gấp đôi khi phần này chiếm giữa màn hình
     function target(){
       if(quick){
         var q = quick.getBoundingClientRect(), H = window.innerHeight;
-        if(q.bottom <= H * 0.7) return SPEED4;                     // các phần sau lịch (chương trình, địa điểm, quà mừng...): 95px/s
+        if(q.bottom <= H * 0.7) return SPEED4;                     // các phần sau lịch (chương trình, địa điểm, quà mừng...): 86px/s
         if(q.top < H * 0.3) return SPEED3;
       }
       return stage && stage.getBoundingClientRect().top <= 1 ? SPEED2 : SPEED;   // từ đoạn cô dâu chú rể trở đi cuộn nhanh hơn
