@@ -708,8 +708,7 @@
   .sec-kicker + h2.title{ margin-top:var(--sp-3); }
   h2.title{ font-family:var(--serif); font-weight:400; font-size:27px; color:var(--ink); line-height:1.25; letter-spacing:.005em; }
   .lead{ font-family:var(--serif); font-weight:400; font-size:clamp(15.5px, 4.25vw, 16.5px); line-height:1.7; color:var(--ink-soft); margin-top:var(--sp-3); text-wrap:pretty; }   /* pretty: chữ chạy đầy dòng, chỉ tránh 1 chữ lẻ ở dòng cuối (balance làm các dòng ngắn đều nhau → xuống dòng nhiều) */
-  .wrap:not(.wrap-wide) .lead{ margin-inline:-14px; }   /* câu dẫn chạy rộng hơn lề chung (32px) của khối → ít xuống dòng */
-  .rsvp-frame .lead{ margin-inline:-10px; }
+  .lead .ph, .gift-note .ph{ display:inline-block; }   /* cụm ý trong câu dẫn: chỉ xuống dòng giữa các cụm */
   .center{ text-align:center; }
 
   /* ===== nền ngà nối tiếp nhau: bỏ khoảng trống kép, ngăn bằng vạch vàng mảnh có 囍 ở giữa ===== */
@@ -1107,7 +1106,7 @@
   @keyframes giftFloat{ 0%,100%{ translate:0 0; } 50%{ translate:0 -6px; } }
   @media (prefers-reduced-motion: reduce){ .gift-deco svg{ animation:none; } }
   .gift-note{ margin-top:var(--sp-3); font-family:var(--serif); font-size:clamp(15px, 4.1vw, 16px); line-height:1.7; color:var(--ink-soft); text-wrap:pretty; }
-  .gift-deco ~ .lead, .gift-deco ~ .gift-note{ padding-inline:clamp(6px, 5vw, 26px); }   /* chừa 2 bên cho icon hộp quà / phong bì trang trí, chữ không đè lên icon */
+  .gift-deco ~ .lead, .gift-deco ~ .gift-note{ padding-inline:clamp(10px, 9vw, 40px); }   /* chừa 2 bên cho icon hộp quà / phong bì trang trí, chữ không đè lên icon */
   .gift-open{ display:inline-flex; align-items:center; gap:8px; margin-top:var(--sp-5); padding:12px 26px; border:1px solid rgba(169,127,46,.6); border-radius:2px; background:transparent; color:var(--red-deep); font-family:var(--sans); font-size:12.5px; font-weight:500; letter-spacing:.1em; text-transform:uppercase; cursor:pointer; }
   .gift-open svg{ width:15px; height:15px; transition:transform .35s ease; }
   /* icon phong thư dọc (nắp chữ V, tim niêm, 2 nếp gấp) bên trái chữ */
@@ -2834,8 +2833,10 @@
   } else {
     bi('tlDesc1', 'Chụp vài tấm hình và để lại đôi dòng cảm nghĩ cho cô dâu chú rể nhé', 'Take a few photos and leave us a note');
   }
-  bi('dressLead', 'Một chút gợi ý cho ' + rsvpGuestFullLower + ': những gam màu dưới đây sẽ giúp ảnh chung thêm hài hoà, còn lại cứ diện thật thoải mái nhé.', "A little suggestion: these shades will make our photos together look lovely — otherwise, just wear whatever feels comfortable.");
-  bi('rsvpLead', capFirst(rsvpGuestPronounOnly) + ' hồi âm đôi dòng để cô dâu chú rể chuẩn bị được chu đáo hơn nhé.', 'A short reply helps us prepare for you.');
+  /* câu dẫn chia theo cụm ý (mỗi cụm không bị ngắt giữa chừng): xuống dòng đúng chỗ ngắt nghĩa, đỡ rối mắt */
+  function ph(){ return [].slice.call(arguments).map(function(t){ return '<span class="ph">' + t + '</span>'; }).join(' '); }
+  bi('dressLead', ph('Một chút gợi ý cho ' + rsvpGuestFullLower + ':', 'những gam màu dưới đây', 'sẽ giúp ảnh chung thêm hài hoà,', 'còn lại cứ diện thật thoải mái nhé.'), "A little suggestion: these shades will make our photos together look lovely — otherwise, just wear whatever feels comfortable.");
+  bi('rsvpLead', ph(capFirst(rsvpGuestPronounOnly) + ' hồi âm đôi dòng', 'để cô dâu chú rể', 'chuẩn bị được chu đáo hơn nhé.'), 'A short reply helps us prepare for you.');
   bi('rsvpAttendLabel', capFirst(rsvpGuestPronounOnly) + ' sẽ đến tham dự chứ', 'Will you be joining us');
   // số người đi cùng (không tính khách, mặc định 0): "Chị đi cùng mấy người?"
   bi('guestLabel', capFirst(rsvpGuestPronounOnly) + ' đi cùng mấy người?', 'How many guests are coming with you?');
@@ -2852,18 +2853,9 @@
      (RSVP_CLOSED ? 'Cảm ơn ' + rsvpGuestFullLower + ' đã đến chung vui trong ngày trọng đại và hạnh phúc ấy.' : 'Mong rằng ' + rsvpGuestFullLower + ' sẽ đến chung vui trong ngày trọng đại và hạnh phúc này.'),
      "From a shy first date to today, we've come far enough together to know this is the hand we want to hold for the rest of the way. " +
      (RSVP_CLOSED ? 'And thank you for being beside us on the day.' : 'And we hope to have you beside us on the day.'));
-  bi('giftNote', 'Nếu muốn gửi quà mừng từ xa, <span class="nowrap">' + rsvpGuestFullLower + '</span> có thể bấm vào nút bên dưới nhé.', "If you'd like to send a gift from afar, just tap the button below.");
-  bi('giftLead', 'Sự hiện diện của ' + rsvpGuestFullLower + ' là món quà ý nghĩa nhất', 'Your presence is the greatest gift of all');
+  bi('giftNote', ph('Nếu muốn gửi quà mừng từ xa,', rsvpGuestFullLower + ' có thể bấm', 'vào nút bên dưới nhé.'), "If you'd like to send a gift from afar, just tap the button below.");
+  bi('giftLead', ph('Sự hiện diện của ' + rsvpGuestFullLower, 'là món quà ý nghĩa nhất'), 'Your presence is the greatest gift of all');
 
-  /* câu dẫn chạy đầy dòng (text-wrap:pretty) — dính 2 chữ cuối mỗi câu bằng dấu cách không ngắt để dòng cuối
-     không bị lẻ 1 chữ (vd "mái nhé.", "nhất"); làm cho cả 2 ngôn ngữ */
-  document.querySelectorAll('.lead, .gift-note').forEach(function(el){
-    el.querySelectorAll('[data-vi], [data-en]').forEach(function(sp){
-      var w = document.createTreeWalker(sp, NodeFilter.SHOW_TEXT), t, last = null;
-      while((t = w.nextNode())) if(/\S/.test(t.nodeValue)) last = t;
-      if(last) last.nodeValue = last.nodeValue.replace(/\s+(\S+\s*)$/, '\u00a0$1');
-    });
-  });
 
   var card = document.getElementById('card');
   var langSwitch = document.getElementById('langSwitch');
@@ -3141,7 +3133,7 @@
     if(up !== cdUp){
       cdUp = up;
       bi('cdKicker', up ? 'Đã được' : 'Chỉ còn', up ? 'Together for' : 'Counting down');
-      bi('countdownLead', up ? 'kể từ giây phút cô dâu chú rể chính thức về chung một nhà' : 'đến giây phút cô dâu chú rể chính thức về chung một nhà',
+      bi('countdownLead', ph(up ? 'kể từ giây phút cô dâu chú rể' : 'đến giây phút cô dâu chú rể', 'chính thức về chung một nhà'),
          up ? 'since we officially became family' : 'until we officially become family');
     }
     var d = Math.floor(diff/86400000);
