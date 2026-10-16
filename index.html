@@ -2938,11 +2938,11 @@
   }
   if(musicHint) musicHint.addEventListener('click', function(){ showMusicHint(false); revealMusic(); });
 
-  /* rèm tự kéo hé: chờ font tải xong rồi mới cho tên hiện dần (class .names-in) để chữ không đổi font giữa chừng.
+  /* rèm tự kéo hé: chờ font tải xong rồi mới bắt đầu bút viết SAVE THE DATE (writeSaveTheDate) để chữ trên bìa không đổi font giữa chừng.
      Mỗi font chia 2 file (Latin + chữ có dấu tiếng Việt): phải chờ ĐỦ cả file chữ có dấu — trước đây chỉ cần 1 file
      Latin tải xong là coi như xong, nên lần đầu mở bằng 4G (Android) tên khách có dấu hiện tạm bằng font của máy.
      document.fonts.load với mẫu chữ có cả "A" lẫn "ệ" → trình duyệt tải đủ 2 file của từng độ đậm.
-     Mạng chậm thì tối đa 2,5 giây là hiện luôn. Hiệu ứng tên + chỉ vàng + ngày ~1.35s, giữ thêm ~0.45s rồi kéo rèm. */
+     Mạng chậm thì tối đa 2,5 giây là bắt đầu luôn. Bút viết ~2.4s, THE DATE ~1.6s, chỉ vàng + ngày, giữ ~1.5s rồi kéo rèm. */
   var curtainParted = false, namesShown = false;
   function partCurtain(){
     if(curtainParted) return;
@@ -2987,7 +2987,6 @@
   function showNames(){
     if(namesShown) return;
     namesShown = true;
-    cover.classList.add('names-in');
     writeSaveTheDate();
   }
   setTimeout(showNames, NAMES_MAX_WAIT);
