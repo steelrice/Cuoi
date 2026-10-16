@@ -707,7 +707,7 @@
   .band-red .rsvp-frame .sec-kicker{ color:var(--gold-line); }
   .sec-kicker + h2.title{ margin-top:var(--sp-3); }
   h2.title{ font-family:var(--serif); font-weight:400; font-size:27px; color:var(--ink); line-height:1.25; letter-spacing:.005em; }
-  .lead{ font-family:var(--serif); font-weight:400; font-size:clamp(15.5px, 4.25vw, 16.5px); line-height:1.7; color:var(--ink-soft); margin-top:var(--sp-3); text-wrap:balance; }
+  .lead{ font-family:var(--serif); font-weight:400; font-size:clamp(15.5px, 4.25vw, 16.5px); line-height:1.7; color:var(--ink-soft); margin-top:var(--sp-3); text-wrap:pretty; }   /* pretty: chữ chạy đầy dòng, chỉ tránh 1 chữ lẻ ở dòng cuối (balance làm các dòng ngắn đều nhau → xuống dòng nhiều) */
   .center{ text-align:center; }
 
   /* ===== nền ngà nối tiếp nhau: bỏ khoảng trống kép, ngăn bằng vạch vàng mảnh có 囍 ở giữa ===== */
@@ -779,7 +779,7 @@
 
   /* ---------- dress code (gộp cuối section Chung vui cùng) ---------- */
   .dress-inline{ margin-top:var(--sp-8); }
-  .dress-inline .lead{ text-wrap:balance; }
+  .dress-inline .lead{ text-wrap:pretty; }
   /* ảnh tràn trọn bề ngang thiệp (thoát khỏi lề .wrap) + 5 thẻ màu đè lên mép dưới ảnh */
   .dress-mood{ position:relative; width:min(100vw, 520px); margin:var(--sp-6) 0 0 calc((100% - min(100vw, 520px)) / 2); padding-bottom:40px; }
   .dress-photo{ position:relative; overflow:hidden; }
@@ -1104,7 +1104,8 @@
   .gift-deco svg{ position:absolute; height:auto; color:var(--gold-line); opacity:.9; animation:giftFloat 5.5s ease-in-out infinite; }
   @keyframes giftFloat{ 0%,100%{ translate:0 0; } 50%{ translate:0 -6px; } }
   @media (prefers-reduced-motion: reduce){ .gift-deco svg{ animation:none; } }
-  .gift-note{ margin-top:var(--sp-3); font-family:var(--serif); font-size:clamp(15px, 4.1vw, 16px); line-height:1.7; color:var(--ink-soft); text-wrap:balance; }
+  .gift-note{ margin-top:var(--sp-3); font-family:var(--serif); font-size:clamp(15px, 4.1vw, 16px); line-height:1.7; color:var(--ink-soft); text-wrap:pretty; }
+  .gift-deco ~ .lead, .gift-deco ~ .gift-note{ padding-inline:clamp(10px, 7vw, 34px); }   /* chừa 2 bên cho icon hộp quà / phong bì trang trí, chữ không đè lên icon */
   .gift-open{ display:inline-flex; align-items:center; gap:8px; margin-top:var(--sp-5); padding:12px 26px; border:1px solid rgba(169,127,46,.6); border-radius:2px; background:transparent; color:var(--red-deep); font-family:var(--sans); font-size:12.5px; font-weight:500; letter-spacing:.1em; text-transform:uppercase; cursor:pointer; }
   .gift-open svg{ width:15px; height:15px; transition:transform .35s ease; }
   /* icon phong thư dọc (nắp chữ V, tim niêm, 2 nếp gấp) bên trái chữ */
@@ -2851,6 +2852,16 @@
      (RSVP_CLOSED ? 'And thank you for being beside us on the day.' : 'And we hope to have you beside us on the day.'));
   bi('giftNote', 'Nếu muốn gửi quà mừng từ xa, <span class="nowrap">' + rsvpGuestFullLower + '</span> có thể bấm vào nút bên dưới nhé.', "If you'd like to send a gift from afar, just tap the button below.");
   bi('giftLead', 'Sự hiện diện của ' + rsvpGuestFullLower + ' là món quà ý nghĩa nhất', 'Your presence is the greatest gift of all');
+
+  /* câu dẫn chạy đầy dòng (text-wrap:pretty) — dính 2 chữ cuối mỗi câu bằng dấu cách không ngắt để dòng cuối
+     không bị lẻ 1 chữ (vd "mái nhé.", "nhất"); làm cho cả 2 ngôn ngữ */
+  document.querySelectorAll('.lead, .gift-note').forEach(function(el){
+    el.querySelectorAll('[data-vi], [data-en]').forEach(function(sp){
+      var w = document.createTreeWalker(sp, NodeFilter.SHOW_TEXT), t, last = null;
+      while((t = w.nextNode())) if(/\S/.test(t.nodeValue)) last = t;
+      if(last) last.nodeValue = last.nodeValue.replace(/\s+(\S+\s*)$/, '\u00a0$1');
+    });
+  });
 
   var card = document.getElementById('card');
   var langSwitch = document.getElementById('langSwitch');
