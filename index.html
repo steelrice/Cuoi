@@ -2714,7 +2714,18 @@
     /* màn cao (iPhone thường, Pro Max…) không phải siết mà vẫn dư → phóng cả khối theo màn cho kín bìa (tối đa 1,2 lần;
        không quá 90% chiều cao, ngang không vượt 82% bề rộng để khỏi chạm 2 viền vàng) */
     if(!stageEl.classList.contains('compact')){
-      var up = Math.min(1.2, window.innerHeight * 0.9 / stageIn.scrollHeight, window.innerWidth * 0.82 / stageIn.offsetWidth);
+      /* bề ngang: đo đúng phần chữ thật (dòng ngày "Tức ngày 13 tháng 10" trên máy tính rất rộng), phóng xong vẫn cách
+         2 viền vàng (rèm hé còn 10% mỗi bên) ít nhất 16px */
+      var tL = 1e9, tR = -1e9, tw = document.createTreeWalker(stageIn, NodeFilter.SHOW_TEXT), tn, rg = document.createRange();
+      while((tn = tw.nextNode())){
+        if(!tn.textContent.trim() || !tn.parentElement.offsetParent) continue;
+        rg.selectNodeContents(tn);
+        [].forEach.call(rg.getClientRects(), function(q){ if(q.width){ tL = Math.min(tL, q.left); tR = Math.max(tR, q.right); } });
+      }
+      [].forEach.call(stageIn.querySelectorAll('.s-date .cap'), function(el){ var q = el.getBoundingClientRect(); if(q.width){ tL = Math.min(tL, q.left); tR = Math.max(tR, q.right); } });   // gạch chân Tháng/Năm cũng tính
+      var coverW = (document.getElementById('cover') || document.documentElement).clientWidth;
+      var sr = stageIn.getBoundingClientRect(), cx = sr.left + sr.width / 2;   // phóng quanh tâm khối → tính nửa rộng xa nhất từ tâm
+      var up = Math.min(1.2, window.innerHeight * 0.9 / stageIn.scrollHeight, tR > tL ? (coverW * 0.4 - 16) / Math.max(1, cx - tL, tR - cx) : 1);
       if(up > 1.02) stageIn.style.setProperty('--fit-scale', up.toFixed(3));
     } else {
       /* đã phải siết (iPhone mở trong Zalo/Messenger…) mà còn dư chút chỗ → chia đều phần dư vào 5 khoảng giữa các cụm
