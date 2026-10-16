@@ -422,7 +422,7 @@
   @keyframes elegantReveal{ from{opacity:0; transform:translateY(14px);} to{opacity:1; transform:none;} }
 
   .s-hy{ font-size:36px; line-height:1; color:var(--gold); margin-bottom:var(--sp-3); }
-  .s-kicker{ font-family:var(--serif); font-weight:400; font-size:min(22px, 5.6vw); letter-spacing:.04em; text-transform:uppercase; white-space:nowrap; color:var(--gold); }
+  .s-kicker{ font-family:var(--serif); font-weight:400; font-size:min(23px, 5.75vw); letter-spacing:.04em; text-transform:uppercase; white-space:nowrap; color:var(--gold); }
   .s-guest{ font-family:'Hello Paris', var(--serif); font-weight:400; -webkit-text-stroke:.7px currentColor; word-spacing:.18em; font-size:clamp(26px,7.5vw,32px); color:var(--cream); margin-top:var(--sp-5); line-height:1.2; letter-spacing:.01em; }
   .s-guest .gline{ display:block; }
   /* cỡ cố định 20px (bằng .s-join "tới dự") thay vì tính theo em — vì .gline có thể tự co
@@ -732,7 +732,7 @@
   .countdown{ --cd-size:clamp(34px,10vw,40px); display:flex; justify-content:center; align-items:flex-start; margin-top:var(--sp-6); }
   .cd-box{ flex:1; min-width:0; text-align:center; }
   .cd-num{ font-family:var(--serif); font-weight:400; font-size:var(--cd-size); color:var(--red-deep); font-variant-numeric:tabular-nums; line-height:1; }
-  .cd-label{ font-size:11px; letter-spacing:.1em; margin-top:var(--sp-2); color:var(--ink-soft); text-transform:uppercase; }
+  .cd-label{ font-size:12.5px; letter-spacing:.1em; margin-top:var(--sp-2); color:var(--ink-soft); text-transform:uppercase; }
   .cd-dot{ flex:none; width:4px; height:4px; margin-left:2px; margin-right:2px; border-radius:50%; background:var(--gold); margin-top:calc(var(--cd-size) / 2 - 2px); }
   #countdownLead{ margin-top:var(--sp-4); text-wrap:balance; }
   .cal-split{ width:100%; height:1px; background-image:linear-gradient(to right, transparent, rgba(207,159,63,.55) 50%, transparent); margin:var(--sp-6) 0; }
@@ -743,7 +743,7 @@
   .cd-kicker + .cal-card .countdown{ margin-top:var(--sp-3); }
   .cal-month{ font-family:var(--script); font-style:italic; font-weight:600; font-size:22px; color:var(--red-mid); text-align:center; margin-bottom:var(--sp-4); }
   .cal-grid{ display:grid; grid-template-columns:repeat(7,1fr); gap:6px; text-align:center; }
-  .cal-grid .dow{ font-size:10.5px; letter-spacing:.04em; color:var(--ink-soft); font-weight:500; padding-bottom:4px; }
+  .cal-grid .dow{ font-size:12px; letter-spacing:.04em; color:var(--ink-soft); font-weight:500; padding-bottom:4px; }
   .cal-grid .day{ font-family:var(--sans); font-size:13px; color:var(--ink); padding:6px 0; }
   .cal-grid .day.blank{ visibility:hidden; }
   .cal-grid .day.marked{ position:relative; color:var(--cream); font-weight:600; }
@@ -904,8 +904,8 @@
   .bk-ctl button:disabled{ opacity:.35; }
   .bk-ctl button svg{ width:15px; height:15px; }
   .bk-cnt{ font-family:var(--serif); font-size:15px; min-width:64px; text-align:center; color:var(--red-deep); }
-  .bk-cnt span{ font-family:var(--sans); font-size:11.5px; letter-spacing:.12em; color:var(--ink-soft); }
-  .bk-hint{ font-size:11.5px; letter-spacing:.04em; color:var(--ink-soft); opacity:.8; transition:opacity .6s ease; }
+  .bk-cnt span{ font-family:var(--sans); font-size:12.5px; letter-spacing:.12em; color:var(--ink-soft); }
+  .bk-hint{ font-size:12.5px; letter-spacing:.04em; color:var(--ink-soft); opacity:.8; transition:opacity .6s ease; }
   .bk-stage.bk-inline ~ .bk-ctl .bk-hint{ display:none; }     /* trong thiệp: không cần chữ hướng dẫn */
   .bk-hint.fade{ opacity:0; }
   /* bàn tay mời lật: kéo từ mép phải sang trái, ăn khớp với nhịp trang tự nhấc (peek), 3 lần rồi thôi */
@@ -976,7 +976,7 @@
   .loc-parents .parents-cols{ margin-top:var(--sp-3); display:grid; grid-template-columns:1fr 1px 1fr; align-items:center; gap:var(--sp-2); }
   .loc-parents .parents-vline{ height:46px; background:rgba(207,159,63,.5); }
   .loc-parents .parents-col{ min-width:0; }
-  .loc-parents .parents-role{ font-size:11px; letter-spacing:.16em; text-transform:uppercase; color:var(--ink-soft); opacity:.75; }
+  .loc-parents .parents-role{ font-size:12.5px; letter-spacing:.16em; text-transform:uppercase; color:var(--ink-soft); opacity:.75; }
   .loc-parents .parents-name{ margin-top:5px; font-family:var(--serif); font-weight:400; font-size:clamp(13px,4.1vw,17px); line-height:1.3; color:var(--ink); white-space:nowrap; }
   .loc-parents .parents-divider{ margin-top:var(--sp-5); display:flex; align-items:center; gap:10px; }
   .loc-parents .parents-divider-top{ margin-top:0; margin-bottom:var(--sp-4); }
@@ -985,7 +985,7 @@
   .loc-addr{ font-weight:400; font-size:14.5px; color:var(--ink-soft); margin-top:var(--sp-5); line-height:1.65; text-wrap:balance; }
   .nowrap{ white-space:nowrap; }
   /* nhãn "Địa chỉ" nhỏ in hoa nằm riêng một dòng phía trên → địa chỉ không bị ngắt dòng lệch */
-  .loc-addr b{ display:block; margin-bottom:4px; font-weight:500; font-size:10.5px; letter-spacing:.18em; text-transform:uppercase; color:var(--gold-line); }
+  .loc-addr b{ display:block; margin-bottom:4px; font-weight:500; font-size:12px; letter-spacing:.18em; text-transform:uppercase; color:var(--gold-line); }
   .loc-map{ display:block; margin-top:var(--sp-5); border:1px solid rgba(207,159,63,.35); border-radius:2px; overflow:hidden; }
   .loc-map img{ width:100%; height:auto; display:block; }
   .loc-credit{ font-size:10.5px; letter-spacing:.04em; color:var(--ink-soft); opacity:.7; margin-top:var(--sp-2); }
@@ -1021,16 +1021,17 @@
   .field select option{ background:#fff; color:var(--ink); }
   .field input:focus, .field textarea:focus, .field select:focus{ outline:none; border-bottom-color:var(--red-mid); }
   .field input::placeholder, .field textarea::placeholder{ color:rgba(42,20,20,.32); }
-  .field-hint{ font-size:12px; color:var(--ink-soft); opacity:.85; margin-top:var(--sp-2); font-style:italic; }
+  .field-hint{ font-size:13px; color:var(--ink-soft); opacity:.85; margin-top:var(--sp-2); font-style:italic; }
   .stepper{ display:flex; align-items:center; gap:var(--sp-5); border-bottom:1px solid rgba(169,127,46,.4); padding-bottom:7px; width:fit-content; }
   .stepper button{ width:28px; height:28px; border-radius:3px; border:1px solid rgba(169,127,46,.5); background:transparent; color:var(--red-deep); font-size:16px; }
   .stepper span{ font-family:var(--serif); font-weight:400; font-size:19px; min-width:18px; text-align:center; color:var(--red-deep); }
   .attend-toggle{ display:flex; gap:var(--sp-3); }
-  .attend-toggle button{ flex:1; padding:13px 8px; border-radius:3px; border:1px solid rgba(169,127,46,.5); background:transparent; color:var(--ink-soft); font-size:12.5px; letter-spacing:.04em; }
+  .attend-toggle button{ flex:1; padding:13px 8px; border-radius:3px; border:1px solid rgba(169,127,46,.5); background:transparent; color:var(--ink-soft); font-size:13.5px; letter-spacing:.04em; }
+  @media (max-width:360px){ .attend-toggle button{ font-size:12.5px; letter-spacing:.02em; padding-inline:4px; } }   /* màn hẹp (SE): "Không đến được" vẫn nằm 1 dòng */
   .attend-toggle button.active{ background:var(--red-mid); color:var(--cream); border-color:var(--red-mid); }
-  .rsvp-submit{ margin-top:var(--sp-2); background:var(--red-deep); color:var(--cream); font-weight:500; font-size:12.5px; letter-spacing:.08em; padding:16px; border:none; border-radius:3px; }
-  .rsvp-note{ margin-top:calc(-1 * var(--sp-4)); font-size:12.5px; text-align:center; min-height:16px; color:var(--red-mid); font-weight:500; }
-  .rsvp-err{ font-size:12px; color:#b3402c; margin-top:var(--sp-2); min-height:14px; }
+  .rsvp-submit{ margin-top:var(--sp-2); background:var(--red-deep); color:var(--cream); font-weight:500; font-size:13.5px; letter-spacing:.08em; padding:16px; border:none; border-radius:3px; }
+  .rsvp-note{ margin-top:calc(-1 * var(--sp-4)); font-size:13.5px; text-align:center; min-height:16px; color:var(--red-mid); font-weight:500; }
+  .rsvp-err{ font-size:13px; color:#b3402c; margin-top:var(--sp-2); min-height:14px; }
   /* ===== hồi âm kiểu thẻ (cùng họ với thẻ địa điểm): mỗi câu hỏi 1 hàng, ngăn bằng kẻ chấm, nhãn vàng in hoa;
      lựa chọn là thanh gạt 2 nấc (nền đỏ trượt qua lại, góc bo 3px như các nút khác); gửi xong dập con dấu 囍 ===== */
   .rsvp-frame{ background:#fffcf6; border-color:rgba(169,127,46,.42); border-radius:4px; box-shadow:0 14px 32px rgba(60,20,10,.08); padding:var(--sp-7) var(--sp-5) var(--sp-5); }
@@ -1062,7 +1063,7 @@
   .rd-seal{ position:relative; width:104px; height:104px; display:flex; align-items:center; justify-content:center; background:var(--red-mid); border-radius:10px; color:#e9c77e; font-size:58px; line-height:1;
     box-shadow:inset 0 0 0 4px var(--red-mid), inset 0 0 0 5.5px rgba(233,199,126,.8), 0 10px 22px rgba(76,12,23,.3); transform:rotate(-8deg); }
   .rd-seal::after{ content:''; position:absolute; inset:-14px; border-radius:18px; border:1.5px solid rgba(122,21,36,.18); transform:rotate(3deg); }
-  .rd-kicker{ margin-top:var(--sp-6); font-family:var(--sans); font-size:10.5px; letter-spacing:.2em; text-transform:uppercase; color:var(--gold-line); }
+  .rd-kicker{ margin-top:var(--sp-6); font-family:var(--sans); font-size:12px; letter-spacing:.2em; text-transform:uppercase; color:var(--gold-line); }
   .rd-title{ font-family:var(--script); font-style:italic; font-weight:500; font-size:40px; line-height:1.1; color:var(--red-deep); margin-top:var(--sp-2); text-wrap:balance; }
   .rd-text{ font-size:14px; line-height:1.7; color:var(--ink-soft); max-width:300px; margin-top:var(--sp-3); text-wrap:balance; }
   .rd-cal{ margin-top:var(--sp-5); }
@@ -1136,15 +1137,15 @@
   .gq-frame i:nth-child(4){ bottom:-7px; right:-7px; border-bottom-width:1.5px; border-right-width:1.5px; }
   .gq-seal{ position:absolute; left:50%; top:50%; width:36px; height:36px; margin:-18px 0 0 -18px; display:flex; align-items:center; justify-content:center; background:var(--red-mid); border-radius:5px; color:#e9c77e; font-size:20px; line-height:1;
     box-shadow:0 0 0 3px #fff, inset 0 0 0 2px var(--red-mid), inset 0 0 0 3px rgba(233,199,126,.75); transform:rotate(-6deg); }
-  .gq-hint{ margin-top:var(--sp-5); font-family:var(--sans); font-size:10.5px; letter-spacing:.18em; text-transform:uppercase; color:var(--gold-line); }
+  .gq-hint{ margin-top:var(--sp-5); font-family:var(--sans); font-size:12px; letter-spacing:.18em; text-transform:uppercase; color:var(--gold-line); }
   .gq-info{ margin:var(--sp-3) 0 0; text-align:left; }
   .gq-info > div{ display:flex; align-items:center; justify-content:space-between; gap:var(--sp-3); padding:11px 0; border-top:1px dashed rgba(169,127,46,.45); }
-  .gq-info dt{ flex:none; font-family:var(--sans); font-size:10.5px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-soft); opacity:.8; }
+  .gq-info dt{ flex:none; font-family:var(--sans); font-size:12px; letter-spacing:.14em; text-transform:uppercase; color:var(--ink-soft); opacity:.8; }
   .gq-info dd{ margin:0; display:flex; align-items:center; gap:10px; text-align:right; font-family:var(--serif); font-size:15px; color:var(--ink); }
   .gq-logo{ height:24px; width:auto; mix-blend-mode:multiply; }   /* nền trắng của logo chìm vào nền kem */
   .gq-logo[alt="Vietcombank"]{ height:30px; }
   .gq-num{ font-variant-numeric:tabular-nums; letter-spacing:.06em; color:var(--red-deep); font-size:17px; }
-  .gq-copy{ flex:none; padding:4px 11px; border:1px solid rgba(169,127,46,.6); border-radius:14px; background:transparent; font-family:var(--sans); font-size:11px; letter-spacing:.04em; color:#8A5E24; transition:background .2s ease, color .2s ease; }
+  .gq-copy{ flex:none; padding:4px 11px; border:1px solid rgba(169,127,46,.6); border-radius:14px; background:transparent; font-family:var(--sans); font-size:12.5px; letter-spacing:.04em; color:#8A5E24; transition:background .2s ease, color .2s ease; }
   .gq-copy.ok{ background:var(--red-mid); border-color:var(--red-mid); color:var(--cream); }
   .gift-inner .gift-dl{ margin-top:var(--sp-4); }
   .gift-dl{ display:flex; align-items:center; justify-content:center; gap:6px; width:100%; margin-top:calc(-1 * var(--sp-3)); background:transparent; border:none; padding:0; font-family:var(--sans); font-size:12px; letter-spacing:.03em; color:var(--gold-line); text-decoration:underline; text-underline-offset:3px; text-decoration-thickness:.5px; }
@@ -1216,7 +1217,7 @@
   <div class="stage">
     <div class="stage-in">
       <div class="s-hy r" style="--d:0s" aria-hidden="true">囍</div>
-      <div class="s-kicker r" id="sKicker" style="--d:.05s"><span data-vi>Trân trọng kính mời!</span><span data-en>You are cordially invited!</span></div>
+      <div class="s-kicker r" id="sKicker" style="--d:.05s"><span data-vi>Trân trọng kính mời</span><span data-en>You are cordially invited</span></div>
       <div class="s-guest r" id="sGuest" style="--d:.4s"><span data-vi>Quý khách</span><span data-en>Dear guest</span></div>
       <div class="s-join r" id="sJoin" style="--d:.75s"><span data-vi>tới dự</span><span data-en>to attend</span></div>
       <div class="s-rule r" style="--d:.75s"></div>
@@ -2740,8 +2741,8 @@
     var v = EV.vi, e = EV.en;
     bi('coverDate', v.coverDate, e.coverDate);
     bi('stdWhen',   v.coverDate, e.coverDate);
-    if(RSVP_CLOSED) bi('sKicker', 'Trân trọng cảm ơn!', 'With Heartfelt Thanks!');   // sau ngày cưới: bìa thành lời cảm ơn
-    else bi('sKicker', 'Trân trọng kính mời!', 'With Great Pleasure!');
+    if(RSVP_CLOSED) bi('sKicker', 'Trân trọng cảm ơn', 'With Heartfelt Thanks');   // sau ngày cưới: bìa thành lời cảm ơn
+    else bi('sKicker', 'Trân trọng kính mời', 'With Great Pleasure');
     bi('sGuest',    guestLine('vi'), guestLine('en'));
     fitGuestName();
     bi('sJoin',     RSVP_CLOSED ? 'đã tới dự' : 'tới dự', RSVP_CLOSED ? 'for joining us at' : 'to join us at');
