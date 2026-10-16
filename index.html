@@ -1844,90 +1844,18 @@
     else buzz(9);
   }, true);
 
-  /* mã QR mừng cưới riêng cho từng khách: cùng tài khoản như mã in sẵn (images/qr-*.svg) nhưng điền sẵn nội dung
-     "MUNG CUOI <TÊN KHÁCH>" → xem sao kê là biết ai gửi. Tạo ngay trên máy khách (thư viện qrcode-generator, MIT,
-     tải lúc mở thiệp), không gửi gì ra ngoài. Lỗi/không tải được thư viện → giữ nguyên mã in sẵn (không có nội dung) */
-  /* VietQR (chuẩn EMVCo của Napas): bin ngân hàng + số TK + nội dung chuyển khoản, để trống số tiền */
-  function vietqrPayload(bin, acct, note){
-    function f(id, v){ return id + String(v.length).padStart(2, '0') + v; }
-    function crc16(s){
-      var c = 0xFFFF;
-      for(var i = 0; i < s.length; i++){
-        c ^= s.charCodeAt(i) << 8;
-        for(var k = 0; k < 8; k++) c = (c & 0x8000) ? ((c << 1) ^ 0x1021) & 0xFFFF : (c << 1) & 0xFFFF;
-      }
-      return c.toString(16).toUpperCase().padStart(4, '0');
-    }
-    var s = f('00', '01') + f('01', '11') +
-            f('38', f('00', 'A000000727') + f('01', f('00', bin) + f('01', acct)) + f('02', 'QRIBFTTA')) +
-            f('53', '704') + f('58', 'VN') + (note ? f('62', f('08', note)) : '') + '6304';
-    return s + crc16(s);
-  }
-  var GIFT_ACCT = { groom:{ bin:'970416', acct:'333393936' }, bride:{ bin:'970436', acct:'9933417879' } };
-  function giftNote(){
-    var who = hasGuestName ? guestFull : 'Son Thao';
-    var t = who.normalize('NFD').replace(/[\u0300-\u036f]/g, '').replace(/[đĐ]/g, 'D').toUpperCase().replace(/[^A-Z0-9 ]+/g, ' ').replace(/\s+/g, ' ').trim();
-    // chuẩn EMV giới hạn nội dung ở 25 ký tự → tên dài thì rút "MUNG CUOI" thành "MC", vẫn dài nữa thì
-    // bỏ bớt họ / tên đệm (giữ xưng hô + tên gọi ở cuối), để vẫn nhận ra ai gửi
-    if(('MUNG CUOI ' + t).length <= 25) return 'MUNG CUOI ' + t;
-    var w = t.split(' '), out = 'MC ' + w[w.length - 1];
-    for(var i = w.length - 2; i >= 0; i--){
-      var tryOut = (i === 0 ? 'MC ' + w.slice(0).join(' ') : 'MC ' + w[0] + ' ' + w.slice(i).join(' '));
-      if(tryOut.length <= 25) out = tryOut; else break;
-    }
-    return out.slice(0, 25);
-  }
-  function giftKind(el){ return /co-dau/.test(el.getAttribute('data-file') || el.getAttribute('src') || '') ? 'bride' : 'groom'; }
-  var giftQR = {};   // kind → ma trận QR (mảng boolean) đã tạo
-  function buildGiftQR(){
-    if(typeof qrcode !== 'function') return;
-    var note = giftNote();
-    document.querySelectorAll('.gift-qr').forEach(function(img){
-      var k = giftKind(img), a = GIFT_ACCT[k];
-      try{
-        var q = qrcode(0, 'Q'); q.addData(vietqrPayload(a.bin, a.acct, note)); q.make();
-        var n = q.getModuleCount(), M = 4, W = n + M * 2, d = '', rows = [];
-        for(var r = 0; r < n; r++){
-          var row = [];
-          for(var c = 0; c < n; c++) row.push(q.isDark(r, c));
-          for(c = 0; c < n; c++) if(row[c]){ var c0 = c; while(c + 1 < n && row[c + 1]) c++; d += 'M' + (c0 + M) + ' ' + (r + M + .5) + 'h' + (c - c0 + 1); }
-          rows.push(row);
-        }
-        giftQR[k] = rows;
-        var svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + W + ' ' + W + '" shape-rendering="crispEdges"><rect width="100%" height="100%" fill="#fff"/><path stroke="#2b1216" d="' + d + '"/></svg>';
-        img.setAttribute('data-file', img.getAttribute('src'));
-        img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
-      }catch(e){}
-    });
-  }
-  document.addEventListener('inviteopen', function(){
-    var sc = document.createElement('script'); sc.src = 'js/qrcode.min.js'; sc.async = true;
-    sc.onload = buildGiftQR; document.head.appendChild(sc);
-  }, { once:true });
-
-  /* tải mã QR về máy: thẻ VietQR in sẵn (images/qr-*.png, 600×776, ô mã ở 120..476) — có mã riêng của khách
-     thì vẽ đè mã đó vào ô rồi lưu PNG; không thì tải nguyên ảnh in sẵn */
-  function saveFile(href, name){
-    var a = document.createElement('a'); a.href = href; a.download = name;
-    document.body.appendChild(a); a.click(); document.body.removeChild(a);
-  }
+  /* tải mã QR về máy */
   document.querySelectorAll('.gift-dl').forEach(function(btn){
     btn.addEventListener('click', function(){
-      var file = btn.getAttribute('data-file') || 'qr.png', rows = giftQR[giftKind(btn)];
-      if(!rows) return saveFile('images/' + file, file);
-      var base = new Image();
-      base.onload = function(){
-        try{
-          var cv = document.createElement('canvas'); cv.width = base.naturalWidth; cv.height = base.naturalHeight;
-          var g = cv.getContext('2d'); g.drawImage(base, 0, 0);
-          var X = 136, Y = 138, S = 324, n = rows.length, m = S / n;   // chừa lề trắng trong khung xanh
-          g.fillStyle = '#fff'; g.fillRect(118, 120, 360, 360); g.fillStyle = '#000';
-          for(var r = 0; r < n; r++) for(var c = 0; c < n; c++) if(rows[r][c]) g.fillRect(Math.floor(X + c * m), Math.floor(Y + r * m), Math.ceil(m), Math.ceil(m));
-          saveFile(cv.toDataURL('image/png'), file);
-        }catch(e){ saveFile('images/' + file, file); }
-      };
-      base.onerror = function(){ saveFile('images/' + file, file); };
-      base.src = 'images/' + file;
+      var card = btn.closest('.gift-inner');
+      var img = card ? card.querySelector('.gift-qr') : null;
+      if(!img || !img.src) return;
+      var a = document.createElement('a');
+      a.href = 'images/' + (btn.getAttribute('data-file') || 'qr.png');
+      a.download = btn.getAttribute('data-file') || 'qr.png';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
     });
   });
 
@@ -3775,7 +3703,7 @@
   }
   document.addEventListener('inviteopen', function(){ track('open'); }, { once:true });
   (function(){
-    function who(el){ var c = el.closest('.gift-inner'), q = c && c.querySelector('.gift-qr'); return q && /co-dau/.test(q.getAttribute('data-file') || q.getAttribute('src')) ? 'bride' : 'groom'; }
+    function who(el){ var c = el.closest('.gift-inner'), q = c && c.querySelector('.gift-qr'); return q && /co-dau/.test(q.getAttribute('src')) ? 'bride' : 'groom'; }
     document.querySelectorAll('.gq-copy').forEach(function(b){ b.addEventListener('click', function(){ track('copy', who(b)); }); });
     document.querySelectorAll('.gift-dl').forEach(function(b){ b.addEventListener('click', function(){ track('qr', who(b)); }); });
   })();
