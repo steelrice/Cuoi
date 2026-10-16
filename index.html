@@ -523,6 +523,7 @@
   .stage.compact-more .s-cta{ margin-top:var(--sp-3); }
   /* màn rất thấp (iPhone SE cũ 320×568, Zalo/Messenger): siết khoảng cách vẫn tràn → thu nhỏ chữ tiêu đề lớn trước
      (囍, lời mời, tên khách, ngày, MERASTIS), giữ nguyên chữ thông tin nhỏ để không bị dưới 12px khi phải thu cả khối */
+  .stage .s-guest, .stage .s-event, .stage .s-date, .stage .s-venue, .stage .swipe-hint{ padding-top:var(--gx,0px); }
   .stage.tiny .s-hy{ font-size:28px; margin-bottom:var(--sp-2); }
   .stage.tiny .s-kicker{ font-size:23px; }
   .stage.tiny .s-guest{ font-size:24px; margin-top:var(--sp-3); }
@@ -2698,8 +2699,9 @@
     var stageIn = document.querySelector('.stage-in');
     if(!stageEl || !stageIn) return;
     stageEl.classList.remove('compact', 'compact-more', 'tiny', 'roomy');
+    stageIn.style.setProperty('--gx', '0px');
     var padY = parseFloat(getComputedStyle(stageEl).paddingTop) || 0;
-    var avail = window.innerHeight - padY * 2;
+    var avail = window.innerHeight - Math.min(padY, 28) * 2;   // lề trên/dưới chỉ cần ~28px (2 nút tròn nằm ở 2 góc, không đè chữ giữa)
     var slack = avail - stageIn.scrollHeight;
     if(stageIn.scrollHeight > avail) stageEl.classList.add('compact');
     if(stageIn.scrollHeight > avail) stageEl.classList.add('compact-more');
@@ -2714,6 +2716,11 @@
     if(!stageEl.classList.contains('compact')){
       var up = Math.min(1.2, window.innerHeight * 0.9 / stageIn.scrollHeight, window.innerWidth * 0.82 / stageIn.offsetWidth);
       if(up > 1.02) stageIn.style.setProperty('--fit-scale', up.toFixed(3));
+    } else {
+      /* đã phải siết (iPhone mở trong Zalo/Messenger…) mà còn dư chút chỗ → chia đều phần dư vào 5 khoảng giữa các cụm
+         (tên khách, tên tiệc, ngày, địa điểm, nút vuốt) cho thoáng lại, mỗi khoảng tối đa 20px */
+      var left = window.innerHeight - 40 - stageIn.scrollHeight;
+      if(left > 5) stageIn.style.setProperty('--gx', Math.min(20, left / 5).toFixed(1) + 'px');
     }
   }
 
