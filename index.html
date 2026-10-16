@@ -2957,7 +2957,7 @@
     curtainParted = true;
     cover.classList.add('parted');
   }
-  var NAMES_MAX_WAIT = 2500, HOLD_MS = 250;
+  var NAMES_MAX_WAIT = 2500, HOLD_MS = 1600;   // ngày hiện ~0,8s rồi giữ thêm cho khách kịp đọc
   /* khách chạm vào màn trong lúc chữ đang hiện → hiện xong thì nhạc nổi lên luôn; chưa chạm → nút nhạc toả sáng nhắc bấm */
   var touchedCover = false;
   ['pointerdown', 'touchend'].forEach(function(n){
@@ -2966,7 +2966,7 @@
   function afterWritten(){
     cover.classList.add('written');
     if(touchedCover) revealMusic(); else if(bgMusic && (bgMusic.paused || bgMusic.muted) && musicToggle){ musicToggle.classList.add('nudge'); armMusicRetry(); }
-    setTimeout(partCurtain, HOLD_MS);   // viết xong là kéo rèm luôn
+    setTimeout(partCurtain, HOLD_MS);
   }
   /* chữ SAVE rồi THE DATE hiện lần lượt từng chữ cái (trồi nhẹ lên + rõ dần), xong là kéo rèm */
   function writeSaveTheDate(){
