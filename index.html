@@ -369,7 +369,7 @@
   }
   /* chỉ hiện ở bìa — mở thiệp rồi (kể cả lúc xem lại thiệp) thì ẩn */
   #cover.open .cover-version{ display:none; }
-  .cover-names{ font-family:'Hello Paris', var(--serif); font-weight:400; font-size:clamp(30px,9vw,42px); -webkit-text-stroke:.8px currentColor; color:var(--cream); margin-top:var(--sp-3); line-height:1.25; letter-spacing:.01em; }
+  .cover-names{ font-family:'Hello Paris', var(--serif); font-weight:400; font-size:clamp(30px,9vw,42px); -webkit-text-stroke:1.3px currentColor; color:var(--cream); margin-top:var(--sp-3); line-height:1.25; letter-spacing:.01em; }
   .cover-date{ margin-top:var(--sp-3); font-size:15px; letter-spacing:.08em; color:var(--cream-dim); }
   /* tên 3 dòng: Hoàng Sơn / & / Phương Thảo — dấu & nghiêng vàng (Cormorant) */
   .cover-names .cn-row{ display:block; }
@@ -1189,7 +1189,7 @@
   .footer.bg-in::before{ background-image:url(images/footer.webp); }
   .footer::after{ content:''; position:absolute; inset:0; z-index:-1; background:linear-gradient(to bottom, #2a1a12 0%, rgba(42,26,18,.62) 40%, rgba(42,26,18,.8) 100%); }  /* nâu espresso */
   .footer .rule{ width:44px; height:1px; background:rgba(207,159,63,.65); margin:var(--sp-4) auto 0; }
-  .footer .mono{ width:132px; margin:0 auto; color:var(--gold); }   /* chữ S T vẽ từ font MTD Hello Paris Serif */
+  .footer .mono{ width:120px; margin:0 auto; color:var(--gold); }   /* chữ S T vẽ từ font MTD Hello Paris Serif */
   .footer .mono svg{ display:block; width:100%; height:auto; overflow:visible; }
   .footer .names i{ font-family:var(--script); font-weight:500; color:var(--gold); font-size:1.2em; padding:0 4px; -webkit-text-stroke:0; }
   .footer .names{ font-family:'Hello Paris', var(--serif); font-weight:400; font-size:clamp(17px,5.4vw,22px); letter-spacing:.03em; white-space:nowrap; -webkit-text-stroke:.6px currentColor; margin-top:var(--sp-2); }
@@ -1719,7 +1719,7 @@
   <!-- ============ FOOTER ============ -->
   <div class="footer">
     <div class="torn-bot" style="--tx:100%" aria-hidden="true"></div>
-    <div class="mono" id="mono" role="img" aria-label="S &amp; T"><svg viewBox="9 -887 1711 1175" aria-hidden="true"><g fill="currentColor" stroke="currentColor" stroke-width="5" stroke-linejoin="round"><path class="mono-s" d="M653 -54C653 -222 459 -348 374 -418C322 -465 253 -519 253 -594C253 -659 298 -708 382 -708C474 -708 537 -623 549 -562V-700C543 -691 535 -687 526 -687C499 -687 432 -717 383 -717C316 -717 240 -685 240 -587C240 -509 312 -436 351 -395C452 -289 590 -184 608 -50C608 -44 608 -38 609 -32V-14C609 114 536 232 370 252H333C195 252 67 151 67 -9C67 -133 142 -271 309 -271C315 -271 322 -270 328 -270L329 -275C316 -275 303 -276 291 -276C175 -276 29 -207 29 -24C29 124 140 238 294 262C318 268 346 268 371 268C501 258 654 180 654 -33C654 -40 654 -47 653 -54Z"/><path class="mono-t" d="M1401 -867C1186 -867 981 -747 768 -747C663 -747 574 -771 497 -844L493 -831C562 -761 680 -732 787 -728V-69C787 -23 765 -7 741 0H879C856 -7 835 -24 835 -67V-728C1018 -728 1273 -847 1452 -847C1543 -847 1630 -832 1687 -745L1700 -752C1639 -826 1551 -867 1401 -867Z"/></g></svg></div>
+    <div class="mono" id="mono" role="img" aria-label="S &amp; T"><svg viewBox="9 -737 1462 1025" aria-hidden="true"><g fill="currentColor" stroke="currentColor" stroke-width="5" stroke-linejoin="round"><path class="mono-s" d="M653 -54C653 -222 459 -348 374 -418C322 -465 253 -519 253 -594C253 -659 298 -708 382 -708C474 -708 537 -623 549 -562V-700C543 -691 535 -687 526 -687C499 -687 432 -717 383 -717C316 -717 240 -685 240 -587C240 -509 312 -436 351 -395C452 -289 590 -184 608 -50C608 -44 608 -38 609 -32V-14C609 114 536 232 370 252H333C195 252 67 151 67 -9C67 -133 142 -271 309 -271C315 -271 322 -270 328 -270L329 -275C316 -275 303 -276 291 -276C175 -276 29 -207 29 -24C29 124 140 238 294 262C318 268 346 268 371 268C501 258 654 180 654 -33C654 -40 654 -47 653 -54Z"/><path class="mono-t" d="M1152 -599C937 -599 732 -479 519 -479C414 -479 325 -503 248 -576L244 -563C313 -493 431 -464 538 -460V199C538 245 516 261 492 268H630C607 261 586 244 586 201V-460C769 -460 1024 -579 1203 -579C1294 -579 1381 -564 1438 -477L1451 -484C1390 -558 1302 -599 1152 -599Z"/></g></svg></div>
     <div class="names">Hoàng Sơn <i>&amp;</i> Phương Thảo</div>
     <div class="rule" aria-hidden="true"></div>
     <p class="thanks" id="thanks"><span data-vi>Cảm ơn bạn đã dành thời gian đọc hết thiệp mời của Sơn và Thảo. Hẹn gặp bạn ngày 21.11.2026 tại Vũng Tàu!</span><span data-en>Thank you for taking the time to read through our invitation. See you on November 21, 2026 in Vung Tau City!</span></p>
