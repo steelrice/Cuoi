@@ -373,7 +373,7 @@
   .cover-date{ margin-top:var(--sp-3); font-size:15px; letter-spacing:.08em; color:var(--cream-dim); }
   /* tên 3 dòng: Hoàng Sơn / & / Phương Thảo — dấu & nghiêng vàng (Cormorant) */
   .cover-names .cn-row{ display:block; }
-  .cover-names .cn-amp{ font-family:'Hello Paris', var(--script); font-style:normal; font-weight:400; font-size:1em; -webkit-text-stroke:inherit; line-height:.95; color:var(--gold); margin:2px 0 0; }
+  .cover-names .cn-amp{ font-family:var(--script); font-style:italic; font-weight:500; font-size:1.15em; line-height:.95; color:var(--gold); margin:2px 0 0; }
   /* chờ tải: từng chữ của tên hiện dần + nhô lên, rồi đường chỉ vàng kẻ ra từ giữa, cuối cùng là ngày.
      Bắt đầu khi font bìa đã tải (class .names-in, xem showNames) để chữ không đổi font giữa chừng */
   .cover-names .cn-w{ display:inline-block; opacity:0; transform:translateY(12px); }
@@ -685,7 +685,7 @@
   @font-face{ font-family:'Hello Paris'; src:url('fonts/hello-paris-std.woff2') format('woff2'); font-display:swap; }
   .std-save, .std-script{ font-family:'Hello Paris', var(--serif); font-weight:400; font-size:clamp(50px,15vw,64px); line-height:.95; letter-spacing:.01em; }   /* font chỉ có chữ hoa (kèm nét lượn) → xếp 2 dòng SAVE / THE DATE như thiệp in */
   .std-names{ font-family:'Hello Paris', var(--serif); font-weight:400; font-size:clamp(17px,5.4vw,23px); margin-top:var(--sp-5); letter-spacing:.03em; white-space:nowrap; -webkit-text-stroke:.6px currentColor; text-shadow:0 1px 10px rgba(20,2,5,.55); }   /* font chỉ có 1 nét mảnh → viền chữ .6px cho đậm, bóng tối cho nổi trên ảnh */
-  .std-names i{ font-family:'Hello Paris', var(--script); font-style:normal; font-weight:400; color:var(--gold); font-size:1em; padding:0 4px; -webkit-text-stroke:inherit; margin-right:.45em; }   /* chữ P của Hello Paris có nét lượn thò sang trái → chừa thêm chỗ sau & */
+  .std-names i{ font-family:var(--script); font-weight:500; color:var(--gold); font-size:1.2em; padding:0 4px; -webkit-text-stroke:0; margin-right:.45em; }   /* chữ P của Hello Paris có nét lượn thò sang trái → chừa thêm chỗ sau & */
   .std-when{ font-size:12px; letter-spacing:.26em; margin-top:var(--sp-3); color:var(--cream-dim); }
   .std-txt > *{ opacity:0; transform:translateY(14px); transition:opacity .9s ease, transform 1s cubic-bezier(.16,1,.3,1); }
   #card.show .std-txt > *{ opacity:1; transform:none; }
@@ -1191,7 +1191,7 @@
   .footer .rule{ width:44px; height:1px; background:rgba(207,159,63,.65); margin:var(--sp-4) auto 0; }
   .footer .mono{ width:130px; margin:0 auto; color:var(--gold); }   /* chữ S T vẽ từ font MTD Hello Paris Serif */
   .footer .mono svg{ display:block; width:100%; height:auto; overflow:visible; }
-  .footer .names i{ font-family:'Hello Paris', var(--script); font-style:normal; font-weight:400; color:var(--gold); font-size:1em; padding:0 4px; -webkit-text-stroke:inherit; margin-right:.45em; }
+  .footer .names i{ font-family:var(--script); font-weight:500; color:var(--gold); font-size:1.2em; padding:0 4px; -webkit-text-stroke:0; margin-right:.45em; }
   .footer .names{ font-family:'Hello Paris', var(--serif); font-weight:400; font-size:clamp(17px,5.4vw,22px); letter-spacing:.03em; white-space:nowrap; -webkit-text-stroke:.6px currentColor; margin-top:var(--sp-2); }
   .footer .thanks{ font-weight:400; font-size:14.5px; margin-top:var(--sp-4); line-height:1.7; max-width:300px; margin-left:auto; margin-right:auto; color:var(--cream-dim); }
   .footer .review-link{ margin-top:var(--sp-5); padding:6px 2px; border:none; background:none; cursor:pointer; font-family:var(--script); font-style:italic; font-weight:500; font-size:18px; color:var(--gold); text-decoration:underline; text-decoration-color:rgba(207,159,63,.5); text-underline-offset:4px; }
