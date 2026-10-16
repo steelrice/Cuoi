@@ -985,6 +985,7 @@
   .loc-addr{ font-weight:400; font-size:14.5px; color:var(--ink-soft); margin-top:var(--sp-5); line-height:1.65; text-wrap:balance; }
   .nowrap{ white-space:nowrap; }
   /* nhãn "Địa chỉ" nhỏ in hoa nằm riêng một dòng phía trên → địa chỉ không bị ngắt dòng lệch */
+  .loc-addr .hall{ display:block; font-weight:600; font-size:15.5px; color:var(--ink); margin-bottom:2px; }   /* sảnh + tầng: dòng riêng, đậm — khách nhìn là biết đi đâu */
   .loc-addr b{ display:block; margin-bottom:4px; font-weight:500; font-size:12px; letter-spacing:.18em; text-transform:uppercase; color:var(--gold-line); }
   .loc-map{ display:block; margin-top:var(--sp-5); border:1px solid rgba(207,159,63,.35); border-radius:2px; overflow:hidden; }
   .loc-map img{ width:100%; height:auto; display:block; }
@@ -1506,7 +1507,7 @@
       <div class="loc-card">
         <div class="loc-body">
           <div class="loc-head">
-            <div class="loc-kicker" id="locKicker">Nhà hàng</div>
+            <div class="loc-kicker" id="locKicker">Nhà hàng tiệc cưới</div>
             <div class="loc-big" id="locBig">Merastis</div>
           </div>
           <div class="loc-parents" id="locParents" hidden>
@@ -1526,8 +1527,8 @@
             <div class="parents-divider" aria-hidden="true"><span></span><i></i><span></span></div>
           </div>
           <div class="loc-addr" id="locAddr">
-            <span data-vi><b>Địa chỉ</b>Sảnh Diamond (Lầu 4)<br>356 Trương Công Định<br>TP. Vũng Tàu</span>
-            <span data-en><b>Address</b>Diamond Hall (4th Floor)<br>356 Truong Cong Dinh St.<br>Vung Tau City</span>
+            <span data-vi><b>Địa chỉ</b><span class="hall">Sảnh Diamond · Lầu 4</span>356 Trương Công Định, Tam Thắng,<br>TP. Vũng Tàu</span>
+            <span data-en><b>Address</b><span class="hall">Diamond Hall · 4th Floor</span>356 Truong Cong Dinh St., Tam Thang Ward,<br>Vung Tau City</span>
           </div>
           <a class="loc-map" id="locMapLink" href="#" target="_blank" rel="noopener">
             <img id="mapVT" src="images/map-vungtau.webp" alt="Bản đồ vị trí Nhà hàng Merastis, Vũng Tàu" loading="lazy">
@@ -2592,11 +2593,11 @@
       vi:{ title:'TIỆC CHUNG VUI', time:'Được tổ chức vào lúc ', hi:'11 giờ trưa, Thứ Bảy',
            lunar:'Tức ngày 13 tháng 10', yearLunar:'Năm Bính Ngọ',
            venue:'<span class="s-vkick">Tại nhà hàng tiệc cưới</span>MERASTIS', addr:'<span class="s-hall">Sảnh Diamond · Lầu 4</span>356 Trương Công Định, Tam Thắng, <span class="nowrap">TP. Vũng Tàu</span>',
-           locKicker:'Nhà hàng', locBig:'Merastis', locAddr:'Sảnh Diamond (Lầu 4)<br>356 Trương Công Định<br>TP. Vũng Tàu' },
+           locKicker:'Nhà hàng tiệc cưới', locBig:'Merastis', locAddr:'<span class="hall">Sảnh Diamond · Lầu 4</span>356 Trương Công Định, Tam Thắng,<br>TP. Vũng Tàu' },
       en:{ title:'OUR CELEBRATION PARTY', time:'To be held at ', hi:'11:00 AM, Saturday',
            lunar:'(Lunar Calendar: October 13th)', yearLunar:'Year of the Fire Horse',
            venue:'<span class="s-vkick">At the wedding restaurant</span>MERASTIS', addr:'<span class="s-hall">Diamond Hall · 4th Floor</span>356 Truong Cong Dinh Street, Tam Thang Ward, <span class="nowrap">Vung Tau City</span>',
-           locKicker:'Restaurant', locBig:'Merastis', locAddr:'Diamond Hall (4th Floor)<br>356 Truong Cong Dinh St.<br>Vung Tau City' }
+           locKicker:'Wedding restaurant', locBig:'Merastis', locAddr:'<span class="hall">Diamond Hall · 4th Floor</span>356 Truong Cong Dinh St., Tam Thang Ward,<br>Vung Tau City' }
     },
     '28': {
       day:'28', place:{ vi:'Hưng Yên', en:'Hung Yen City' }, maps:'https://maps.app.goo.gl/GCHuv1PDPoEEhdEt7', shuttle:false,
