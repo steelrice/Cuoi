@@ -2959,7 +2959,7 @@
     curtainParted = true;
     cover.classList.add('parted');
   }
-  var NAMES_MAX_WAIT = 2500, WRITE_MS = 2800, HOLD_MS = 900;
+  var NAMES_MAX_WAIT = 2500, WRITE_MS = 2600, HOLD_MS = 250;
   /* bút viết SAVE: mỗi nét trong mask #sdInk được "kéo" ra (stroke-dashoffset) → chữ hiện ra đúng chỗ bút đi qua.
      Khách chạm vào màn trong lúc viết → viết xong thì nhạc nổi lên luôn; chưa chạm → nút nhạc toả sáng nhắc bấm */
   var touchedCover = false;
@@ -2969,48 +2969,49 @@
   function afterWritten(){
     cover.classList.add('written');
     if(touchedCover) revealMusic(); else if(bgMusic && (bgMusic.paused || bgMusic.muted) && musicToggle){ musicToggle.classList.add('nudge'); armMusicRetry(); }
-    setTimeout(partCurtain, HOLD_MS + 600);
+    setTimeout(partCurtain, HOLD_MS);   // viết xong là kéo rèm luôn
   }
   function writeSaveTheDate(){
     var ink = [].slice.call(document.querySelectorAll('#sdInk path')), pen = document.getElementById('sdPen');
     var date = [].slice.call(document.querySelectorAll('#sdDate path'));
-    function showDate(){ date.forEach(function(p, i){ setTimeout(function(){ p.classList.add('on'); }, i * 160); }); setTimeout(afterWritten, date.length * 160 + 500); }
+    function showDate(){ date.forEach(function(p, i){ setTimeout(function(){ p.classList.add('on'); }, i * 90); }); setTimeout(afterWritten, date.length * 90 + 300); }
     var reduce = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
     if(!ink.length || reduce){ ink.forEach(function(p){ p.style.strokeWidth = 400; }); date.forEach(function(p){ p.classList.add('on'); }); afterWritten(); return; }
-    /* dòng thời gian: mỗi nét viết có nhịp chậm–nhanh–chậm; giữa 2 nét bút nhấc lên lướt tới đầu nét kế (không để lại mực) */
+    /* dòng thời gian: bút đi một tốc độ đều (chỉ chậm lúc bắt đầu và lúc kết thúc cả chữ) cho liền mạch;
+       nét rất ngắn (chân chữ) hiện cùng lúc với nét trước, không bắt bút ghé qua; giữa 2 nét bút lướt nhanh sang đầu nét kế */
     var L = ink.map(function(p){ var l = p.getTotalLength(); p.style.strokeDasharray = l + ' ' + l; p.style.strokeDashoffset = l; return l; });
-    var segs = [], moveMs = 0, inkLen = L.reduce(function(a, b){ return a + b; }, 0);
+    var segs = [], last = null, SHORT = 140;
     ink.forEach(function(p, i){
-      if(i){
-        var a = ink[i - 1].getPointAtLength(L[i - 1]), b = p.getPointAtLength(0), dist = Math.hypot(b.x - a.x, b.y - a.y);
-        var mv = Math.max(70, Math.min(200, dist * .22)); moveMs += mv;
-        segs.push({ mv:true, a:a, b:b, ms:mv });
+      if(last && L[i] < SHORT){ (last.extra = last.extra || []).push(i); return; }
+      if(last){
+        var a = ink[last.i].getPointAtLength(L[last.i]), b = p.getPointAtLength(0);
+        segs.push({ mv:true, a:a, b:b, d:Math.hypot(b.x - a.x, b.y - a.y) });
       }
-      segs.push({ i:i, ms:0 });
+      last = { i:i }; segs.push(last);
     });
-    var inkMs = Math.max(900, WRITE_MS - moveMs);
-    segs.forEach(function(sg){ if(!sg.mv) sg.ms = Math.max(90, inkMs * L[sg.i] / inkLen); });
-    function ease(x){ return .5 * x + .5 * (.5 - .5 * Math.cos(Math.PI * x)); }   // nửa đều, nửa chậm ở 2 đầu nét
+    var inkLen = 0, mvLen = 0;
+    segs.forEach(function(sg){ if(sg.mv) mvLen += sg.d; else inkLen += L[sg.i]; });
+    var MV_SPEED = 2.2;   // bút nhấc lên lướt nhanh gấp ~2 lần lúc viết
+    var tot = inkLen + mvLen / MV_SPEED, acc = 0;
+    segs.forEach(function(sg){ var w = sg.mv ? sg.d / MV_SPEED : L[sg.i]; sg.t0 = acc / tot; acc += w; sg.t1 = acc / tot; });
+    function ease(x){ return x < .12 ? x * x / .24 : x > .88 ? .88 - (1 - x) * (1 - x) / .24 : x - .06; }
+    var easeMax = ease(1);
     function place(x, y){ pen.setAttribute('transform', 'translate(' + x.toFixed(1) + ' ' + y.toFixed(1) + ')'); }
-    var si = 0, segT0 = performance.now();
-    pen.classList.add('on'); place(ink[0].getPointAtLength(0).x, ink[0].getPointAtLength(0).y);
+    var t0 = performance.now(), p0 = ink[0].getPointAtLength(0);
+    pen.classList.add('on'); place(p0.x, p0.y);
     (function step(now){
-      if(curtainParted){ si = segs.length; }   // khách đã mở thiệp giữa chừng → hiện đủ chữ luôn
-      while(si < segs.length){
-        var sg = segs[si], t = (now - segT0) / sg.ms;
-        if(t >= 1){ if(!sg.mv) ink[sg.i].style.strokeDashoffset = 0; segT0 += sg.ms; si++; continue; }
-        if(sg.mv){
-          var k = ease(Math.max(0, t)), lift = Math.sin(Math.PI * k) * 60;   // nhấc bút: vòng nhẹ lên trên
-          place(sg.a.x + (sg.b.x - sg.a.x) * k, sg.a.y + (sg.b.y - sg.a.y) * k - lift);
-        } else {
-          var d = L[sg.i] * ease(Math.max(0, t)), pt = ink[sg.i].getPointAtLength(d);
-          ink[sg.i].style.strokeDashoffset = L[sg.i] - d; place(pt.x, pt.y);
-        }
-        return requestAnimationFrame(step);
+      var T = curtainParted ? 1 : Math.min(1, ease(Math.min(1, (now - t0) / WRITE_MS)) / easeMax);   // khách mở thiệp giữa chừng → hiện đủ chữ luôn
+      for(var k = 0; k < segs.length; k++){
+        var sg = segs[k], f = Math.max(0, Math.min(1, (T - sg.t0) / (sg.t1 - sg.t0)));
+        if(sg.mv){ if(f > 0 && f < 1){ place(sg.a.x + (sg.b.x - sg.a.x) * f, sg.a.y + (sg.b.y - sg.a.y) * f - Math.sin(Math.PI * f) * 40); } continue; }
+        var d = L[sg.i] * f; ink[sg.i].style.strokeDashoffset = L[sg.i] - d;
+        if(sg.extra) sg.extra.forEach(function(j){ ink[j].style.strokeDashoffset = L[j] * (1 - f); });
+        if(f > 0 && f < 1){ var pt = ink[sg.i].getPointAtLength(d); place(pt.x, pt.y); }
       }
+      if(T < 1) return requestAnimationFrame(step);
       ink.forEach(function(p){ p.style.strokeDashoffset = 0; p.style.strokeWidth = 400; });   // phủ kín phần mép nét bút chưa quét tới
       pen.classList.remove('on'); showDate();
-    })(segT0);
+    })(t0);
   }
   function showNames(){
     if(namesShown) return;
