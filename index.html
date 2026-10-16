@@ -1735,6 +1735,16 @@
 
 
 <script>
+  /* Facebook/Messenger tự gắn đuôi theo dõi (fbclid=…) vào link mời → xoá khỏi thanh địa chỉ (không tải lại trang)
+     để khách copy link gửi tiếp cho gọn. Thiệp không dùng tham số này. */
+  (function(){
+    try{
+      var u = new URL(location.href), drop = ['fbclid', 'gclid', 'mibextid'], changed = false;
+      u.searchParams.forEach(function(v, k){ if(/^utm_/.test(k)) drop.push(k); });
+      drop.forEach(function(k){ if(u.searchParams.has(k)){ u.searchParams.delete(k); changed = true; } });
+      if(changed) history.replaceState(history.state, '', u.pathname + (u.search ? u.search : '') + u.hash);
+    }catch(e){}
+  })();
   // tải lại trang (reload) luôn bắt đầu từ đầu: tắt việc trình duyệt tự nhớ vị trí cuộn cũ.
   // Quay lại tab/app hay bấm Back (bfcache) không chạy lại script này nên vẫn giữ chỗ đang xem.
   if('scrollRestoration' in history) history.scrollRestoration = 'manual';
