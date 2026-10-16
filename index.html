@@ -372,7 +372,7 @@
   }
   /* chỉ hiện ở bìa — mở thiệp rồi (kể cả lúc xem lại thiệp) thì ẩn */
   #cover.open .cover-version{ display:none; }
-  .cover-names{ font-family:'Hello Paris', var(--serif); font-weight:400; font-size:clamp(30px,9vw,42px); -webkit-text-stroke:1.3px currentColor; color:var(--cream); margin-top:var(--sp-3); line-height:1.25; letter-spacing:.01em; }
+  .cover-names{ font-family:'Hello Paris', var(--serif); font-weight:400; font-size:clamp(34px,10.8vw,50px); -webkit-text-stroke:1.3px currentColor; word-spacing:.18em; color:var(--cream); margin-top:var(--sp-3); line-height:1.25; letter-spacing:.01em; }
   .cover-date{ margin-top:var(--sp-3); font-size:15px; letter-spacing:.08em; color:var(--cream-dim); }
   /* tên 3 dòng: Hoàng Sơn / & / Phương Thảo — dấu & nghiêng vàng (Cormorant) */
   .cover-names .cn-row{ display:block; }
@@ -425,7 +425,7 @@
 
   .s-hy{ font-size:36px; line-height:1; color:var(--gold); margin-bottom:var(--sp-3); }
   .s-kicker{ font-family:var(--script); font-weight:600; font-size:min(24px, 6vw); letter-spacing:.06em; text-transform:uppercase; white-space:nowrap; color:var(--gold); }
-  .s-guest{ font-family:'Hello Paris', var(--serif); font-weight:400; -webkit-text-stroke:.7px currentColor; word-spacing:.18em; font-size:clamp(26px,7.5vw,32px); color:var(--cream); margin-top:var(--sp-5); line-height:1.2; letter-spacing:.01em; }
+  .s-guest{ font-family:var(--serif); font-weight:400; font-size:clamp(26px,7.5vw,32px); color:var(--cream); margin-top:var(--sp-5); line-height:1.2; letter-spacing:.01em; }
   .s-guest .gline{ display:block; }
   /* cỡ cố định 20px (bằng .s-join "tới dự") thay vì tính theo em — vì .gline có thể tự co
      nhỏ khi tên dài (fitGuestName), nếu companion cũng theo em sẽ bị co nhỏ theo không mong muốn */
@@ -526,7 +526,7 @@
      (囍, lời mời, tên khách, ngày, MERASTIS), giữ nguyên chữ thông tin nhỏ để không bị dưới 12px khi phải thu cả khối */
   .stage .s-guest, .stage .s-event, .stage .s-date, .stage .s-venue, .stage .swipe-hint{ padding-top:var(--gx,0px); }
   .stage.tiny .s-hy{ font-size:28px; margin-bottom:var(--sp-2); }
-  .stage.tiny .s-kicker{ font-size:15px; letter-spacing:.04em; }   /* màn thấp (SE): nút nhạc / cờ chiếm 2 góc trên → chữ phải lọt giữa 2 nút */
+  .stage.tiny .s-kicker{ font-size:clamp(15px, calc((100vw - 140px) / 13), 21px); letter-spacing:.04em; }   /* màn thấp (SE): nút nhạc / cờ chiếm 2 góc trên → chữ phải lọt giữa 2 nút */
   .stage.tiny .s-guest{ font-size:24px; margin-top:var(--sp-3); }
   .stage.tiny .s-join{ font-size:17px; margin-top:var(--sp-2); }
   .stage.tiny .s-event{ font-size:20px; margin-top:var(--sp-3); }
@@ -1002,7 +1002,7 @@
   /* ---------- RSVP / lời chúc — khung viền mảnh ---------- */
   .rsvp-frame{ position:relative; border:1px solid rgba(169,127,46,.45); padding:var(--sp-7) var(--sp-4) var(--sp-6); }
   .rsvp-kicker{ font-family:var(--script); font-style:italic; font-weight:500; font-size:25px; color:var(--gold-line); text-wrap:balance; }
-  .rsvp-title{ font-family:'Hello Paris', var(--serif); font-weight:400; -webkit-text-stroke:.7px currentColor; word-spacing:.18em; font-size:clamp(28px,8vw,36px); line-height:1.15; color:var(--red-deep); margin-top:var(--sp-3); text-wrap:balance; }
+  .rsvp-title{ font-family:var(--serif); font-weight:400; font-size:clamp(28px,8vw,36px); line-height:1.15; color:var(--red-deep); margin-top:var(--sp-3); text-wrap:balance; }
   .rsvp-title + .lead{ margin-top:var(--sp-4); }
   .rsvp-card{ background:var(--cream); border:1px solid rgba(76,12,23,.14); border-radius:6px; padding:var(--sp-5) var(--sp-5) var(--sp-6); box-shadow:var(--shadow); }
   .band-red .rsvp-card h2.title{ color:var(--ink); }
