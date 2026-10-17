@@ -2993,6 +2993,15 @@
       .map(function(f){ return document.fonts.load(f, FONT_SAMPLE).catch(function(){}); }))
       .then(showNames, showNames);
   } else showNames();
+  /* Samsung Internet / mạng chậm: rèm có thể mở trước khi file chữ có dấu tải xong → tên khách hiện tạm bằng font máy,
+     dấu lệch; vài máy không tự vẽ lại khi font về. Mỗi lần có font mới tải xong thì gán lại chữ trên bìa để trình duyệt
+     vẽ lại đúng font, rồi căn lại khung bìa */
+  if(document.fonts && document.fonts.addEventListener){
+    document.fonts.addEventListener('loadingdone', function(){
+      ['sGuest', 'sKicker'].forEach(function(id){ var el = document.getElementById(id); if(el) el.innerHTML = el.innerHTML; });
+      if(typeof fitCoverStage === 'function') fitCoverStage();
+    });
+  }
 
   /* xem lại thiệp chính (khối trên bìa) sau khi đã mở: nút phong bì góc phải trên + link ở footer */
   var reviewToggle = document.getElementById('reviewToggle');
